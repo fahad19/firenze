@@ -5,18 +5,33 @@ Node.js ORM for MySQL.
 # Usage
 
 ```js
-var Model = require('firenze').Model;
-var Connection = require('firenze').Connection;
+var firenze = require('firence');
 
-var connection = new Connection({
+var connection = new firenze.Connection({
   host: '',
   database: '',
   user: '',
   password: ''
 });
 
-var Post = new Model({
+var Posts = new firenze.Collection({
   connection: connection,
+
+  table: 'posts',
+
+  model: function () {
+    return new Post();
+  }
+});
+
+var Post = new firenze.Model({
+  alias: 'Post',
+
+  primaryKey: 'id',
+
+  collection: function () {
+    return new Posts();
+  },
 
   schema: {
     id: {
@@ -44,7 +59,8 @@ promise.then(function (post) {
 });
 
 // finding
-var promise = Post.find('one', {
+var posts = new Posts();
+var promise = posts.find('first', {
   conditions: {
     id: 1
   }
