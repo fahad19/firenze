@@ -59,6 +59,12 @@ var Post = db.Model({
   }
 });
 
+var TimestampBehavior = firenze.Behavior({
+  beforeSave: function (origin, result, args) {
+    return result;
+  }
+});
+
 // saving
 var post = new Post({
   title: 'Hello World',
