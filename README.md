@@ -5,29 +5,42 @@ Node.js ORM for MySQL.
 # Usage
 
 ```js
-var firenze = require('firence');
+var firenze = require('firenze');
 
-var connection = new firenze.Connection({
+var db = firenze.Database({
   host: '',
   database: '',
   user: '',
   password: ''
 });
 
-var Posts = new firenze.Collection({
-  connection: connection,
+// db.use('database_name')
 
+var Posts = db.Collection({
   table: 'posts',
 
+  modelClass: function () {
+    return Post;
+  }, // or modelClass: Post
+
   model: function () {
-    return new Post();
+    var Model;
+    if (_.isFunction(this.modelClass)) {
+      Model = this.modelClass();
+    } else {
+      Model = this.modelClass;
+    }
+
+    return new Model();
   }
 });
 
-var Post = new firenze.Model({
+var Post = db.Model({
   alias: 'Post',
 
   primaryKey: 'id',
+
+  collectionClass: Posts
 
   collection: function () {
     return new Posts();
@@ -70,6 +83,8 @@ promise.then(function (post) {
 }).catch(function (err) {
 
 });
+
+// posts.use(anotherDb);
 ```
 
 ## License
