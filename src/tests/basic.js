@@ -11,7 +11,10 @@ var db = new lib.Database({
 var q = db
   .connection()
   .select()
-  .table('test_posts')
+  .table('posts as Post')
+  .where({
+    'Post.title': 'Hello World'
+  })
   .then(function (posts) {
     console.log(posts);
   });
