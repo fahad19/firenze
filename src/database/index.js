@@ -32,13 +32,13 @@ class Database {
     return this.knex;
   }
 
-  collection(options = {}) {
+  Collection(options = {}) {
     return Collection(_.merge({
       db: this
     }, options));
   }
 
-  model(options = {}) {
+  Model(options = {}) {
     return Model(options);
   }
 }

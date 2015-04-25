@@ -12,11 +12,11 @@ module.exports = function (_options) {
     }
 
     collection(options = {}) {
-      if (!this.collectionClass) {
+      if (!this.options.collectionClass) {
         return new Error('Cannot find any collectionClass');
       }
 
-      var C = new this.collectionClass(options);
+      var C = new this.options.collectionClass(options);
       if (!_.isFunction(C)) {
         return C;
       }

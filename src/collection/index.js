@@ -12,11 +12,11 @@ module.exports = function (_options = {}) {
     }
 
     model(options = {}) {
-      if (!this.modelClass) {
+      if (!this.options.modelClass) {
         return new Error('Cannot find any modelClass');
       }
 
-      var M = new this.modelClass(options);
+      var M = new this.options.modelClass(options);
       if (!_.isFunction(M)) {
         return M;
       }
@@ -25,11 +25,11 @@ module.exports = function (_options = {}) {
     }
 
     database() {
-      return this.db;
+      return this.options.db;
     }
 
     setDatabase(db) {
-      this.db = db;
+      this.options.db = db;
     }
   }
 
