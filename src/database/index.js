@@ -33,15 +33,13 @@ class Database {
   }
 
   collection(options = {}) {
-    options = _.merge({
+    return Collection(_.merge({
       db: this
-    }, options);
-
-    return new Collection(options);
+    }, options));
   }
 
   model(options = {}) {
-    return new Model(options);
+    return Model(options);
   }
 }
 

@@ -1,36 +1,37 @@
 var _ = require('lodash');
 
-class Collection {
-  constructor(options = {}) {
-    this.defaultOptions = {
-      db: null,
-      modelClass: null,
-      table: null,
-      alias: null
-    };
-    this.options = _.merge(this.defaultOptions, options);
-  }
-
-  model(options = {}) {
-    if (!this.modelClass) {
-      return new Error('Cannot find any modelClass');
+module.exports = function (_options = {}) {
+  class Collection {
+    constructor(options = {}) {
+      this.defaultOptions = _.merge({
+        modelClass: null,
+        table: null,
+        alias: null
+      }, _options);
+      this.options = _.merge(this.defaultOptions, options);
     }
 
-    var M = new this.modelClass(options);
-    if (!_.isFunction(M)) {
-      return M;
+    model(options = {}) {
+      if (!this.modelClass) {
+        return new Error('Cannot find any modelClass');
+      }
+
+      var M = new this.modelClass(options);
+      if (!_.isFunction(M)) {
+        return M;
+      }
+
+      return new M(options);
     }
 
-    return new M(options);
+    database() {
+      return this.db;
+    }
+
+    setDatabase(db) {
+      this.db = db;
+    }
   }
 
-  database() {
-    return this.db;
-  }
-
-  setDatabase(db) {
-    this.db = db;
-  }
+  return Collection;
 }
-
-module.exports = Collection;
