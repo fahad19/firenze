@@ -1,5 +1,8 @@
 var _ = require('lodash');
 
+var Collection = require('../collection');
+var Model = require('../model');
+
 class Database {
   constructor(options = {}) {
     this.defaultOptions = {
@@ -27,6 +30,18 @@ class Database {
 
   connection() {
     return this.knex;
+  }
+
+  collection(options = {}) {
+    options = _.merge({
+      db: this
+    }, options);
+
+    return new Collection(options);
+  }
+
+  model(options = {}) {
+    return new Model(options);
   }
 }
 

@@ -26,11 +26,11 @@
   "homepage": "https://github.com/fahad19/firenze",
   "devDependencies": {
     "babel": "^5.1.10",
-    "lodash": "^3.7.0"
+    "mocha": "^2.2.4"
   },
   "dependencies": {
+    "lodash": "^3.7.0",
     "knex": "^0.7.6",
-    "mysql": "^2.6.2",
-    "sqlite3": "^3.0.5"
+    "mysql": "^2.6.2"
   }
 }
