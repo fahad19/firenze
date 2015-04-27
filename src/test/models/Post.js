@@ -2,7 +2,7 @@ module.exports = function (db) {
   return db.Model({
     schema: {
       id: {
-        type: 'increments'
+        type: 'integer' //'increments'
       },
       author_id: {
         type: 'integer'
