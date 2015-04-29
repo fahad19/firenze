@@ -1,23 +1,10 @@
-var lib = require('../index');
+var assert = require('assert');
 
-var db = new lib.Database({
-  type: 'mysql',
-  host: '127.0.0.1',
-  database: 'firenze',
-  user: 'root',
-  password: '',
-});
-
-var q = db
-  .connection()
-  .select()
-  .table('posts as Post')
-  .where({
-    'Post.title': 'Hello World'
-  })
-  .then(function (posts) {
-    console.log(posts);
+describe('Array', function () {
+  describe('#indexOf()', function () {
+    it('should return -1 when the value is not present', function () {
+      assert.equal(-1, [1,2,3].indexOf(5));
+      assert.equal(-1, [1,2,3].indexOf(0));
+    });
   });
-
-console.log('hello');
-
+});
