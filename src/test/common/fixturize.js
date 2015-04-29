@@ -14,8 +14,8 @@ module.exports = function (model, rows) {
           .catch(function (error) {
             callback(error);
           })
-          .finally(function () {
-            callback(null, arguments);
+          .then(function (response) {
+            callback(null, response);
           });
       },
       function (callback) {
@@ -28,8 +28,18 @@ module.exports = function (model, rows) {
           .catch(function (error) {
             callback(error);
           })
-          .finally(function () {
-            callback(null, arguments);
+          .then(function (response) {
+            callback(null, response);
+          });
+      },
+      function (callback) {
+        console.log('inserting data: ', table);
+        connection(table).insert(rows)
+          .catch(function (error) {
+            callback(error);
+          })
+          .then(function (response) {
+            callback(null, response);
           });
       }
     ], function (err, results) {
