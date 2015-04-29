@@ -1,20 +1,43 @@
 var _ = require('lodash');
+var async = require('async');
+var Promise = require('bluebird');
 
 module.exports = function (model, rows) {
-  var connection = model.collection().database().connection();
-  var table = model.collection().options.table;
+  return new Promise(function (resolve, reject) {
+    var connection = model.collection().database().connection();
+    var table = model.collection().options.table;
 
-  console.log('dropping table', table);
-  connection.schema.dropTableIfExists(table).catch(function (error) {
-    console.log('error', error);
-  });
+    async.series([
+      function (callback) {
+        console.log('dropping table: ', table);
+        connection.schema.dropTableIfExists(table)
+          .catch(function (error) {
+            callback(error);
+          })
+          .finally(function () {
+            callback(null, arguments);
+          });
+      },
+      function (callback) {
+        console.log('creating schema: ', table);
+        connection.schema.createTable(table, function (t) {
+          _.each(model.options.schema, function (column, name) {
+            t[column.type](name);
+          });
+        })
+          .catch(function (error) {
+            callback(error);
+          })
+          .finally(function () {
+            callback(null, arguments);
+          });
+      }
+    ], function (err, results) {
+      if (err) {
+        return reject(err);
+      }
 
-  connection.schema.createTable(table, function (t) {
-    console.log('running fixtures for table: ', table);
-    _.each(model.options.schema, function (column, name) {
-      t[column.type](name);
+      return resolve(results);
     });
-  }).catch(function (error) {
-    console.log('error', error);
   });
 };

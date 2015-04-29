@@ -7,6 +7,10 @@ var db = new lib.Database(config.mysql);
 // test
 var Post = require('./models/Post')(db);
 var postsFixtures = require('./fixtures/posts');
-
 var post = new Post();
-fixturize(post, postsFixtures);
+
+fixturize(post, postsFixtures).then(function (results) {
+  console.log('results', results);
+}).catch(function (error) {
+  console.log('error', error);
+});
