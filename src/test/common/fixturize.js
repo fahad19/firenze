@@ -9,37 +9,37 @@ module.exports = function (model, rows) {
 
     async.series([
       function (callback) {
-        console.log('dropping table: ', table);
+        console.log('dropping table:', table);
         connection.schema.dropTableIfExists(table)
-          .catch(function (error) {
-            callback(error);
-          })
           .then(function (response) {
             callback(null, response);
+          })
+          .catch(function (error) {
+            callback(error);
           });
       },
       function (callback) {
-        console.log('creating schema: ', table);
+        console.log('creating schema:', table);
         connection.schema.createTable(table, function (t) {
           _.each(model.options.schema, function (column, name) {
             t[column.type](name);
           });
         })
-          .catch(function (error) {
-            callback(error);
-          })
           .then(function (response) {
             callback(null, response);
+          })
+          .catch(function (error) {
+            callback(error);
           });
       },
       function (callback) {
-        console.log('inserting data: ', table);
+        console.log('inserting data:', table);
         connection(table).insert(rows)
-          .catch(function (error) {
-            callback(error);
-          })
           .then(function (response) {
             callback(null, response);
+          })
+          .catch(function (error) {
+            callback(error);
           });
       }
     ], function (err, results) {
