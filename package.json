@@ -26,7 +26,8 @@
   "homepage": "https://github.com/fahad19/firenze",
   "devDependencies": {
     "babel": "^5.1.10",
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "should": "^6.0.1"
   },
   "dependencies": {
     "async": "^0.9.0",
