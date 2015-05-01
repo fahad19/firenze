@@ -24,4 +24,13 @@ describe('Collection', function () {
     var post = posts.model();
     post.should.have.property('alias').which.is.exactly('Post');
   });
+
+  it('should find all results', function (done) {
+    var posts = new this.Posts();
+    posts.find('all').then(function (posts) {
+      posts.should.be.instanceOf(Array);
+      posts.should.have.lengthOf(3);
+      done();
+    });
+  });
 });

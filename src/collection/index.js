@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 module.exports = function (_options = {}) {
   class Collection {
@@ -6,6 +7,11 @@ module.exports = function (_options = {}) {
       this.modelClass = null;
       this.table = null;
       this.alias = null;
+      this.finders = {
+        all: 'findAll',
+        first: 'findFirst',
+        count: 'findCount'
+      };
       _.merge(this, _options, extend);
     }
 
@@ -37,6 +43,38 @@ module.exports = function (_options = {}) {
 
     setDatabase(db) {
       this.db = db;
+    }
+
+    getTable() {
+      var exp = this.table;
+      var alias = this.model().alias;
+      if (alias) {
+        exp += ' as ' + alias;
+      }
+      return this.database().connection()(exp);
+    }
+
+    find(type = 'first', options = {}) {
+      if (!this.finders[type] || !_.isFunction(this[this.finders[type]])) {
+        throw new Error('Invalid find type');
+      }
+
+      return this[this.finders[type]](options);
+    }
+
+    findAll(options = {}) {
+      var table = this.getTable();
+      return new Promise(function (resolve, reject) {
+        return table.then(resolve).catch(reject);
+      });
+    }
+
+    findFirst(options = {}) {
+
+    }
+
+    findCount(options = {}) {
+
     }
   }
 
