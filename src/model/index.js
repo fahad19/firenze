@@ -2,21 +2,19 @@ var _ = require('lodash');
 
 module.exports = function (_options) {
   class Model {
-    constructor(options = {}) {
-      this.defaultOptions = _.merge({
-        collectionClass: null,
-        schema: {},
-        primaryKey: 'id'
-      }, _options);
-      this.options = _.merge(this.defaultOptions, options);
+    constructor(extend = {}) {
+      this.collectionClass = null;
+      this.schema = {};
+      this.primaryKey = 'id';
+      _.merge(this, _options, extend);
     }
 
     collection(options = {}) {
-      if (!this.options.collectionClass) {
+      if (!this.collectionClass) {
         return new Error('Cannot find any collectionClass');
       }
 
-      var C = new this.options.collectionClass(options);
+      var C = new this.collectionClass(options);
       if (!_.isFunction(C)) {
         return C;
       }

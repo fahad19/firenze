@@ -12,7 +12,7 @@ module.exports = {
   load: function (model, rows) {
     return new Promise(function (resolve, reject) {
       var connection = model.collection().database().connection();
-      var table = model.collection().options.table;
+      var table = model.collection().table;
 
       async.series([
         function (callback) {
@@ -26,7 +26,7 @@ module.exports = {
         },
         function (callback) {
           connection.schema.createTable(table, function (t) {
-            _.each(model.options.schema, function (column, name) {
+            _.each(model.schema, function (column, name) {
               t[column.type](name);
             });
           })
