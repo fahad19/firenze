@@ -6,6 +6,7 @@ describe('Fixtures', function () {
   before(function () {
     this.db = new lib.Database(config.mysql);
     this.Post = require('../models/Post')(this.db);
+    this.Author = require('../models/Author')(this.db);
     this.fixtures = lib.fixtures;
   });
 
@@ -22,4 +23,21 @@ describe('Fixtures', function () {
       throw error;
     });
   });
+
+  it('should load fixtures for multiple models', function (done) {
+    this.fixtures.loadAll([
+      {
+        model: new this.Post(),
+        data: require('../fixtures/posts')
+      },
+      {
+        model: new this.Author(),
+        data: require('../fixtures/authors')
+      }
+    ]).then(function (results) {
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  })
 });
