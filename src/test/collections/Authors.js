@@ -1,6 +1,9 @@
 module.exports = function (db) {
   return db.Collection({
     table: 'authors',
-    modelClass: require('../models/Author')(db)
+
+    modelClass: function () {
+      require('../models/Author')(db)
+    }
   });
 };

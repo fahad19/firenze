@@ -14,8 +14,17 @@ module.exports = function (_options = {}) {
         return new Error('Cannot find any modelClass');
       }
 
+      var isInstance = function (i) {
+        return !_.isFunction(i) && _.isObject(i.schema);
+      };
+
       var M = new this.modelClass(options);
-      if (!_.isFunction(M)) {
+      if (isInstance(M)) {
+        return M;
+      }
+
+      M = new M(options);
+      if (isInstance(M)) {
         return M;
       }
 

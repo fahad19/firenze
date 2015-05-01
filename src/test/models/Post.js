@@ -17,6 +17,8 @@ module.exports = function (db) {
       }
     },
 
-    collectionClass: require('../collections/Posts')(db)
+    collectionClass: function () {
+      require('../collections/Posts')(db)
+    }
   });
 };

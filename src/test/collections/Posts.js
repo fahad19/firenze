@@ -1,6 +1,9 @@
 module.exports = function (db) {
   return db.Collection({
     table: 'posts',
-    modelClass: require('../models/Post')(db)
+
+    modelClass: function () {
+      return require('../models/Post')(db)
+    }
   });
 };

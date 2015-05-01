@@ -14,8 +14,17 @@ module.exports = function (_options) {
         return new Error('Cannot find any collectionClass');
       }
 
+      var isInstance = function (i) {
+        return !_.isFunction(i) && _.isString(i.table);
+      };
+
       var C = new this.collectionClass(options);
-      if (!_.isFunction(C)) {
+      if (isInstance(C)) {
+        return C;
+      }
+
+      C = new C(options);
+      if (isInstance(C)) {
         return C;
       }
 
