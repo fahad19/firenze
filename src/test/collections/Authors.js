@@ -3,7 +3,7 @@ module.exports = function (db) {
     table: 'authors',
 
     modelClass: function () {
-      require('../models/Author')(db)
+      return require('../models/Author')(db);
     }
   });
 };

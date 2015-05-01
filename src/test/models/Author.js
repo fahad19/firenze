@@ -15,7 +15,7 @@ module.exports = function (db) {
     },
 
     collectionClass: function () {
-      require('../collections/Authors')(db)
+      return require('../collections/Authors')(db);
     }
   });
 };

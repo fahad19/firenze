@@ -3,7 +3,7 @@ module.exports = function (db) {
     table: 'posts',
 
     modelClass: function () {
-      return require('../models/Post')(db)
+      return require('../models/Post')(db);
     }
   });
 };
