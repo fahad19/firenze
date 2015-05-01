@@ -1,5 +1,7 @@
 module.exports = function (db) {
   return db.Model({
+    alias: 'Author',
+
     schema: {
       id: {
         type: 'increments'

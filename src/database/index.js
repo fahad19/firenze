@@ -32,6 +32,13 @@ class Database {
     return this.knex;
   }
 
+  close(cb = null) {
+    if (!cb) {
+      cb = function () { };
+    }
+    return this.connection().destroy(cb);
+  }
+
   Collection(options = {}) {
     return Collection(_.merge({
       db: this
