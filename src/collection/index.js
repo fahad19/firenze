@@ -1,13 +1,14 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 
+var query = require('../common/query');
+
 module.exports = function (_options = {}) {
   class Collection {
     constructor(extend = {}) {
       this.modelClass = null;
       this.table = null;
       this.alias = null;
-      this.query = require('../common/query');
       this.finders = {
         all: 'findAll',
         first: 'findFirst',
@@ -47,7 +48,7 @@ module.exports = function (_options = {}) {
     }
 
     getQuery(options = {}) {
-      return this.query.get(this, options);
+      return query.get(this, options);
     }
 
     find(type = 'first', options = {}) {
@@ -59,11 +60,11 @@ module.exports = function (_options = {}) {
     }
 
     findAll(options = {}) {
-      var query = this.getQuery(options);
+      var q = this.getQuery(options);
 
       var self = this;
       return new Promise(function (resolve, reject) {
-        return query.then(function (results) {
+        return q.then(function (results) {
           var models = [];
           _.each(results, function (v, k) {
             models.push(self.model({
@@ -76,12 +77,12 @@ module.exports = function (_options = {}) {
     }
 
     findFirst(options = {}) {
-      var query = this.getQuery(options);
-      query.limit(1);
+      var q = this.getQuery(options);
+      q.limit(1);
 
       var self = this;
       return new Promise(function (resolve, reject) {
-        return query.then(function (results) {
+        return q.then(function (results) {
           if (results.length === 0) {
             return resolve(null);
           }
@@ -94,12 +95,12 @@ module.exports = function (_options = {}) {
     }
 
     findCount(options = {}) {
-      var query = this.getQuery(options);
-      query.count();
+      var q = this.getQuery(options);
+      q.count();
 
       var self = this;
       return new Promise(function (resolve, reject) {
-        return query.then(function (results) {
+        return q.then(function (results) {
           if (results.length === 0) {
             return resolve(null);
           }
