@@ -81,4 +81,14 @@ describe('Collection', function () {
       throw error;
     });
   });
+
+  it('should find count of results', function (done) {
+    var posts = new this.Posts();
+    posts.find('count').then(function (count) {
+      count.should.equal(3);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
 });

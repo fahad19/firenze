@@ -52,6 +52,11 @@ module.exports = function (_options = {}) {
         exp += ' as ' + alias;
       }
       var query = this.database().connection()(exp);
+      query = this.applyOptions(query, options);
+      return query;
+    }
+
+    applyOptions(query, options) {
       query = this.applyConditions(query, options);
       return query;
     }
@@ -98,7 +103,7 @@ module.exports = function (_options = {}) {
       return new Promise(function (resolve, reject) {
         return query.then(function (results) {
           if (results.length === 0) {
-            resolve(null);
+            return resolve(null);
           }
 
           return resolve(self.model({
@@ -109,7 +114,22 @@ module.exports = function (_options = {}) {
     }
 
     findCount(options = {}) {
+      var query = this.getQuery(options);
+      query.count();
 
+      var self = this;
+      return new Promise(function (resolve, reject) {
+        return query.then(function (results) {
+          if (results.length === 0) {
+            return resolve(null);
+          }
+
+          var firstKey = _.first(_.keys(results[0]));
+          var count = results[0][firstKey];
+
+          return resolve(count);
+        }).catch(reject);
+      });
     }
   }
 
