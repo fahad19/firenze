@@ -4,6 +4,7 @@ module.exports = [
     author_id: 1,
     title: "Hello World",
     body: "blah...",
+    views: 10,
     note: 'note'
   },
   {
@@ -11,6 +12,7 @@ module.exports = [
     author_id: 1,
     title: "About",
     body: "about us...",
+    views: 20,
     note: 'note'
   },
   {
@@ -18,6 +20,7 @@ module.exports = [
     author_id: 2,
     title: "Contact",
     body: "contact us...",
+    views: 30,
     note: null
   }
 ];
