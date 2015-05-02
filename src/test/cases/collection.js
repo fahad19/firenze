@@ -3,9 +3,22 @@ var lib = require('../../index');
 var config = require('../config');
 
 describe('Collection', function () {
-  before(function () {
+  before(function (done) {
     this.db = new lib.Database(config.mysql);
     this.Posts = require('../collections/Posts')(this.db);
+    this.Post = require('../models/Post')(this.db);
+    this.postsData = require('../fixtures/posts');
+
+    lib.fixtures.loadAll([
+      {
+        model: new this.Post(),
+        data: this.postsData
+      }
+    ]).then(function () {
+      done();
+    }).catch(function (error) {
+      throw err;
+    });
   });
 
   after(function (done) {
@@ -49,6 +62,20 @@ describe('Collection', function () {
       }
     }).then(function (post) {
       post.get('title').should.equal('Hello World');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
+  it('should find single result with aliased conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('first', {
+      conditions: {
+        'Post.id': 2
+      }
+    }).then(function (post) {
+      post.get('title').should.equal('About');
       done();
     }).catch(function (error) {
       throw error;
