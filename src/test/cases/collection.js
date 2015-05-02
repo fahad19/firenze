@@ -188,4 +188,32 @@ describe('Collection', function () {
       throw error;
     });
   });
+
+  it('should find count of results, with NULL conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.note': null
+      }
+    }).then(function (count) {
+      count.should.equal(1);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
+
+  it('should find count of results, with NOT NULL conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.note !=': null
+      }
+    }).then(function (count) {
+      count.should.equal(2);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
 });

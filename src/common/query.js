@@ -36,9 +36,17 @@ module.exports = {
         var field = parts[0];
         var operator = parts[1];
 
-        query.where(field, operator, v);
+        if (_.isNull(v) && _.includes(['!=', '<>'], operator)) {
+          query.whereNotNull(field);
+        } else {
+          query.where(field, operator, v);
+        }
       } else {
-        query.where(k, v);
+        if (_.isNull(v)) {
+          query.whereNull(k);
+        } else {
+          query.where(k, v);
+        }
       }
     });
 
