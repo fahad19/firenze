@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var should = require('should');
 var lib = require('../../index');
 var config = require('../config');
@@ -81,6 +82,27 @@ describe('Collection', function () {
       }
     }).then(function (post) {
       post.get('title').should.equal('Hello World');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
+  it('should find single result with selected fields', function (done) {
+    var posts = new this.Posts();
+    posts.find('first', {
+      fields: [
+        'id',
+        'title'
+      ],
+      conditions: {
+        id: 1
+      }
+    }).then(function (post) {
+      _.keys(post.attributes).should.eql([
+        'id',
+        'title'
+      ]);
       done();
     }).catch(function (error) {
       throw error;

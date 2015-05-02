@@ -14,6 +14,7 @@ module.exports = {
 
   applyOptions: function (query, options) {
     query = this.applyConditions(query, options);
+    query = this.applyFields(query, options);
     query = this.applyOrder(query, options);
     return query;
   },
@@ -47,6 +48,18 @@ module.exports = {
     var order = _.isObject(options.order) ? options.order : {};
     _.each(order, function (v, k) {
       query.orderBy(k, v);
+    });
+    return query;
+  },
+
+  applyFields: function (query, options = {}) {
+    var fields = _.isArray(options.fields) ? options.fields : [];
+    if (fields.length === 0) {
+      return query;
+    }
+
+    _.each(fields, function (v, k) {
+      query.select(v);
     });
     return query;
   }
