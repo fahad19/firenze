@@ -36,6 +36,22 @@ describe('Collection', function () {
       firstPost.attributes.title.should.be.exactly('Hello World');
 
       done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
+  it('should find single result', function (done) {
+    var posts = new this.Posts();
+    posts.find('first', {
+      conditions: {
+        id: 1
+      }
+    }).then(function (post) {
+      post.get('title').should.equal('Hello World');
+      done();
+    }).catch(function (error) {
+      throw error;
     });
   });
 });

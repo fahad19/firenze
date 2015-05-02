@@ -31,6 +31,10 @@ module.exports = function (_options) {
 
       return new C(options);
     }
+
+    get(field) {
+      return this.attributes[field];
+    }
   }
 
   return Model;

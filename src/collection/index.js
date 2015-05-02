@@ -45,13 +45,24 @@ module.exports = function (_options = {}) {
       this.db = db;
     }
 
-    getTable() {
+    getQuery(options = {}) {
       var exp = this.table;
       var alias = this.model().alias;
       if (alias) {
         exp += ' as ' + alias;
       }
-      return this.database().connection()(exp);
+      var query = this.database().connection()(exp);
+      query = this.applyConditions(query, options);
+      return query;
+    }
+
+    applyConditions(query, options = {}) {
+      var conditions = _.isObject(options.conditions) ? options.conditions : null;
+      _.each(conditions, function (v, k) {
+        query.where(k, v);
+      });
+
+      return query;
     }
 
     find(type = 'first', options = {}) {
@@ -63,10 +74,11 @@ module.exports = function (_options = {}) {
     }
 
     findAll(options = {}) {
-      var table = this.getTable();
+      var query = this.getQuery(options);
+
       var self = this;
       return new Promise(function (resolve, reject) {
-        return table.then(function (results) {
+        return query.then(function (results) {
           var models = [];
           _.each(results, function (v, k) {
             models.push(self.model({
@@ -79,7 +91,21 @@ module.exports = function (_options = {}) {
     }
 
     findFirst(options = {}) {
+      var query = this.getQuery(options);
+      query.limit(1);
 
+      var self = this;
+      return new Promise(function (resolve, reject) {
+        return query.then(function (results) {
+          if (results.length === 0) {
+            resolve(null);
+          }
+
+          return resolve(self.model({
+            attributes: results[0]
+          }));
+        }).catch(reject);
+      });
     }
 
     findCount(options = {}) {
