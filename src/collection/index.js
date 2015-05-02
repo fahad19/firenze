@@ -64,8 +64,17 @@ module.exports = function (_options = {}) {
 
     findAll(options = {}) {
       var table = this.getTable();
+      var self = this;
       return new Promise(function (resolve, reject) {
-        return table.then(resolve).catch(reject);
+        return table.then(function (results) {
+          var models = [];
+          _.each(results, function (v, k) {
+            models.push(self.model({
+              attributes: v
+            }));
+          });
+          return resolve(models);
+        }).catch(reject);
       });
     }
 

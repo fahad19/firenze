@@ -5,6 +5,7 @@ module.exports = function (_options) {
     constructor(extend = {}) {
       this.collectionClass = null;
       this.schema = {};
+      this.attributes = {};
       this.primaryKey = 'id';
       _.merge(this, _options, extend);
     }

@@ -30,6 +30,11 @@ describe('Collection', function () {
     posts.find('all').then(function (posts) {
       posts.should.be.instanceOf(Array);
       posts.should.have.lengthOf(3);
+
+      var firstPost = posts[0];
+      firstPost.should.have.property('attributes');
+      firstPost.attributes.title.should.be.exactly('Hello World');
+
       done();
     });
   });
