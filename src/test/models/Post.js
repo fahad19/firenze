@@ -14,6 +14,9 @@ module.exports = function (db) {
       },
       body: {
         type: 'text'
+      },
+      views: {
+        type: 'integer'
       }
     },
 

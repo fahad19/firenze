@@ -21,7 +21,15 @@ module.exports = {
   applyConditions: function (query, options = {}) {
     var conditions = _.isObject(options.conditions) ? options.conditions : null;
     _.each(conditions, function (v, k) {
-      query.where(k, v);
+      k = _.trim(k);
+      if (_.includes(k, ' ')) {
+        var parts = k.split(' ');
+        var field = parts[0];
+        var operator = parts[1];
+        query.where(field, operator, v);
+      } else {
+        query.where(k, v);
+      }
     });
 
     return query;

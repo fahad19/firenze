@@ -110,4 +110,46 @@ describe('Collection', function () {
       throw error;
     });
   });
+
+  it('should find count of results, with `greater than (>)` conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.views >': 15
+      }
+    }).then(function (count) {
+      count.should.equal(2);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
+
+  it('should find count of results, with `greater than and equal (>=)` conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.views >=': 20
+      }
+    }).then(function (count) {
+      count.should.equal(2);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
+
+  it('should find count of results, with `less than (<)` conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.views <': 15
+      }
+    }).then(function (count) {
+      count.should.equal(1);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
 });
