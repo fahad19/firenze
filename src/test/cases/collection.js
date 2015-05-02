@@ -152,4 +152,18 @@ describe('Collection', function () {
       throw error;
     });
   });
+
+  it('should find count of results, with `not equal (!=)` conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('count', {
+      conditions: {
+        'Post.title !=': 'Hello World'
+      }
+    }).then(function (count) {
+      count.should.equal(2);
+      done();
+    }).catch(function(error) {
+      throw error;
+    });
+  });
 });

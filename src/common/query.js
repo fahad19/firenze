@@ -22,10 +22,18 @@ module.exports = {
     var conditions = _.isObject(options.conditions) ? options.conditions : null;
     _.each(conditions, function (v, k) {
       k = _.trim(k);
-      if (_.includes(k, ' ')) {
+
+      if (k === 'AND') {
+
+      } else if (k === 'OR') {
+
+      } else if (k === 'NOT') {
+
+      } else if (_.includes(k, ' ')) {
         var parts = k.split(' ');
         var field = parts[0];
         var operator = parts[1];
+
         query.where(field, operator, v);
       } else {
         query.where(k, v);
