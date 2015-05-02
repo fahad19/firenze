@@ -7,6 +7,7 @@ module.exports = function (_options = {}) {
       this.modelClass = null;
       this.table = null;
       this.alias = null;
+      this.query = require('../common/query');
       this.finders = {
         all: 'findAll',
         first: 'findFirst',
@@ -46,37 +47,7 @@ module.exports = function (_options = {}) {
     }
 
     getQuery(options = {}) {
-      var exp = this.table;
-      var alias = this.model().alias;
-      if (alias) {
-        exp += ' as ' + alias;
-      }
-      var query = this.database().connection()(exp);
-      query = this.applyOptions(query, options);
-      return query;
-    }
-
-    applyOptions(query, options) {
-      query = this.applyConditions(query, options);
-      query = this.applyOrder(query, options);
-      return query;
-    }
-
-    applyConditions(query, options = {}) {
-      var conditions = _.isObject(options.conditions) ? options.conditions : null;
-      _.each(conditions, function (v, k) {
-        query.where(k, v);
-      });
-
-      return query;
-    }
-
-    applyOrder(query, options = {}) {
-      var order = _.isObject(options.order) ? options.order : {};
-      _.each(order, function (v, k) {
-        query.orderBy(k, v);
-      });
-      return query;
+      return this.query.get(this, options);
     }
 
     find(type = 'first', options = {}) {
