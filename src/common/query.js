@@ -16,6 +16,7 @@ module.exports = {
     query = this.applyConditions(query, options);
     query = this.applyFields(query, options);
     query = this.applyOrder(query, options);
+    query = this.applyGroup(query, options);
     return query;
   },
 
@@ -48,6 +49,14 @@ module.exports = {
     var order = _.isObject(options.order) ? options.order : {};
     _.each(order, function (v, k) {
       query.orderBy(k, v);
+    });
+    return query;
+  },
+
+  applyGroup: function (query, options = {}) {
+    var group = _.isObject(options.group) ? options.group : [];
+    _.each(group, function (v, k) {
+      query.groupBy(k, v);
     });
     return query;
   },
