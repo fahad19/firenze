@@ -58,6 +58,7 @@ module.exports = function (_options = {}) {
 
     applyOptions(query, options) {
       query = this.applyConditions(query, options);
+      query = this.applyOrder(query, options);
       return query;
     }
 
@@ -67,6 +68,14 @@ module.exports = function (_options = {}) {
         query.where(k, v);
       });
 
+      return query;
+    }
+
+    applyOrder(query, options = {}) {
+      var order = _.isObject(options.order) ? options.order : {};
+      _.each(order, function (v, k) {
+        query.orderBy(k, v);
+      });
       return query;
     }
 

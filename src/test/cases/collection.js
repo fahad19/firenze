@@ -54,6 +54,25 @@ describe('Collection', function () {
     });
   });
 
+  it('should find all results with ordering', function (done) {
+    var posts = new this.Posts();
+    posts.find('all', {
+      order: {
+        title: 'asc'
+      }
+    }).then(function (posts) {
+      posts.should.be.instanceOf(Array);
+
+      var firstPost = posts[0];
+      firstPost.should.have.property('attributes');
+      firstPost.get('title').should.be.exactly('About');
+
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
   it('should find single result', function (done) {
     var posts = new this.Posts();
     posts.find('first', {
