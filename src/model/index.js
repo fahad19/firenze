@@ -50,7 +50,6 @@ module.exports = function (_options) {
           [this.alias + '.' + this.primaryKey]: id
         }
       });
-      console.log(options);
       return new Promise(function (resolve, reject) {
         return collection.find('first', options).then(function (model) {
           resolve(model);
