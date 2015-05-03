@@ -7,6 +7,7 @@ module.exports = function (_options) {
       this.schema = {};
       this.attributes = {};
       this.primaryKey = 'id';
+      this.displayField = null;
       _.merge(this, _options, extend);
     }
 

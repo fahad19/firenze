@@ -12,7 +12,8 @@ module.exports = function (_options = {}) {
       this.finders = {
         all: 'findAll',
         first: 'findFirst',
-        count: 'findCount'
+        count: 'findCount',
+        list: 'findList'
       };
       _.merge(this, _options, extend);
     }
@@ -109,6 +110,33 @@ module.exports = function (_options = {}) {
           var count = results[0][firstKey];
 
           return resolve(count);
+        }).catch(reject);
+      });
+    }
+
+    findList(options = {}) {
+      var model = this.model();
+      if (!_.isArray(options.fields)) {
+        options.fields = [
+          model.primaryKey,
+          model.displayField
+        ];
+      }
+
+      var q = this.getQuery(options);
+
+      var self = this;
+      return new Promise(function (resolve, reject) {
+        return q.then(function (results) {
+          var list = {};
+
+          _.each(results, function (v, k) {
+            var listK = v[model.primaryKey];
+            var listV = v[model.displayField];
+            list[listK] = listV;
+          });
+
+          return resolve(list);
         }).catch(reject);
       });
     }

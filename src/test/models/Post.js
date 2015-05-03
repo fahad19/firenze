@@ -2,6 +2,8 @@ module.exports = function (db) {
   return db.Model({
     alias: 'Post',
 
+    displayField: 'title',
+
     schema: {
       id: {
         type: 'integer'

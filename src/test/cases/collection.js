@@ -123,6 +123,20 @@ describe('Collection', function () {
     });
   });
 
+  it('should find list', function (done) {
+    var posts = new this.Posts();
+    posts.find('list').then(function (list) {
+      list.should.eql({
+        1: 'Hello World',
+        2: 'About',
+        3: 'Contact'
+      });
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
   it('should find count of results', function (done) {
     var posts = new this.Posts();
     posts.find('count').then(function (count) {
