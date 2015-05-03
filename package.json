@@ -6,6 +6,7 @@
   "scripts": {
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
+    "lint": "eslint src",
     "test": "mocha $(find lib/test/cases -name '*.js')"
   },
   "repository": {
@@ -26,6 +27,8 @@
   "homepage": "https://github.com/fahad19/firenze",
   "devDependencies": {
     "babel": "^5.1.10",
+    "babel-eslint": "^3.0.1",
+    "eslint": "^0.20.0",
     "mocha": "^2.2.4",
     "should": "^6.0.1"
   },

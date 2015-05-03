@@ -1,3 +1,5 @@
+/* global describe, it */
+
 var should = require('should');
 var lib = require('../../index');
 

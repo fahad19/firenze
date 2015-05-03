@@ -1,3 +1,5 @@
+/* global describe, before, after, it */
+
 var should = require('should');
 var lib = require('../../index');
 var config = require('../config');

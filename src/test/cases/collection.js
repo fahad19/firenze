@@ -1,3 +1,5 @@
+/* global describe, before, after, it */
+
 var _ = require('lodash');
 var should = require('should');
 var lib = require('../../index');
