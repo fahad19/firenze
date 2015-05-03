@@ -1,4 +1,5 @@
 var _ = require('lodash');
+var Promise = require('bluebird');
 
 module.exports = function (_options) {
   class Model {
@@ -35,6 +36,26 @@ module.exports = function (_options) {
 
     get(field) {
       return this.attributes[field];
+    }
+
+    fetch(options = {}) {
+      var id = this.get(this.primaryKey);
+      if (!id) {
+        throw new Error('No ID found');
+      }
+
+      var collection = this.collection();
+      _.merge(options, {
+        conditions: {
+          [this.alias + '.' + this.primaryKey]: id
+        }
+      });
+      console.log(options);
+      return new Promise(function (resolve, reject) {
+        return collection.find('first', options).then(function (model) {
+          resolve(model);
+        }).catch(reject);
+      });
     }
   }
 

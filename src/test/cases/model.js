@@ -24,4 +24,18 @@ describe('Model', function () {
     var posts = post.collection();
     posts.should.have.property('table').which.is.exactly('posts');
   });
+
+  it('should fetch itself', function (done) {
+    var post = new this.Post({
+      attributes: {
+        id: 2
+      }
+    });
+    post.fetch().then(function (model) {
+      model.get('title').should.be.exactly('About');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
 });
