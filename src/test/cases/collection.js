@@ -20,7 +20,7 @@ describe('Collection', function () {
     ]).then(function () {
       done();
     }).catch(function (error) {
-      throw err;
+      throw error;
     });
   });
 
@@ -43,11 +43,11 @@ describe('Collection', function () {
 
   it('should find all results', function (done) {
     var posts = new this.Posts();
-    posts.find('all').then(function (posts) {
-      posts.should.be.instanceOf(Array);
-      posts.should.have.lengthOf(3);
+    posts.find('all').then(function (models) {
+      models.should.be.instanceOf(Array);
+      models.should.have.lengthOf(3);
 
-      var firstPost = posts[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.attributes.title.should.be.exactly('Hello World');
 
@@ -63,10 +63,10 @@ describe('Collection', function () {
       order: {
         title: 'asc'
       }
-    }).then(function (posts) {
-      posts.should.be.instanceOf(Array);
+    }).then(function (models) {
+      models.should.be.instanceOf(Array);
 
-      var firstPost = posts[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.get('title').should.be.exactly('About');
 

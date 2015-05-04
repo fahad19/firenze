@@ -67,7 +67,7 @@ module.exports = function (_options = {}) {
       return new Promise(function (resolve, reject) {
         return q.then(function (results) {
           var models = [];
-          _.each(results, function (v, k) {
+          _.each(results, function (v) {
             models.push(self.model({
               attributes: v
             }));
@@ -99,7 +99,6 @@ module.exports = function (_options = {}) {
       var q = this.getQuery(options);
       q.count();
 
-      var self = this;
       return new Promise(function (resolve, reject) {
         return q.then(function (results) {
           if (results.length === 0) {
@@ -125,12 +124,11 @@ module.exports = function (_options = {}) {
 
       var q = this.getQuery(options);
 
-      var self = this;
       return new Promise(function (resolve, reject) {
         return q.then(function (results) {
           var list = {};
 
-          _.each(results, function (v, k) {
+          _.each(results, function (v) {
             var listK = v[model.primaryKey];
             var listV = v[model.displayField];
             list[listK] = listV;
@@ -143,4 +141,4 @@ module.exports = function (_options = {}) {
   }
 
   return Collection;
-}
+};

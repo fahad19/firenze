@@ -36,10 +36,10 @@ describe('Fixtures', function () {
         model: new this.Author(),
         data: require('../fixtures/authors')
       }
-    ]).then(function (results) {
+    ]).then(function () {
       done();
     }).catch(function (error) {
       throw error;
     });
-  })
+  });
 });

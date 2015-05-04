@@ -75,9 +75,9 @@ module.exports = {
       return query;
     }
 
-    _.each(fields, function (v, k) {
+    _.each(fields, function (v) {
       query.select(v);
     });
     return query;
   }
-}
+};
