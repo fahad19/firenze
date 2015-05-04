@@ -9,7 +9,13 @@ module.exports = function (_options) {
       this.attributes = {};
       this.primaryKey = 'id';
       this.displayField = null;
+      this.id = null;
       _.merge(this, _options, extend);
+
+      var id = this.get(this.primaryKey);
+      if (id) {
+        this.id = id;
+      }
     }
 
     collection(options = {}) {
@@ -41,7 +47,7 @@ module.exports = function (_options) {
     }
 
     fetch(options = {}) {
-      var id = this.get(this.primaryKey);
+      var id = this.id || this.get(this.primaryKey);
       if (!id) {
         throw new Error('No ID found');
       }
