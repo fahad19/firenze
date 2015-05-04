@@ -1,3 +1,4 @@
+/*eslint camelcase: [2, {properties: "never"}]*/
 module.exports = function (db) {
   return db.Model({
     alias: 'Post',

@@ -1,3 +1,4 @@
+/*eslint camelcase: [2, {properties: "never"}]*/
 module.exports = [
   {
     id: 1,

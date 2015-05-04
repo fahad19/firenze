@@ -27,7 +27,9 @@ module.exports = function (_options = {}) {
         return !_.isFunction(i) && _.isObject(i.schema);
       };
 
-      var M = new this.modelClass(options);
+      var M = this.modelClass;
+
+      M = new M(options);
       if (isInstance(M)) {
         return M;
       }

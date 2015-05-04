@@ -21,7 +21,9 @@ module.exports = function (_options) {
         return !_.isFunction(i) && _.isString(i.table);
       };
 
-      var C = new this.collectionClass(options);
+      var C = this.collectionClass;
+
+      C = new C(options);
       if (isInstance(C)) {
         return C;
       }
