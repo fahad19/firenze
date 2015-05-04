@@ -22,15 +22,28 @@ module.exports = {
 
   applyConditions: function (query, options = {}) {
     var conditions = _.isObject(options.conditions) ? options.conditions : null;
+    var self = this;
     _.each(conditions, function (v, k) {
       k = _.trim(k);
 
       if (k === 'AND') {
-
+        query.where(function () {
+          self.applyConditions(this, {
+            conditions: v
+          });
+        });
       } else if (k === 'OR') {
-
+        query.orWhere(function () {
+          self.applyConditions(this, {
+            conditions: v
+          });
+        });
       } else if (k === 'NOT') {
-
+        query.whereNot(function () {
+          self.applyConditions(this, {
+            conditions: v
+          });
+        });
       } else if (_.includes(k, ' ')) {
         var parts = k.split(' ');
         var field = parts[0];

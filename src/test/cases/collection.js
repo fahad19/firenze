@@ -57,6 +57,29 @@ describe('Collection', function () {
     });
   });
 
+  it('should find all results with AND conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find('all', {
+      conditions: {
+        'Post.id': 2,
+        AND: {
+          'Post.title': 'About'
+        }
+      }
+    }).then(function (models) {
+      models.should.be.instanceOf(Array);
+      models.should.have.lengthOf(1);
+
+      var firstPost = models[0];
+      firstPost.should.have.property('attributes');
+      firstPost.attributes.title.should.be.exactly('About');
+
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
   it('should find all results with ordering', function (done) {
     var posts = new this.Posts();
     posts.find('all', {
