@@ -1,7 +1,7 @@
 /* global describe, before, after, it */
 
 var _ = require('lodash');
-var should = require('should');
+var should = require('should'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
 
