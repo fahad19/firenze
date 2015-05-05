@@ -1,5 +1,5 @@
 module.exports = function (db) {
-  return db.Model({
+  return db.createModelClass({
     alias: 'Author',
 
     displayField: 'name',

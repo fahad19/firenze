@@ -1,5 +1,5 @@
 module.exports = function (db) {
-  return db.Collection({
+  return db.createCollectionClass({
     table: 'authors',
 
     modelClass: function () {
