@@ -26,6 +26,35 @@ class Database {
         'prefix'
       ])
     });
+
+    var self = this;
+
+    this.Collection = function (extend) {
+      class GeneratedCollection extends Collection {
+        constructor(_extend = {}) {
+          super(_extend);
+
+          if (!this.database()) {
+            this.setDatabase(self);
+          }
+
+          _.merge(this, extend);
+        }
+      }
+
+      return GeneratedCollection;
+    };
+
+    this.Model = function (extend) {
+      class GeneratedModel extends Model {
+        constructor(_extend = {}) {
+          super(_extend);
+          _.merge(this, extend);
+        }
+      }
+
+      return GeneratedModel;
+    };
   }
 
   connection() {
@@ -37,16 +66,6 @@ class Database {
       cb = function () { };
     }
     return this.connection().destroy(cb);
-  }
-
-  Collection(options = {}) {
-    return Collection(_.merge({
-      db: this
-    }, options));
-  }
-
-  Model(options = {}) {
-    return Model(options);
   }
 }
 
