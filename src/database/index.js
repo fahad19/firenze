@@ -29,7 +29,7 @@ class Database {
 
     var self = this;
 
-    this.createCollectionClass = function (extend) {
+    this.createCollectionClass = this.Collection = function (extend) {
       class GeneratedCollection extends Collection {
         constructor(_extend = {}) {
           super(_extend);
@@ -45,7 +45,7 @@ class Database {
       return GeneratedCollection;
     };
 
-    this.createModelClass = function (extend) {
+    this.createModelClass = this.Model = function (extend) {
       class GeneratedModel extends Model {
         constructor(_extend = {}) {
           super(_extend);
