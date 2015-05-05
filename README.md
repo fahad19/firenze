@@ -5,46 +5,32 @@ Node.js ORM for MySQL.
 # Usage
 
 ```js
-var firenze = require('firenze');
+var f = require('firenze');
+var Database = f.Database;
 
-var db = firenze.Database({
-  host: '',
-  database: '',
+// create an instance of your Database
+var db = new Database({
+  host: '127.0.0.1',
+  database: 'my_database',
   user: '',
   password: ''
 });
 
-// db.use('database_name')
-
-var Posts = db.Collection({
+// define a Collection, which represents a table
+var Posts = db.createCollectionClass({ // or db.Collection()
   table: 'posts',
 
   modelClass: function () {
     return Post;
-  }, // or modelClass: Post
-
-  model: function () {
-    var Model;
-    if (_.isFunction(this.modelClass)) {
-      Model = this.modelClass();
-    } else {
-      Model = this.modelClass;
-    }
-
-    return new Model();
   }
+  // or modelClass: Post
 });
 
-var Post = db.Model({
+// define a Model, which represents a record
+var Post = db.createModelClass({ // or db.Model()
   alias: 'Post',
 
-  primaryKey: 'id',
-
-  collectionClass: Posts
-
-  collection: function () {
-    return new Posts();
-  },
+  collectionClass: Posts, // or a function that returns Posts
 
   schema: {
     id: {
@@ -59,38 +45,33 @@ var Post = db.Model({
   }
 });
 
-var TimestampBehavior = firenze.Behavior({
-  beforeSave: function (origin, result, args) {
-    return result;
+// finding
+var posts = new Posts();
+posts.find('first', {
+  conditions: {
+    id: 1
+    // can also be prefixed with Model alias as:
+    // 'Post.id': 1
   }
+}).then(function (post) {
+  // post in an instance of Model, with fetched data
+  var title = post.get('title');
+
+  // or convert to plain object
+  var postObject = post.toObject();
+  var title = postObject.title;
 });
 
 // saving
 var post = new Post({
-  title: 'Hello World',
-  body: 'blah...'
-});
-var promise = post.save();
-promise.then(function (post) {
-
-}).catch(function (err) {
-
-});
-
-// finding
-var posts = new Posts();
-var promise = posts.find('first', {
-  conditions: {
-    id: 1
+  attributes: {
+    title: 'Hello World',
+    body: 'blah...'
   }
 });
-promise.then(function (post) {
-
-}).catch(function (err) {
-
+post.save().then(function (model) {
+  console.log('Saved with ID: ' + model.get('id'));
 });
-
-// posts.use(anotherDb);
 ```
 
 ## License
