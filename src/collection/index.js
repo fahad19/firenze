@@ -1,7 +1,7 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 
-var query = require('../common/query');
+var query = require('./query');
 
 class Collection {
   constructor(extend = {}) {
