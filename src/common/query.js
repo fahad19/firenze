@@ -51,12 +51,16 @@ module.exports = {
 
         if (_.isNull(v) && _.includes(['!=', '<>'], operator)) {
           query.whereNotNull(field);
+        } else if (_.isArray(v) && _.includes(['!='], operator)) {
+          query.whereNotIn(field, v);
         } else {
           query.where(field, operator, v);
         }
       } else {
         if (_.isNull(v)) {
           query.whereNull(k);
+        } else if (_.isArray(v)) {
+          query.whereIn(k, v);
         } else {
           query.where(k, v);
         }
