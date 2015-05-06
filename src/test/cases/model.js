@@ -52,6 +52,16 @@ describe('Model', function () {
     });
     post.set('title', 'Hello World');
     post.get('title').should.eql('Hello World');
+
+    post.set({
+      body: 'blah...'
+    });
+    var postObj = post.toObject();
+    postObj.should.eql({
+      id: 2,
+      title: 'Hello World',
+      body: 'blah...'
+    });
   });
 
   it('should get plain object', function () {

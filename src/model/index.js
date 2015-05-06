@@ -48,7 +48,11 @@ class Model {
   }
 
   set(field, value) {
-    this.attributes[field] = value;
+    if (_.isObject(field)) {
+      return _.merge(this.attributes, field);
+    }
+
+    return this.attributes[field] = value;
   }
 
   toObject() {
