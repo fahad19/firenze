@@ -43,7 +43,8 @@ class Model {
   }
 
   get(field) {
-    return dotProp.get(this.attributes, field);
+    var obj = this.toObject();
+    return dotProp.get(obj, field);
   }
 
   set(field, value) {
