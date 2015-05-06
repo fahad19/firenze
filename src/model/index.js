@@ -46,6 +46,10 @@ class Model {
     return dotProp.get(this.attributes, field);
   }
 
+  set(field, value) {
+    this.attributes[field] = value;
+  }
+
   fetch(options = {}) {
     var id = this.id || this.get(this.primaryKey);
     if (!id) {

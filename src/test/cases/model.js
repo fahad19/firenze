@@ -45,4 +45,12 @@ describe('Model', function () {
     });
     post.get('id').should.eql(2);
   });
+
+  it('should set its attributes', function () {
+    var post = new this.Post({
+      id: 2
+    });
+    post.set('title', 'Hello World');
+    post.get('title').should.eql('Hello World');
+  });
 });
