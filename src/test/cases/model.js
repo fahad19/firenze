@@ -38,4 +38,11 @@ describe('Model', function () {
       throw error;
     });
   });
+
+  it('should get its attributes', function () {
+    var post = new this.Post({
+      id: 2
+    });
+    post.get('id').should.eql(2);
+  });
 });

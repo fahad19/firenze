@@ -35,6 +35,7 @@
   "dependencies": {
     "async": "^0.9.0",
     "bluebird": "^2.9.25",
+    "dot-prop": "^2.0.0",
     "knex": "^0.7.6",
     "lodash": "^3.7.0",
     "mysql": "^2.6.2"

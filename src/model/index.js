@@ -1,5 +1,6 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
+var dotProp = require('dot-prop');
 
 class Model {
   constructor(attributes = {}, extend = {}) {
@@ -42,7 +43,7 @@ class Model {
   }
 
   get(field) {
-    return this.attributes[field];
+    return dotProp.get(this.attributes, field);
   }
 
   fetch(options = {}) {
