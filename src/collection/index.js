@@ -69,9 +69,7 @@ class Collection {
       return q.then(function (results) {
         var models = [];
         _.each(results, function (v) {
-          models.push(self.model({
-            attributes: v
-          }));
+          models.push(self.model(v));
         });
         return resolve(models);
       }).catch(reject);
@@ -89,9 +87,7 @@ class Collection {
           return resolve(null);
         }
 
-        return resolve(self.model({
-          attributes: results[0]
-        }));
+        return resolve(self.model(results[0]));
       }).catch(reject);
     });
   }

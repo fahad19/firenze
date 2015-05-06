@@ -2,10 +2,10 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 
 class Model {
-  constructor(extend = {}) {
+  constructor(attributes = {}, extend = {}) {
     this.collectionClass = null;
     this.schema = {};
-    this.attributes = {};
+    this.attributes = attributes ? attributes : {};
     this.primaryKey = 'id';
     this.displayField = null;
     this.id = null;

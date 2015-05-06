@@ -47,8 +47,8 @@ class Database {
 
     this.createModelClass = this.Model = function (extend) {
       class GeneratedModel extends Model {
-        constructor(_extend = {}) {
-          super(_extend);
+        constructor(attributes = {}, _extend = {}) {
+          super(attributes, _extend);
           _.merge(this, extend);
         }
       }

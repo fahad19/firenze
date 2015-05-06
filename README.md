@@ -64,10 +64,8 @@ posts.find('first', {
 
 // saving
 var post = new Post({
-  attributes: {
-    title: 'Hello World',
-    body: 'blah...'
-  }
+  title: 'Hello World',
+  body: 'blah...'
 });
 post.save().then(function (model) {
   console.log('Saved with ID: ' + model.get('id'));

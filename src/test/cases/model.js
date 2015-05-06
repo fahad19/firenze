@@ -29,9 +29,7 @@ describe('Model', function () {
 
   it('should fetch itself', function (done) {
     var post = new this.Post({
-      attributes: {
-        id: 2
-      }
+      id: 2
     });
     post.fetch().then(function (model) {
       model.get('title').should.be.exactly('About');
