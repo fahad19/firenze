@@ -53,4 +53,16 @@ describe('Model', function () {
     post.set('title', 'Hello World');
     post.get('title').should.eql('Hello World');
   });
+
+  it('should get plain object', function () {
+    var post = new this.Post({
+      id: 2,
+      title: 'Post here'
+    });
+    var postObj = post.toObject();
+    postObj.should.eql({
+      id: 2,
+      title: 'Post here'
+    });
+  });
 });

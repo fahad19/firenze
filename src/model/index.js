@@ -50,6 +50,10 @@ class Model {
     this.attributes[field] = value;
   }
 
+  toObject() {
+    return this.attributes;
+  }
+
   fetch(options = {}) {
     var id = this.id || this.get(this.primaryKey);
     if (!id) {
