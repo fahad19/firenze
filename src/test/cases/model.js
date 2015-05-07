@@ -64,6 +64,19 @@ describe('Model', function () {
     });
   });
 
+  it('should check if it is new', function () {
+    var post = new this.Post({
+      title: 'Post here'
+    });
+    post.isNew().should.be.true;
+
+    var anotherPost = new this.Post({
+      id: 1,
+      title: 'Yo'
+    });
+    anotherPost.isNew().should.be.false;
+  });
+
   it('should get plain object', function () {
     var post = new this.Post({
       id: 2,
@@ -86,6 +99,17 @@ describe('Model', function () {
       done();
     }).catch(function (error) {
       throw error;
+    });
+  });
+
+  it('should update existing record', function (done) {
+    var post = new this.Post({id: 1});
+    post.fetch().then(function (model) {
+      model.set('title', 'Hello Universe');
+      model.save().then(function (m) {
+        m.get('title').should.eql('Hello Universe');
+        done();
+      });
     });
   });
 });

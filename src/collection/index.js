@@ -143,12 +143,25 @@ class Collection {
     });
     var self = this;
     return new Promise(function (resolve, reject) {
-      q.insert(obj).then(function (ids) {
-        if (ids.length === 0) {
-          return resolve(null);
+      if (model.isNew()) {
+        console.log('inserting...');
+        q.insert(obj);
+      } else {
+        q
+          .where(model.primaryKey, '=', model.getId())
+          .update(_.omit(obj, model.primaryKey));
+      }
+
+      q.then(function (ids) {
+        var id = null;
+        if ((_.isArray(ids) && ids.length === 0) || !ids) {
+          return resolve(id);
+        } else if (_.isArray(ids)) {
+          id = ids[0];
+        } else {
+          id = ids;
         }
 
-        var id = ids[0];
         return self.model({id: id}).fetch().then(function (m) {
           resolve(m);
         }).catch(function (error) {

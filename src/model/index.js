@@ -60,7 +60,7 @@ class Model {
   }
 
   fetch(options = {}) {
-    var id = this.id || this.get(this.primaryKey);
+    var id = this.getId();
     if (!id) {
       throw new Error('No ID found');
     }
@@ -78,23 +78,21 @@ class Model {
     });
   }
 
-  save() {
+  getId() {
     var id = this.id || this.get(this.primaryKey);
-    if (!id) {
-      return this.create();
+    if (!_.isUndefined(id)) {
+      return id;
     }
 
-    return this.update();
+    return null;
   }
 
-  create() {
-    var self = this;
-    console.log('creating...');
-    return this.collection().save(self);
+  isNew() {
+    return this.getId() ? false : true;
   }
 
-  update() {
-
+  save() {
+    return this.collection().save(this);
   }
 }
 
