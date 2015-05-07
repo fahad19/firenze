@@ -108,7 +108,7 @@ class Model {
   }
 
   delete() {
-    this.collection().delete(this);
+    return this.collection().delete(this);
   }
 }
 

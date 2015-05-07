@@ -135,10 +135,10 @@ describe('Model', function () {
   });
 
   it('should delete a record', function (done) {
-    var post = new this.Post({id: 1});
-    post.delete().then(function (res) {
-      console.log(res);
+    var post = new this.Post({id: 2});
+    post.delete().then(function (affectedRows) {
+      affectedRows.should.eql(1);
       done();
     });
-  })
+  });
 });
