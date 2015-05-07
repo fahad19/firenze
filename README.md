@@ -7,6 +7,15 @@ Node.js ORM for MySQL.
 # Contents
 
 - [Quickstart](#quickstart)
+- [Database](#database)
+- [Collection](#collection)
+  - [Creating classes](#creating-classes)
+  - [Properties](#properties)
+    - [table](#table)
+    - [modelClass](#modelclass)
+  - [Usage](#usage)
+    - [Finding](#finding)
+      - [Single result](#single-result)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -16,7 +25,7 @@ Node.js ORM for MySQL.
 Install the module first:
 
 ```
-$ npm install --save firenze
+$ npm install --save firenze mysql
 ```
 
 Now you can proceed to managing your database as folllows:
@@ -27,6 +36,7 @@ var Database = f.Database;
 
 // create an instance of your Database
 var db = new Database({
+  type: 'mysql',
   host: '127.0.0.1',
   database: 'my_database',
   user: '',
@@ -86,6 +96,80 @@ var post = new Post({
 });
 post.save().then(function (model) {
   console.log('Saved with ID: ' + model.get('id'));
+});
+```
+
+# Database
+
+Before anything else, you need to create an instance of `Database` with your credentials which will be referenced in your Collections and Models.
+
+```js
+var f = require('firenze');
+var Database = f.Database;
+
+var db = new Database({
+  type: 'mysql',
+  host: '127.0.0.1',
+  database: 'my_database',
+  user: '',
+  password: '',
+  pool: {
+    min: 0,
+    max: 1
+  }
+});
+```
+
+# Collection
+
+A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
+
+## Creating classes
+
+You can create a Collection class from your Database instance. And it requires minimum two properies, `table`, and `modelClass`:
+
+```js
+var Posts = db.createCollectionClass({
+  table: 'posts',
+
+  modelClass: function () {
+    return Post;
+  }
+});
+```
+
+There is also a short method for creating Collection class via `db.Collection()`.
+
+## Properties
+
+### table
+
+The name of the table that this Collection represents. Always as a string.
+
+### modelClass
+
+Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+
+## Usage
+
+Before using the Collection, you need to create an instance of it:
+
+```js
+var posts = new Posts();
+```
+
+### Finding
+
+#### Single result
+
+```js
+posts.find('first', {
+  conditions: {
+    id: 1
+  }
+}).then(function (post) {
+  // post is now an instance of Post model
+  var title = post.get('title');
 });
 ```
 
