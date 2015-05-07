@@ -16,7 +16,7 @@ class Database {
 
     this.options = _.merge(this.defaultOptions, options);
 
-    this.knex = require('knex')({
+    var config = {
       client: this.options.type,
       connection: _.pick(this.options, [
         'host',
@@ -25,8 +25,13 @@ class Database {
         'database',
         'prefix'
       ])
-    });
+    };
 
+    if (this.options.pool) {
+      config.pool = this.options.pool;
+    }
+
+    this.knex = require('knex')(config);
     var self = this;
 
     this.createCollectionClass = this.Collection = function (extend) {

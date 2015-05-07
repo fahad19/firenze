@@ -174,6 +174,26 @@ class Collection {
       }).catch(reject);
     });
   }
+
+  delete(model) {
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      if (model.isNew()) {
+        var error = new Error('Cannot delete a model without ID');
+        return reject(error);
+      }
+
+      var q = self.getQuery({
+        alias: false
+      });
+
+      return q
+        .where(model.primaryKey, '=', model.getId())
+        .del()
+        .then(resolve)
+        .catch(reject);
+    });
+  }
 }
 
 module.exports = Collection;

@@ -106,6 +106,10 @@ class Model {
     this.id = null;
     this.attributes = {};
   }
+
+  delete() {
+    this.collection().delete(this);
+  }
 }
 
 module.exports = Model;

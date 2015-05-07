@@ -133,4 +133,12 @@ describe('Model', function () {
     post.clear();
     post.isNew().should.be.true; //eslint-disable-line
   });
+
+  it('should delete a record', function (done) {
+    var post = new this.Post({id: 1});
+    post.delete().then(function (res) {
+      console.log(res);
+      done();
+    });
+  })
 });
