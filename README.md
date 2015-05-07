@@ -2,7 +2,24 @@
 
 Node.js ORM for MySQL.
 
-# Usage
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+# Contents
+
+- [Quickstart](#quickstart)
+- [License](#license)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+# Quickstart
+
+Install the module first:
+
+```
+$ npm install --save firenze
+```
+
+Now you can proceed to managing your database as folllows:
 
 ```js
 var f = require('firenze');
@@ -72,6 +89,6 @@ post.save().then(function (model) {
 });
 ```
 
-## License
+# License
 
 MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
