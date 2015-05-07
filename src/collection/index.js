@@ -136,7 +136,7 @@ class Collection {
     });
   }
 
-  save(model) {
+  save(model, options = {}) {
     var obj = model.toObject();
     var q = this.getQuery({
       alias: false
@@ -146,9 +146,14 @@ class Collection {
       if (model.isNew()) {
         q.insert(obj);
       } else {
+        obj = _.omit(obj, model.primaryKey);
+        if (_.isArray(options.fields)) {
+          obj = _.pick(obj, options.fields);
+        }
+
         q
           .where(model.primaryKey, '=', model.getId())
-          .update(_.omit(obj, model.primaryKey));
+          .update(obj);
       }
 
       q.then(function (ids) {

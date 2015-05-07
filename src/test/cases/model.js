@@ -113,6 +113,16 @@ describe('Model', function () {
     });
   });
 
+  it('should update particular field', function (done) {
+    var post = new this.Post({id: 1});
+    post.fetch().then(function (model) {
+      model.saveField('title', 'Hello Universe').then(function (m) {
+        m.get('title').should.eql('Hello Universe');
+        done();
+      });
+    });
+  });
+
   it('should clear', function () {
     var post = new this.Post({
       id: 1,

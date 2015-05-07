@@ -91,8 +91,15 @@ class Model {
     return this.getId() ? false : true;
   }
 
-  save() {
-    return this.collection().save(this);
+  save(options = {}) {
+    return this.collection().save(this, options);
+  }
+
+  saveField(field, value) {
+    this.set(field, value);
+    return this.save({
+      fields: [field]
+    });
   }
 
   clear() {
