@@ -17,7 +17,7 @@ class Collection {
     _.merge(this, extend);
   }
 
-  model(options = {}) {
+  model(attributes = {}, extend = {}) {
     if (!this.modelClass) {
       return new Error('Cannot find any modelClass');
     }
@@ -28,17 +28,17 @@ class Collection {
 
     var M = this.modelClass;
 
-    M = new M(options);
+    M = new M(attributes, extend);
     if (isInstance(M)) {
       return M;
     }
 
-    M = new M(options);
+    M = new M(attributes, extend);
     if (isInstance(M)) {
       return M;
     }
 
-    return new M(options);
+    return new M(attributes, extend);
   }
 
   database() {
@@ -132,6 +132,28 @@ class Collection {
         });
 
         return resolve(list);
+      }).catch(reject);
+    });
+  }
+
+  save(model) {
+    var obj = model.toObject();
+    var q = this.getQuery({
+      alias: false
+    });
+    var self = this;
+    return new Promise(function (resolve, reject) {
+      q.insert(obj).then(function (ids) {
+        if (ids.length === 0) {
+          return resolve(null);
+        }
+
+        var id = ids[0];
+        return self.model({id: id}).fetch().then(function (m) {
+          resolve(m);
+        }).catch(function (error) {
+          reject(error);
+        });
       }).catch(reject);
     });
   }

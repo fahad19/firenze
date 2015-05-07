@@ -52,7 +52,7 @@ class Model {
       return _.merge(this.attributes, field);
     }
 
-    return this.attributes[field] = value;
+    this.attributes[field] = value;
   }
 
   toObject() {
@@ -88,7 +88,9 @@ class Model {
   }
 
   create() {
-
+    var self = this;
+    console.log('creating...');
+    return this.collection().save(self);
   }
 
   update() {

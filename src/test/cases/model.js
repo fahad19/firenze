@@ -75,4 +75,17 @@ describe('Model', function () {
       title: 'Post here'
     });
   });
+
+  it('should create a new record', function (done) {
+    var post = new this.Post({
+      title: 'New Post',
+      body: 'text...'
+    });
+    post.save().then(function (model) {
+      model.get('title').should.eql('New Post');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
 });
