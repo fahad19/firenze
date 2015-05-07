@@ -129,6 +129,27 @@ describe('Collection', function () {
     });
   });
 
+  it('should find all results with pagination', function (done) {
+    var posts = new this.Posts();
+    posts.find('all', {
+      order: {
+        title: 'asc'
+      },
+      limit: 2,
+      page: 2
+    }).then(function (models) {
+      models.should.be.instanceOf(Array);
+
+      var firstPost = models[0];
+      firstPost.should.have.property('attributes');
+      firstPost.get('title').should.be.exactly('Hello World');
+
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
   it('should find single result', function (done) {
     var posts = new this.Posts();
     posts.find('first', {

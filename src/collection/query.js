@@ -16,6 +16,7 @@ module.exports = {
     query = this.applyConditions(query, options);
     query = this.applyFields(query, options);
     query = this.applyOrder(query, options);
+    query = this.applyLimit(query, options);
     query = this.applyGroup(query, options);
     return query;
   },
@@ -95,6 +96,21 @@ module.exports = {
     _.each(fields, function (v) {
       query.select(v);
     });
+    return query;
+  },
+
+  applyLimit: function (query, options = {}) {
+    if (options.limit && options.page) {
+      var limit = parseInt(options.limit, 10);
+      var page = parseInt(options.page, 10);
+
+      query
+        .limit(limit)
+        .offset((page - 1) * limit);
+    } else if (options.limit) {
+      query.limit(parseInt(options.limit, 10));
+    }
+
     return query;
   }
 };
