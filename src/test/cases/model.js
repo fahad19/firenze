@@ -68,13 +68,13 @@ describe('Model', function () {
     var post = new this.Post({
       title: 'Post here'
     });
-    post.isNew().should.be.true;
+    post.isNew().should.be.true; //eslint-disable-line
 
     var anotherPost = new this.Post({
       id: 1,
       title: 'Yo'
     });
-    anotherPost.isNew().should.be.false;
+    anotherPost.isNew().should.be.false; //eslint-disable-line
   });
 
   it('should get plain object', function () {

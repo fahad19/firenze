@@ -144,7 +144,6 @@ class Collection {
     var self = this;
     return new Promise(function (resolve, reject) {
       if (model.isNew()) {
-        console.log('inserting...');
         q.insert(obj);
       } else {
         q
