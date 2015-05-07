@@ -94,6 +94,11 @@ class Model {
   save() {
     return this.collection().save(this);
   }
+
+  clear() {
+    this.id = null;
+    this.attributes = {};
+  }
 }
 
 module.exports = Model;

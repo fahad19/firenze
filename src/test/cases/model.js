@@ -112,4 +112,15 @@ describe('Model', function () {
       });
     });
   });
+
+  it('should clear', function () {
+    var post = new this.Post({
+      id: 1,
+      title: 'Hi'
+    });
+    post.isNew().should.be.false; //eslint-disable-line
+
+    post.clear();
+    post.isNew().should.be.true; //eslint-disable-line
+  });
 });
