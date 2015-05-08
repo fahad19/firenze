@@ -33,6 +33,7 @@ Node.js ORM for MySQL.
       - [displayField](#displayfield)
       - [collectionClass](#collectionclass)
       - [schema](#schema)
+  - [Usage](#usage-1)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
