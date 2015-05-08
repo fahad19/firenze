@@ -28,11 +28,11 @@ Node.js ORM for MySQL.
       - [NOT](#not)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
-  - [Properties](#properties-1)
-    - [alias](#alias)
-    - [displayField](#displayfield)
-    - [collectionClass](#collectionclass)
-    - [schema](#schema)
+    - [Properties](#properties-1)
+      - [alias](#alias)
+      - [displayField](#displayfield)
+      - [collectionClass](#collectionclass)
+      - [schema](#schema)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -349,21 +349,21 @@ var Post = db.createModelClas({
 
 There is a short method for creating a Model class via `db.Model()`.
 
-## Properties
+### Properties
 
-### alias
+#### alias
 
 Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
 
-### displayField
+#### displayField
 
 This is the field that represents your record's display value. Usually `title` or `name` in most cases.
 
-### collectionClass
+#### collectionClass
 
 Just like how Collection has a modelClass, models also need to have a collectionClass. It can be a direct reference to the class, or it can be a function that returns the class.
 
-### schema
+#### schema
 
 Models do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
 
