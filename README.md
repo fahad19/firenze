@@ -17,8 +17,8 @@ Node.js ORM for MySQL.
     - [Finders](#finders)
       - [first](#first)
       - [all](#all)
-    - [list](#list)
-    - [count](#count)
+      - [list](#list)
+      - [count](#count)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -195,7 +195,7 @@ posts.find('all', {
   });
 });
 ```
-### list
+#### list
 
 Gives you a list of key/value paired object of matched results:
 
@@ -216,7 +216,7 @@ posts.find('list', {
 });
 ```
 
-### count
+#### count
 
 Gives you the total count of matched results:
 
