@@ -308,7 +308,6 @@ List of available column types:
 * enum
 * binary
 * uuid
-```
 
 # License
 
