@@ -158,9 +158,13 @@ Before using the Collection, you need to create an instance of it:
 var posts = new Posts();
 ```
 
-### Finding
+### Finders
 
-#### Single result
+There are various ways you can find results:
+
+#### first
+
+Gives you the first matched result:
 
 ```js
 posts.find('first', {
@@ -170,6 +174,52 @@ posts.find('first', {
 }).then(function (post) {
   // post is now an instance of Post model
   var title = post.get('title');
+});
+```
+
+#### all
+
+Gives you all matched results:
+
+```js
+posts.find('all', {
+  conditions: {
+    published: true
+  }
+}).then(function (models) {
+  models.forEach(function (model) {
+    var title = model.get('title');
+  });
+});
+```
+### list
+
+Gives you a list of key/value paired object of matched results:
+
+```js
+posts.find('list', {
+  conditions: {},
+  fields: [
+    'id',
+    'title'
+  ]
+}).then(function (list) {
+  // list is now:
+  //
+  // {
+  //   1: 'Hello World',
+  //   2: 'About'
+  // }
+});
+```
+
+### count
+
+Gives you the total count of matched results:
+
+```
+posts.find('count').then(function (count) {
+  // count is an integer here
 });
 ```
 
