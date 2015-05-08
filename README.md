@@ -10,9 +10,9 @@ Node.js ORM for MySQL.
 - [Database](#database)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
-  - [Properties](#properties)
-    - [table](#table)
-    - [modelClass](#modelclass)
+    - [Properties](#properties)
+      - [table](#table)
+      - [modelClass](#modelclass)
   - [Usage](#usage)
     - [Finders](#finders)
       - [first](#first)
@@ -157,13 +157,13 @@ var Posts = db.createCollectionClass({
 
 There is also a short method for creating Collection class via `db.Collection()`.
 
-## Properties
+### Properties
 
-### table
+#### table
 
 The name of the table that this Collection represents. Always as a string.
 
-### modelClass
+#### modelClass
 
 Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
 
