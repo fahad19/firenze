@@ -14,8 +14,11 @@ Node.js ORM for MySQL.
     - [table](#table)
     - [modelClass](#modelclass)
   - [Usage](#usage)
-    - [Finding](#finding)
-      - [Single result](#single-result)
+    - [Finders](#finders)
+      - [first](#first)
+      - [all](#all)
+    - [list](#list)
+    - [count](#count)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
