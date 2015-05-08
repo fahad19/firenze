@@ -19,6 +19,13 @@ Node.js ORM for MySQL.
       - [all](#all)
       - [list](#list)
       - [count](#count)
+    - [Complex conditions](#complex-conditions)
+      - [equals](#equals)
+      - [in list](#in-list)
+      - [comparisons](#comparisons)
+      - [AND](#and)
+      - [OR](#or)
+      - [NOT](#not)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
   - [Properties](#properties-1)
@@ -26,6 +33,7 @@ Node.js ORM for MySQL.
     - [displayField](#displayfield)
     - [collectionClass](#collectionclass)
     - [schema](#schema)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -229,6 +237,86 @@ Gives you the total count of matched results:
 ```js
 posts.find('count').then(function (count) {
   // count is an integer here
+});
+```
+
+### Complex conditions
+
+#### equals
+
+```js
+posts.find('all', {
+  conditions: {
+    id: 1
+  }
+});
+```
+
+#### in list
+
+```js
+posts.find('all', {
+  conditions: {
+    id: [
+      1,
+      2,
+      3
+    ]
+  }
+});
+```
+
+#### comparisons
+
+```js
+posts.find('all', {
+  conditions: {
+    'Post.rating >': 3
+  }
+})
+```
+
+Example comparisons that you can try:
+
+* greater than `ModelAlias.field >`
+* greater than or equel to `ModelAlias.field >=`
+* less than `ModelAlias.field <`
+* less than or equal to `ModelAlias.field <=`
+* not equal to `ModelAlias.field !=`
+
+#### AND
+
+```js
+posts.find('all', {
+  conditions: {
+    AND: {
+      'Post.published': 1
+    }
+  }
+});
+```
+
+#### OR
+
+```js
+posts.find('all', {
+  conditions: {
+    OR: {
+      'Post.published': 1
+    }
+  }
+});
+```
+
+#### NOT
+
+```js
+posts.find('all', {
+  conditions: {
+    NOT: {
+      'Post.published': 1
+    }
+  }
 });
 ```
 
