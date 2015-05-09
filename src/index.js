@@ -3,5 +3,5 @@ module.exports = {
   Collection: require('./collection'),
   Model: require('./model'),
 
-  fixtures: require('./common/fixtures')
+  fixtures: require('./fixtures')
 };
