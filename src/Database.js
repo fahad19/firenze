@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
-var Collection = require('./collection');
-var Model = require('./model');
+var Collection = require('./Collection');
+var Model = require('./Model');
 
 class Database {
   constructor(options = {}) {

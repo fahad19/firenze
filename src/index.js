@@ -1,7 +1,7 @@
 module.exports = {
-  Database: require('./database'),
-  Collection: require('./collection'),
-  Model: require('./model'),
+  Database: require('./Database'),
+  Collection: require('./Collection'),
+  Model: require('./Model'),
 
   fixtures: require('./fixtures')
 };
