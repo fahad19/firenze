@@ -390,7 +390,7 @@ class Collection {
         q = this.getQuery({
           alias: false,
           conditions: {
-            model.primaryKey: model.getId()
+            [model.primaryKey]: model.getId()
           }
         });
         promise = this

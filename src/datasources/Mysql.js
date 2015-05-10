@@ -6,6 +6,8 @@ var Datasource = require('../Datasource');
 
 class Mysql extends Datasource {
   constructor(options) {
+    super(options);
+
     this.options = options;
 
     var config = {
