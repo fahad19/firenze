@@ -176,3 +176,5 @@ class Mysql extends Datasource {
     return query;
   }
 }
+
+module.exports = Mysql;
