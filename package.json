@@ -8,8 +8,9 @@
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src",
     "test": "mocha $(find lib/test/cases -name '*.js')",
-    "toc": "doctoc README.md --github --title '# Contents'",
-    "docs": "docume README.md"
+    "doctoc": "doctoc README.md --github --title '# Contents'",
+    "docume": "docume README.md",
+    "docs": "npm run doctoc && docume"
   },
   "repository": {
     "type": "git",
