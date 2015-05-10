@@ -3,6 +3,27 @@ var _ = require('lodash');
 var Collection = require('./Collection');
 var Model = require('./Model');
 
+// # Database
+//
+// Before anything else, you need to create an instance of `Database` with your credentials which will be referenced in your Collections and Models.
+//
+// ```js
+// var f = require('firenze');
+// var Database = f.Database;
+//
+// var db = new Database({
+//   type: 'mysql',
+//   host: '127.0.0.1',
+//   database: 'my_database',
+//   user: '',
+//   password: '',
+//   pool: {
+//     min: 0,
+//     max: 1
+//   }
+// });
+// ```
+
 class Database {
   constructor(options = {}) {
     this.defaultOptions = {

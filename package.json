@@ -9,7 +9,7 @@
     "lint": "eslint src",
     "test": "mocha $(find lib/test/cases -name '*.js')",
     "toc": "doctoc README.md --github --title '# Contents'",
-    "docs": "docco $(find src -name '*.js' | grep -v test)"
+    "docs": "docume README.md"
   },
   "repository": {
     "type": "git",
@@ -30,8 +30,8 @@
   "devDependencies": {
     "babel": "^5.1.10",
     "babel-eslint": "^3.0.1",
-    "docco": "^0.7.0",
     "doctoc": "^0.13.0",
+    "docume": "^0.1.4",
     "eslint": "^0.20.0",
     "mocha": "^2.2.4",
     "should": "^6.0.1"

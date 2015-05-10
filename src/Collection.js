@@ -3,6 +3,189 @@ var Promise = require('bluebird');
 
 var query = require('./query');
 
+// # Collection
+//
+// A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
+//
+// ## Creating classes
+//
+// You can create a Collection class from your Database instance. And it requires minimum two properies, `table`, and `modelClass`:
+//
+// ```js
+// var Posts = db.createCollectionClass({
+//   table: 'posts',
+//
+//   modelClass: function () {
+//     return Post;
+//   }
+// });
+// ```
+//
+// There is also a short method for creating Collection class via `db.Collection()`.
+//
+// ### Properties
+//
+// #### table
+//
+// The name of the table that this Collection represents. Always as a string.
+//
+// #### modelClass
+//
+// Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+//
+// ## Usage
+//
+// Before using the Collection, you need to create an instance of it:
+//
+// ```js
+// var posts = new Posts();
+// ```
+//
+// ### Finders
+//
+// There are various ways you can find results:
+//
+// #### first
+//
+// Gives you the first matched result:
+//
+// ```js
+// posts.find('first', {
+//   conditions: {
+//     id: 1
+//   }
+// }).then(function (post) {
+//   // post is now an instance of Post model
+//   var title = post.get('title');
+// });
+// ```
+//
+// #### all
+//
+// Gives you all matched results:
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     published: true
+//   }
+// }).then(function (models) {
+//   models.forEach(function (model) {
+//     var title = model.get('title');
+//   });
+// });
+// ```
+// #### list
+//
+// Gives you a list of key/value paired object of matched results:
+//
+// ```js
+// posts.find('list', {
+//   conditions: {},
+//   fields: [
+//     'id',
+//     'title'
+//   ]
+// }).then(function (list) {
+//   // list is now:
+//   //
+//   // {
+//   //   1: 'Hello World',
+//   //   2: 'About'
+//   // }
+// });
+// ```
+//
+// #### count
+//
+// Gives you the total count of matched results:
+//
+// ```js
+// posts.find('count').then(function (count) {
+//   // count is an integer here
+// });
+// ```
+//
+// ### Complex conditions
+//
+// #### equals
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     id: 1
+//   }
+// });
+// ```
+//
+// #### in list
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     id: [
+//       1,
+//       2,
+//       3
+//     ]
+//   }
+// });
+// ```
+//
+// #### comparisons
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     'Post.rating >': 3
+//   }
+// })
+// ```
+//
+// Example comparisons that you can try:
+//
+// * greater than `ModelAlias.field >`
+// * greater than or equel to `ModelAlias.field >=`
+// * less than `ModelAlias.field <`
+// * less than or equal to `ModelAlias.field <=`
+// * not equal to `ModelAlias.field !=`
+//
+// #### AND
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     AND: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+//
+// #### OR
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     OR: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+//
+// #### NOT
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     NOT: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+
 class Collection {
   constructor(extend = {}) {
     this.modelClass = null;

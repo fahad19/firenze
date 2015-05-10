@@ -117,6 +117,7 @@ post.save().then(function (model) {
 });
 ```
 
+<!--docume:src/Database.js-->
 # Database
 
 Before anything else, you need to create an instance of `Database` with your credentials which will be referenced in your Collections and Models.
@@ -137,7 +138,9 @@ var db = new Database({
   }
 });
 ```
+<!--/docume:src/Database.js-->
 
+<!--docume:src/Collection.js-->
 # Collection
 
 A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
@@ -320,7 +323,9 @@ posts.find('all', {
   }
 });
 ```
+<!--/docume:src/Collection.js-->
 
+<!--docume:src/Model.js-->
 # Models
 
 A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
@@ -414,6 +419,7 @@ var post = new Post({
   body: 'blah...'
 });
 ```
+<!--/docume:src/Model.js-->
 
 # License
 
