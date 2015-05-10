@@ -280,47 +280,62 @@ class Collection {
 
     var self = this;
     return new Promise(function (resolve, reject) {
-      return q.then(function (results) {
-        var models = [];
-        _.each(results, function (v) {
-          models.push(self.model(v));
-        });
-        return resolve(models);
-      }).catch(reject);
+      return self
+        .getDatasource()
+        .read(q)
+        .then(function (results) {
+          var models = [];
+          _.each(results, function (v) {
+            models.push(self.model(v));
+          });
+          return resolve(models);
+        })
+        .catch(reject);
     });
   }
 
   findFirst(options = {}) {
-    var q = this.getQuery(options);
-    q.limit(1);
+    var q = this.getQuery(_.merge(options, {
+      limit: 1
+    }));
 
     var self = this;
     return new Promise(function (resolve, reject) {
-      return q.then(function (results) {
-        if (results.length === 0) {
-          return resolve(null);
-        }
+      return self
+        .getDatasource()
+        .read(q)
+        .then(function (results) {
+          if (results.length === 0) {
+            return resolve(null);
+          }
 
-        return resolve(self.model(results[0]));
-      }).catch(reject);
+          return resolve(self.model(results[0]));
+        })
+        .catch(reject);
     });
   }
 
   findCount(options = {}) {
-    var q = this.getQuery(options);
-    q.count();
+    var q = this.getQuery(_.merge(options, {
+      count: true
+    }));
 
+    var self = this;
     return new Promise(function (resolve, reject) {
-      return q.then(function (results) {
-        if (results.length === 0) {
-          return resolve(null);
-        }
+      return self
+        .getDatasource()
+        .read(q)
+        .then(function (results) {
+          if (results.length === 0) {
+            return resolve(null);
+          }
 
-        var firstKey = _.first(_.keys(results[0]));
-        var count = results[0][firstKey];
+          var firstKey = _.first(_.keys(results[0]));
+          var count = results[0][firstKey];
 
-        return resolve(count);
-      }).catch(reject);
+          return resolve(count);
+        })
+        .catch(reject);
     });
   }
 

@@ -41,8 +41,8 @@ class Mysql extends Datasource {
     return q.insert(obj);
   }
 
-  read() {
-
+  read(q) {
+    return q;
   }
 
   update(q, obj) {
@@ -70,6 +70,7 @@ class Mysql extends Datasource {
     query = this._queryOrder(query, options);
     query = this._queryLimit(query, options);
     query = this._queryGroup(query, options);
+    query = this._queryCount(query, options);
     return query;
   }
 
@@ -166,4 +167,11 @@ class Mysql extends Datasource {
     return query;
   }
 
+  _queryCount(query, options = {}) {
+    if (options.count) {
+      query.count();
+    }
+
+    return query;
+  }
 }
