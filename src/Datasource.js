@@ -1,5 +1,17 @@
 class Datasource {
-  constructor() {
+  constructor(options = {}) {
+
+  }
+
+  getConnection() {
+
+  }
+
+  closeConnection() {
+
+  }
+
+  getQuery() {
 
   }
 
