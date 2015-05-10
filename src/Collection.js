@@ -239,6 +239,14 @@ class Collection {
     return this.db;
   }
 
+// ### getDatasource()
+//
+// Get datasource of the Collections' database
+//
+  getDatasource() {
+    return this.database().getDatasource();
+  }
+
 // ### setDatabase(db)
 //
 // Change database instance of this Collection to `db`
@@ -252,7 +260,7 @@ class Collection {
 // Get query object for this Collection
 //
   getQuery(options = {}) {
-    return query.get(this, options);
+    return this.database().getDatasource().getQuery(options);
   }
 
 // ### find()
@@ -398,12 +406,15 @@ class Collection {
       }
 
       var q = self.getQuery({
-        alias: false
+        alias: false,
+        conditions: {
+          [model.primaryKey]: model.getId()
+        }
       });
 
-      return q
-        .where(model.primaryKey, '=', model.getId())
-        .del()
+      return this
+        .getDatasource()
+        .delete(q)
         .then(resolve)
         .catch(reject);
     });

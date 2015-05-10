@@ -27,7 +27,7 @@ var Model = require('./Model');
 class Database {
   constructor(options = {}) {
     this.defaultOptions = {
-      type: 'mysql',
+      type: 'Mysql',
       host: null,
       user: null,
       database: null,
@@ -37,22 +37,9 @@ class Database {
 
     this.options = _.merge(this.defaultOptions, options);
 
-    var config = {
-      client: this.options.type,
-      connection: _.pick(this.options, [
-        'host',
-        'user',
-        'password',
-        'database',
-        'prefix'
-      ])
-    };
+    var DatasourceClass = require('./datasources/Mysql');
+    this.datasource = new DatasourceClass(this.options);
 
-    if (this.options.pool) {
-      config.pool = this.options.pool;
-    }
-
-    this.knex = require('knex')(config);
     var self = this;
 
     this.createCollectionClass = this.Collection = function (extend) {
@@ -83,14 +70,15 @@ class Database {
     };
   }
 
+  getDatasource() {
+    return this.datasource;
+  }
+
   connection() {
-    return this.knex;
+    return this.datasource.getConnection();
   }
 
   close(cb = null) {
-    if (!cb) {
-      cb = function () { };
-    }
     return this.connection().destroy(cb);
   }
 }

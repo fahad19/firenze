@@ -34,8 +34,8 @@ class Model {
 //
 // There is a short method for creating a Model class via `db.Model()`.
 //
-
   constructor(attributes = {}, extend = {}) {
+
 // ### Properties
 //
 // #### collectionClass
