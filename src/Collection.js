@@ -356,25 +356,34 @@ class Collection {
 //
   save(model, options = {}) {
     var obj = model.toObject();
-    var q = this.getQuery({
-      alias: false
-    });
     var self = this;
     return new Promise(function (resolve, reject) {
+      var promise = null;
+      var q = null;
+
       if (model.isNew()) {
-        q.insert(obj);
+        q = this.getQuery({
+          alias: false
+        });
+        promise = self.getDatasource().create(q, obj);
       } else {
         obj = _.omit(obj, model.primaryKey);
         if (_.isArray(options.fields)) {
           obj = _.pick(obj, options.fields);
         }
 
-        q
-          .where(model.primaryKey, '=', model.getId())
-          .update(obj);
+        q = this.getQuery({
+          alias: false,
+          conditions: {
+            model.primaryKey: model.getId()
+          }
+        });
+        promise = this
+          .getDatasource()
+          .update(q, obj);
       }
 
-      q.then(function (ids) {
+      promise.then(function (ids) {
         var id = null;
         if ((_.isArray(ids) && ids.length === 0) || !ids) {
           return resolve(id);

@@ -37,16 +37,16 @@ class Mysql extends Datasource {
     return this.getConnection().destroy(cb);
   }
 
-  create() {
-
+  create(q, obj) {
+    return q.insert(obj);
   }
 
   read() {
 
   }
 
-  update() {
-
+  update(q, obj) {
+    return q.update(obj);
   }
 
   delete(q) {
