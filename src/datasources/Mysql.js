@@ -1,6 +1,5 @@
 var knex = require('knex');
 var _ = require('lodash');
-var Promise = require('bluebird');
 
 var Datasource = require('../Datasource');
 
@@ -62,21 +61,21 @@ class Mysql extends Datasource {
       exp += ' as ' + alias;
     }
     var query = collection.database().connection()(exp);
-    query = this._queryOptions(query, options);
+    query = this.queryOptions(query, options);
     return query;
   }
 
-  _queryOptions(query, options) {
-    query = this._queryConditions(query, options);
-    query = this._queryFields(query, options);
-    query = this._queryOrder(query, options);
-    query = this._queryLimit(query, options);
-    query = this._queryGroup(query, options);
-    query = this._queryCount(query, options);
+  queryOptions(query, options) {
+    query = this.queryConditions(query, options);
+    query = this.queryFields(query, options);
+    query = this.queryOrder(query, options);
+    query = this.queryLimit(query, options);
+    query = this.queryGroup(query, options);
+    query = this.queryCount(query, options);
     return query;
   }
 
-  _queryConditions(query, options = {}) {
+  queryConditions(query, options = {}) {
     var conditions = _.isObject(options.conditions) ? options.conditions : null;
     var self = this;
     _.each(conditions, function (v, k) {
@@ -84,19 +83,19 @@ class Mysql extends Datasource {
 
       if (k === 'AND') {
         query.where(function () {
-          self._queryConditions(this, {
+          self.queryConditions(this, {
             conditions: v
           });
         });
       } else if (k === 'OR') {
         query.orWhere(function () {
-          self._queryConditions(this, {
+          self.queryConditions(this, {
             conditions: v
           });
         });
       } else if (k === 'NOT') {
         query.whereNot(function () {
-          self._queryConditions(this, {
+          self.queryConditions(this, {
             conditions: v
           });
         });
@@ -126,7 +125,7 @@ class Mysql extends Datasource {
     return query;
   }
 
-  _queryOrder(query, options = {}) {
+  queryOrder(query, options = {}) {
     var order = _.isObject(options.order) ? options.order : {};
     _.each(order, function (v, k) {
       query.orderBy(k, v);
@@ -134,7 +133,7 @@ class Mysql extends Datasource {
     return query;
   }
 
-  _queryGroup(query, options = {}) {
+  queryGroup(query, options = {}) {
     var group = _.isObject(options.group) ? options.group : [];
     _.each(group, function (v, k) {
       query.groupBy(k, v);
@@ -142,7 +141,7 @@ class Mysql extends Datasource {
     return query;
   }
 
-  _queryFields(query, options = {}) {
+  queryFields(query, options = {}) {
     var fields = _.isArray(options.fields) ? options.fields : [];
     if (fields.length === 0) {
       return query;
@@ -154,7 +153,7 @@ class Mysql extends Datasource {
     return query;
   }
 
-  _queryLimit(query, options = {}) {
+  queryLimit(query, options = {}) {
     if (options.limit && options.page) {
       var limit = parseInt(options.limit, 10);
       var page = parseInt(options.page, 10);
@@ -169,7 +168,7 @@ class Mysql extends Datasource {
     return query;
   }
 
-  _queryCount(query, options = {}) {
+  queryCount(query, options = {}) {
     if (options.count) {
       query.count();
     }

@@ -1,8 +1,6 @@
 var _ = require('lodash');
 var Promise = require('bluebird');
 
-var query = require('./query');
-
 // # Collection
 //
 // A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
