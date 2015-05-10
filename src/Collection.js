@@ -201,9 +201,9 @@ class Collection {
     _.merge(this, extend);
   }
 
-// ### Methods
+// ## Methods
 //
-// #### model(attributes = {}, extend = {})
+// ### model(attributes = {}, extend = {})
 //
 // Get an instance of this Collection's model
 //
@@ -231,7 +231,7 @@ class Collection {
     return new M(attributes, extend);
   }
 
-// #### database()
+// ### database()
 //
 // Get in instance of the current Database
 //
@@ -239,7 +239,7 @@ class Collection {
     return this.db;
   }
 
-// #### setDatabase(db)
+// ### setDatabase(db)
 //
 // Change database instance of this Collection to `db`
 //
@@ -247,7 +247,7 @@ class Collection {
     this.db = db;
   }
 
-// #### getQuery(options = {})
+// ### getQuery(options = {})
 //
 // Get query object for this Collection
 //
@@ -255,7 +255,7 @@ class Collection {
     return query.get(this, options);
   }
 
-// #### find()
+// ### find()
 //
 // Explained above in `Finders` section
 //
@@ -342,7 +342,7 @@ class Collection {
     });
   }
 
-// #### save(model, options = {})
+// ### save(model, options = {})
 //
 // Save the given model. This method is not usually called directly, but rather via `Model.save()`.
 //
@@ -385,7 +385,7 @@ class Collection {
     });
   }
 
-// #### delete(model)
+// ### delete(model)
 //
 // Deletes the given model. Usually called via `Model.delete()`.
 //

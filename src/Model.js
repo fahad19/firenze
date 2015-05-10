@@ -6,6 +6,9 @@ var dotProp = require('dot-prop');
 //
 // A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
 //
+
+class Model {
+
 // ## Creating classes
 //
 // You can create a Model class from your Database instance. And it can be created as follows:
@@ -31,20 +34,16 @@ var dotProp = require('dot-prop');
 //
 // There is a short method for creating a Model class via `db.Model()`.
 //
+
+  constructor(attributes = {}, extend = {}) {
 // ### Properties
-//
-// #### alias
-//
-// Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
-//
-// #### displayField
-//
-// This is the field that represents your record's display value. Usually `title` or `name` in most cases.
 //
 // #### collectionClass
 //
 // Just like how Collection has a modelClass, models also need to have a collectionClass. It can be a direct reference to the class, or it can be a function that returns the class.
 //
+    this.collectionClass = null;
+
 // #### schema
 //
 // Models do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
@@ -79,6 +78,48 @@ var dotProp = require('dot-prop');
 // * binary
 // * uuid
 //
+    this.schema = {};
+
+// #### attributes
+//
+// Your model's data
+//
+    this.attributes = attributes ? attributes : {};
+
+// #### primaryKey
+//
+// The name of the ID field, defaults to `id`.
+//
+    this.primaryKey = 'id';
+
+// #### displayField
+//
+// This is the field that represents your record's display value. Usually `title` or `name` in most cases.
+//
+    this.displayField = null;
+
+// #### id
+//
+// For convenience, stores the ID of the model in this property
+//
+    this.id = null;
+
+    _.merge(this, extend);
+
+// #### alias
+//
+// Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+//
+    if (!this.alias) {
+      this.alias = this.collection().table;
+    }
+
+    var id = this.get(this.primaryKey);
+    if (id) {
+      this.id = id;
+    }
+  }
+
 // ## Usage
 //
 // Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
@@ -95,22 +136,14 @@ var dotProp = require('dot-prop');
 //   body: 'blah...'
 // });
 // ```
+//
 
-class Model {
-  constructor(attributes = {}, extend = {}) {
-    this.collectionClass = null;
-    this.schema = {};
-    this.attributes = attributes ? attributes : {};
-    this.primaryKey = 'id';
-    this.displayField = null;
-    this.id = null;
-    _.merge(this, extend);
-
-    var id = this.get(this.primaryKey);
-    if (id) {
-      this.id = id;
-    }
-  }
+// ## Methods
+//
+// ### collection(options = {})
+//
+// Get the model's Collection's instance
+//
 
   collection(options = {}) {
     if (!this.collectionClass) {
@@ -136,11 +169,19 @@ class Model {
     return new C(options);
   }
 
+// ### get(field)
+//
+// Get the field of current model
+//
   get(field) {
     var obj = this.toObject();
     return dotProp.get(obj, field);
   }
 
+// ### set(field, value)
+//
+// Set an attribute with given value for the field
+//
   set(field, value) {
     if (_.isObject(field)) {
       return _.merge(this.attributes, field);
@@ -149,10 +190,27 @@ class Model {
     this.attributes[field] = value;
   }
 
+// ### toObject()
+//
+// Returns a plain object of the model
+//
   toObject() {
     return this.attributes;
   }
 
+// ### fetch(options = {})
+//
+// Fetches the model again from the Database.
+//
+// A quick example:
+//
+// ```js
+// var post = new Post({id: 1});
+// post.fetch().then(function (model) {
+//   var title = model.get('title');
+// });
+// ```
+//
   fetch(options = {}) {
     var id = this.getId();
     if (!id) {
@@ -172,6 +230,10 @@ class Model {
     });
   }
 
+// ### getId()
+//
+// Get the ID of model
+//
   getId() {
     var id = this.id || this.get(this.primaryKey);
     if (!_.isUndefined(id)) {
@@ -181,14 +243,26 @@ class Model {
     return null;
   }
 
+// ### isNew()
+//
+// Is the current model new? As in saved in Database, or yet to be saved?
+//
   isNew() {
     return this.getId() ? false : true;
   }
 
+// ### save(options = {})
+//
+// Save the current model
+//
   save(options = {}) {
     return this.collection().save(this, options);
   }
 
+// ### saveField(field, value)
+//
+// Save a particular field with value
+//
   saveField(field, value) {
     this.set(field, value);
     return this.save({
@@ -196,11 +270,19 @@ class Model {
     });
   }
 
+// ### clear()
+//
+// Clear the current instance of model of any data
+//
   clear() {
     this.id = null;
     this.attributes = {};
   }
 
+// ### delete()
+//
+// Delete the current model
+//
   delete() {
     return this.collection().delete(this);
   }

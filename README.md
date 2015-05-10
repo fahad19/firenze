@@ -26,22 +26,37 @@ Node.js ORM for MySQL.
       - [AND](#and)
       - [OR](#or)
       - [NOT](#not)
-    - [Methods](#methods)
-      - [model(attributes = {}, extend = {})](#modelattributes---extend--)
-      - [database()](#database)
-      - [setDatabase(db)](#setdatabasedb)
-      - [getQuery(options = {})](#getqueryoptions--)
-      - [find()](#find)
-      - [save(model, options = {})](#savemodel-options--)
-      - [delete(model)](#deletemodel)
+  - [Methods](#methods)
+    - [model(attributes = {}, extend = {})](#modelattributes---extend--)
+    - [database()](#database)
+    - [setDatabase(db)](#setdatabasedb)
+    - [getQuery(options = {})](#getqueryoptions--)
+    - [find()](#find)
+    - [save(model, options = {})](#savemodel-options--)
+    - [delete(model)](#deletemodel)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
     - [Properties](#properties-1)
-      - [alias](#alias)
-      - [displayField](#displayfield)
       - [collectionClass](#collectionclass)
       - [schema](#schema)
+      - [attributes](#attributes)
+      - [primaryKey](#primarykey)
+      - [displayField](#displayfield)
+      - [id](#id)
+      - [alias](#alias)
   - [Usage](#usage-1)
+  - [Methods](#methods-1)
+    - [collection(options = {})](#collectionoptions--)
+    - [get(field)](#getfield)
+    - [set(field, value)](#setfield-value)
+    - [toObject()](#toobject)
+    - [fetch(options = {})](#fetchoptions--)
+    - [getId()](#getid)
+    - [isNew()](#isnew)
+    - [save(options = {})](#saveoptions--)
+    - [saveField(field, value)](#savefieldfield-value)
+    - [clear()](#clear)
+    - [delete()](#delete)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -332,33 +347,33 @@ posts.find('all', {
 });
 ```
 
-### Methods
+## Methods
 
-#### model(attributes = {}, extend = {})
+### model(attributes = {}, extend = {})
 
 Get an instance of this Collection's model
 
-#### database()
+### database()
 
 Get in instance of the current Database
 
-#### setDatabase(db)
+### setDatabase(db)
 
 Change database instance of this Collection to `db`
 
-#### getQuery(options = {})
+### getQuery(options = {})
 
 Get query object for this Collection
 
-#### find()
+### find()
 
 Explained above in `Finders` section
 
-#### save(model, options = {})
+### save(model, options = {})
 
 Save the given model. This method is not usually called directly, but rather via `Model.save()`.
 
-#### delete(model)
+### delete(model)
 
 Deletes the given model. Usually called via `Model.delete()`.
 
@@ -395,14 +410,6 @@ var Post = db.createModelClas({
 There is a short method for creating a Model class via `db.Model()`.
 
 ### Properties
-
-#### alias
-
-Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
-
-#### displayField
-
-This is the field that represents your record's display value. Usually `title` or `name` in most cases.
 
 #### collectionClass
 
@@ -442,6 +449,26 @@ List of available column types:
 * binary
 * uuid
 
+#### attributes
+
+Your model's data
+
+#### primaryKey
+
+The name of the ID field, defaults to `id`.
+
+#### displayField
+
+This is the field that represents your record's display value. Usually `title` or `name` in most cases.
+
+#### id
+
+For convenience, stores the ID of the model in this property
+
+#### alias
+
+Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+
 ## Usage
 
 Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
@@ -458,6 +485,62 @@ var post = new Post({
   body: 'blah...'
 });
 ```
+
+## Methods
+
+### collection(options = {})
+
+Get the model's Collection's instance
+
+### get(field)
+
+Get the field of current model
+
+### set(field, value)
+
+Set an attribute with given value for the field
+
+### toObject()
+
+Returns a plain object of the model
+
+### fetch(options = {})
+
+Fetches the model again from the Database.
+
+A quick example:
+
+```js
+var post = new Post({id: 1});
+post.fetch().then(function (model) {
+  var title = model.get('title');
+});
+```
+
+### getId()
+
+Get the ID of model
+
+### isNew()
+
+Is the current model new? As in saved in Database, or yet to be saved?
+
+### save(options = {})
+
+Save the current model
+
+### saveField(field, value)
+
+Save a particular field with value
+
+### clear()
+
+Clear the current instance of model of any data
+
+### delete()
+
+Delete the current model
+
 <!--/docume:src/Model.js-->
 
 # License
