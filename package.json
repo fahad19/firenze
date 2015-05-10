@@ -10,7 +10,7 @@
     "test": "mocha $(find lib/test/cases -name '*.js')",
     "doctoc": "doctoc README.md --github --title '# Contents'",
     "docume": "docume README.md",
-    "docs": "npm run doctoc && docume"
+    "docs": "npm run docume && npm run doctoc"
   },
   "repository": {
     "type": "git",

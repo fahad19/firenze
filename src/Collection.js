@@ -185,6 +185,7 @@ var query = require('./query');
 //   }
 // });
 // ```
+//
 
 class Collection {
   constructor(extend = {}) {
@@ -200,6 +201,12 @@ class Collection {
     _.merge(this, extend);
   }
 
+// ### Methods
+//
+// #### model(attributes = {}, extend = {})
+//
+// Get an instance of this Collection's model
+//
   model(attributes = {}, extend = {}) {
     if (!this.modelClass) {
       return new Error('Cannot find any modelClass');
@@ -224,18 +231,34 @@ class Collection {
     return new M(attributes, extend);
   }
 
+// #### database()
+//
+// Get in instance of the current Database
+//
   database() {
     return this.db;
   }
 
+// #### setDatabase(db)
+//
+// Change database instance of this Collection to `db`
+//
   setDatabase(db) {
     this.db = db;
   }
 
+// #### getQuery(options = {})
+//
+// Get query object for this Collection
+//
   getQuery(options = {}) {
     return query.get(this, options);
   }
 
+// #### find()
+//
+// Explained above in `Finders` section
+//
   find(type = 'first', options = {}) {
     if (!this.finders[type] || !_.isFunction(this[this.finders[type]])) {
       throw new Error('Invalid find type');
@@ -319,6 +342,10 @@ class Collection {
     });
   }
 
+// #### save(model, options = {})
+//
+// Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+//
   save(model, options = {}) {
     var obj = model.toObject();
     var q = this.getQuery({
@@ -358,6 +385,10 @@ class Collection {
     });
   }
 
+// #### delete(model)
+//
+// Deletes the given model. Usually called via `Model.delete()`.
+//
   delete(model) {
     var self = this;
     return new Promise(function (resolve, reject) {

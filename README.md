@@ -26,6 +26,14 @@ Node.js ORM for MySQL.
       - [AND](#and)
       - [OR](#or)
       - [NOT](#not)
+    - [Methods](#methods)
+      - [model(attributes = {}, extend = {})](#modelattributes---extend--)
+      - [database()](#database)
+      - [setDatabase(db)](#setdatabasedb)
+      - [getQuery(options = {})](#getqueryoptions--)
+      - [find()](#find)
+      - [save(model, options = {})](#savemodel-options--)
+      - [delete(model)](#deletemodel)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
     - [Properties](#properties-1)
@@ -323,6 +331,37 @@ posts.find('all', {
   }
 });
 ```
+
+### Methods
+
+#### model(attributes = {}, extend = {})
+
+Get an instance of this Collection's model
+
+#### database()
+
+Get in instance of the current Database
+
+#### setDatabase(db)
+
+Change database instance of this Collection to `db`
+
+#### getQuery(options = {})
+
+Get query object for this Collection
+
+#### find()
+
+Explained above in `Finders` section
+
+#### save(model, options = {})
+
+Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+
+#### delete(model)
+
+Deletes the given model. Usually called via `Model.delete()`.
+
 <!--/docume:src/Collection.js-->
 
 <!--docume:src/Model.js-->
