@@ -44,6 +44,12 @@ class Database {
 
     var self = this;
 
+// ## Methods
+//
+// ### createCollectionClass(extend)
+//
+// Also aliased as `.Collection(extend)`.
+//
     this.createCollectionClass = this.Collection = function (extend) {
       class GeneratedCollection extends Collection {
         constructor(_extend = {}) {
@@ -60,6 +66,10 @@ class Database {
       return GeneratedCollection;
     };
 
+// ### createModelClass(extend)
+//
+// Also aliased as `.Model(extend)`
+//
     this.createModelClass = this.Model = function (extend) {
       class GeneratedModel extends Model {
         constructor(attributes = {}, _extend = {}) {
@@ -72,14 +82,26 @@ class Database {
     };
   }
 
+// ### getDatasource()
+//
+// Returns datasource
+//
   getDatasource() {
     return this.datasource;
   }
 
+// ### getConnection()
+//
+// Returns connection of the Datasource
+//
   getConnection() {
     return this.getDatasource().getConnection();
   }
 
+// ### close(cb = null)
+//
+// Closes the connection
+//
   close(cb = null) {
     return this.getConnection().destroy(cb);
   }

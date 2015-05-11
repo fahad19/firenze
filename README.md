@@ -9,13 +9,19 @@ Node.js ORM for MySQL.
 - [Quickstart](#quickstart)
 - [Database](#database)
   - [Usage](#usage)
+  - [Methods](#methods)
+    - [createCollectionClass(extend)](#createcollectionclassextend)
+    - [createModelClass(extend)](#createmodelclassextend)
+    - [getDatasource()](#getdatasource)
+    - [getConnection()](#getconnection)
+    - [close(cb = null)](#closecb--null)
 - [Datasource](#datasource)
   - [Available](#available)
   - [Usage](#usage-1)
-  - [Methods](#methods)
-    - [getConnection()](#getconnection)
+  - [Methods](#methods-1)
+    - [getConnection()](#getconnection-1)
     - [closeConnection(cb = null)](#closeconnectioncb--null)
-    - [getQuery()](#getquery)
+    - [query()](#query)
     - [create(q, obj)](#createq-obj)
     - [read(q)](#readq)
     - [update(q, obj)](#updateq-obj)
@@ -38,12 +44,12 @@ Node.js ORM for MySQL.
       - [AND](#and)
       - [OR](#or)
       - [NOT](#not)
-  - [Methods](#methods-1)
+  - [Methods](#methods-2)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
-    - [database()](#database)
-    - [getDatasource()](#getdatasource)
+    - [getDatabase()](#getdatabase)
+    - [getDatasource()](#getdatasource-1)
     - [setDatabase(db)](#setdatabasedb)
-    - [getQuery(options = {})](#getqueryoptions--)
+    - [query(options = {})](#queryoptions--)
     - [find()](#find)
     - [save(model, options = {})](#savemodel-options--)
     - [delete(model)](#deletemodel)
@@ -58,7 +64,7 @@ Node.js ORM for MySQL.
       - [id](#id)
       - [alias](#alias)
   - [Usage](#usage-3)
-  - [Methods](#methods-2)
+  - [Methods](#methods-3)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
@@ -175,6 +181,28 @@ var db = new Database({
   }
 });
 ```
+## Methods
+
+### createCollectionClass(extend)
+
+Also aliased as `.Collection(extend)`.
+
+### createModelClass(extend)
+
+Also aliased as `.Model(extend)`
+
+### getDatasource()
+
+Returns datasource
+
+### getConnection()
+
+Returns connection of the Datasource
+
+### close(cb = null)
+
+Closes the connection
+
 <!--/docume:src/Database.js-->
 
 <!--docume:src/Datasource.js-->
@@ -208,7 +236,7 @@ Returns the current connection
 
 Closes the current connection, and calls the callback function `cb()` if passed.
 
-### getQuery()
+### query()
 
 Gets a query object
 
@@ -420,7 +448,7 @@ posts.find('all', {
 
 Get an instance of this Collection's model
 
-### database()
+### getDatabase()
 
 Get in instance of the current Database
 
@@ -432,7 +460,7 @@ Get datasource of the Collections' database
 
 Change database instance of this Collection to `db`
 
-### getQuery(options = {})
+### query(options = {})
 
 Get query object for this Collection
 
