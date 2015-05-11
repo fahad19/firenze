@@ -83,10 +83,10 @@ Node.js ORM for MySQL.
 
 # Quickstart
 
-Install the module first:
+Install the module (along with an adapter) first:
 
 ```
-$ npm install --save firenze mysql
+$ npm install --save firenze firenze-adapter-mysql
 ```
 
 Now you can proceed to managing your database as folllows:
@@ -94,10 +94,11 @@ Now you can proceed to managing your database as folllows:
 ```js
 var f = require('firenze');
 var Database = f.Database;
+var MysqlAdapter = require('firenze-adapter-mysql');
 
 // create an instance of your Database
 var db = new Database({
-  type: 'mysql',
+  adapter: MysqlAdapter,
   host: '127.0.0.1',
   database: 'my_database',
   user: '',
@@ -170,9 +171,10 @@ Before anything else, you need to create an instance of `Database` with your cre
 ```js
 var f = require('firenze');
 var Database = f.Database;
+var MysqlAdapter = require('firenze-adapter-mysql');
 
 var db = new Database({
-  type: 'mysql',
+  adapter: MysqlAdapter,
   host: '127.0.0.1',
   database: 'my_database',
   user: '',

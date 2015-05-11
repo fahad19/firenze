@@ -12,9 +12,10 @@ let Model = require('./Model');
 // ```js
 // var f = require('firenze');
 // var Database = f.Database;
+// var MysqlAdapter = require('firenze-adapter-mysql');
 //
 // var db = new Database({
-//   type: 'mysql',
+//   adapter: MysqlAdapter,
 //   host: '127.0.0.1',
 //   database: 'my_database',
 //   user: '',
@@ -29,7 +30,7 @@ let Model = require('./Model');
 class Database {
   constructor(options = {}) {
     this.defaultOptions = {
-      type: 'Mysql',
+      adapter: null,
       host: null,
       user: null,
       database: null,
@@ -39,8 +40,8 @@ class Database {
 
     this.options = _.merge(this.defaultOptions, options);
 
-    let AdapterClass = require('./adapters/Mysql');
-    this.adapter = new AdapterClass(this.options);
+    let AdapterClass = this.options.adapter;
+    this.adapter = new AdapterClass(_.omit(this.options, 'adapter'));
 
     let self = this;
 

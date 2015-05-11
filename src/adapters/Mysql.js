@@ -12,7 +12,7 @@ class Mysql extends Adapter {
     this.options = options;
 
     let config = {
-      client: this.options.type,
+      client: 'mysql',
       connection: _.pick(this.options, [
         'host',
         'user',
