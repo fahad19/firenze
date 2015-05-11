@@ -26,6 +26,8 @@ Node.js ORM for MySQL.
     - [read(q)](#readq)
     - [update(q, obj)](#updateq-obj)
     - [delete(q)](#deleteq)
+    - [loadFixture(model, rows)](#loadfixturemodel-rows)
+    - [loadAllFixtures(arr)](#loadallfixturesarr)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
     - [Properties](#properties)
@@ -255,6 +257,16 @@ Updates the records matching againt query object with given data
 ### delete(q)
 
 Deletes the records matching against query object
+
+### loadFixture(model, rows)
+
+Creates table, and loads data for given model
+
+### loadAllFixtures(arr)
+
+Runs fixtures for multiple models
+
+arr = [{model: post, data: rows}]
 
 <!--/docume:src/Datasource.js-->
 

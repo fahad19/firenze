@@ -85,6 +85,24 @@ class Datasource {
   delete(q) { //eslint-disable-line
 
   }
+
+// ### loadFixture(model, rows)
+//
+// Creates table, and loads data for given model
+//
+  loadFixture(model, rows) { //eslint-disable-line
+
+  }
+
+// ### loadAllFixtures(arr)
+//
+// Runs fixtures for multiple models
+//
+// arr = [{model: post, data: rows}]
+//
+  loadAllFixtures(arr) { //eslint-disable-line
+
+  }
 }
 
 module.exports = Datasource;
