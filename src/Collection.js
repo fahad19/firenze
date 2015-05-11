@@ -237,12 +237,12 @@ class Collection {
     return this.db;
   }
 
-// ### getDatasource()
+// ### getAdapter()
 //
-// Get datasource of the Collections' database
+// Get adapter of the Collections' database
 //
-  getDatasource() {
-    return this.getDatabase().getDatasource();
+  getAdapter() {
+    return this.getDatabase().getAdapter();
   }
 
 // ### setDatabase(db)
@@ -258,7 +258,7 @@ class Collection {
 // Get query object for this Collection
 //
   query(options = {}) {
-    return this.getDatasource().query(this, options);
+    return this.getAdapter().query(this, options);
   }
 
 // ### find()
@@ -279,7 +279,7 @@ class Collection {
     var self = this;
     return new Promise(function (resolve, reject) {
       return self
-        .getDatasource()
+        .getAdapter()
         .read(q)
         .then(function (results) {
           var models = [];
@@ -300,7 +300,7 @@ class Collection {
     var self = this;
     return new Promise(function (resolve, reject) {
       return self
-        .getDatasource()
+        .getAdapter()
         .read(q)
         .then(function (results) {
           if (results.length === 0) {
@@ -321,7 +321,7 @@ class Collection {
     var self = this;
     return new Promise(function (resolve, reject) {
       return self
-        .getDatasource()
+        .getAdapter()
         .read(q)
         .then(function (results) {
           if (results.length === 0) {
@@ -378,7 +378,7 @@ class Collection {
         q = self.query({
           alias: false
         });
-        promise = self.getDatasource().create(q, obj);
+        promise = self.getAdapter().create(q, obj);
       } else {
         obj = _.omit(obj, model.primaryKey);
         if (_.isArray(options.fields)) {
@@ -392,7 +392,7 @@ class Collection {
           }
         });
         promise = self
-          .getDatasource()
+          .getAdapter()
           .update(q, obj);
       }
 
@@ -435,7 +435,7 @@ class Collection {
       });
 
       return self
-        .getDatasource()
+        .getAdapter()
         .delete(q)
         .then(resolve)
         .catch(reject);

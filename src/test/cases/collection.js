@@ -12,7 +12,7 @@ describe('Collection', function () {
     this.Post = require('../models/Post')(this.db);
     this.postsData = require('../fixtures/posts');
 
-    this.db.getDatasource().loadAllFixtures([
+    this.db.getAdapter().loadAllFixtures([
       {
         model: new this.Post(),
         data: this.postsData

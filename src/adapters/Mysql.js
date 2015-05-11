@@ -3,9 +3,9 @@ var _ = require('lodash');
 var Promise = require('bluebird');
 var async = require('async');
 
-var Datasource = require('../Datasource');
+var Adapter = require('../Adapter');
 
-class Mysql extends Datasource {
+class Mysql extends Adapter {
   constructor(options) {
     super(options);
 

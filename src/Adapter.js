@@ -1,23 +1,23 @@
 var _ = require('lodash');
 
-// # Datasource
+// # Adapter
 //
-// Datasource is responsible for making the actual database operations.
+// Adapter is responsible for making the actual database operations.
 //
 // ## Available
 //
 // * MySQL
 //
 
-class Datasource {
+class Adapter {
 // ## Usage
 //
-// You would hardly ever need to create an instance of a Datasource. Database class would take care of it.
+// You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
 //
-// A datasource instance is created with the same options passed when creating a Database instance:
+// An adapter instance is created with the same options passed when creating a Database instance:
 //
 // ```js
-// var datasoure = new lib.Datasource(options);
+// var adapter = new lib.Adapter(options);
 // ```
 //
   constructor(options = {}) { //eslint-disable-line
@@ -26,7 +26,7 @@ class Datasource {
 
 // ## Methods
 //
-// Every datasource needs to implement at least these methods below:
+// Every adapter needs to implement at least these methods below:
 //
 // ### getConnection()
 //
@@ -105,4 +105,4 @@ class Datasource {
   }
 }
 
-module.exports = Datasource;
+module.exports = Adapter;

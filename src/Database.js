@@ -39,8 +39,8 @@ class Database {
 
     this.options = _.merge(this.defaultOptions, options);
 
-    var DatasourceClass = require('./datasources/Mysql');
-    this.datasource = new DatasourceClass(this.options);
+    var AdapterClass = require('./adapters/Mysql');
+    this.adapter = new AdapterClass(this.options);
 
     var self = this;
 
@@ -82,20 +82,20 @@ class Database {
     };
   }
 
-// ### getDatasource()
+// ### getAdapter()
 //
-// Returns datasource
+// Returns adapter
 //
-  getDatasource() {
-    return this.datasource;
+  getAdapter() {
+    return this.adapter;
   }
 
 // ### getConnection()
 //
-// Returns connection of the Datasource
+// Returns connection of the Adapter
 //
   getConnection() {
-    return this.getDatasource().getConnection();
+    return this.getAdapter().getConnection();
   }
 
 // ### close(cb = null)

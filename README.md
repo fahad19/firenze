@@ -12,10 +12,10 @@ Node.js ORM for MySQL.
   - [Methods](#methods)
     - [createCollectionClass(extend)](#createcollectionclassextend)
     - [createModelClass(extend)](#createmodelclassextend)
-    - [getDatasource()](#getdatasource)
+    - [getAdapter()](#getadapter)
     - [getConnection()](#getconnection)
     - [close(cb = null)](#closecb--null)
-- [Datasource](#datasource)
+- [Adapter](#adapter)
   - [Available](#available)
   - [Usage](#usage-1)
   - [Methods](#methods-1)
@@ -49,7 +49,7 @@ Node.js ORM for MySQL.
   - [Methods](#methods-2)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
-    - [getDatasource()](#getdatasource-1)
+    - [getAdapter()](#getadapter-1)
     - [setDatabase(db)](#setdatabasedb)
     - [query(options = {})](#queryoptions--)
     - [find()](#find)
@@ -193,13 +193,13 @@ Also aliased as `.Collection(extend)`.
 
 Also aliased as `.Model(extend)`
 
-### getDatasource()
+### getAdapter()
 
-Returns datasource
+Returns adapter
 
 ### getConnection()
 
-Returns connection of the Datasource
+Returns connection of the Adapter
 
 ### close(cb = null)
 
@@ -207,10 +207,10 @@ Closes the connection
 
 <!--/docume:src/Database.js-->
 
-<!--docume:src/Datasource.js-->
-# Datasource
+<!--docume:src/Adapter.js-->
+# Adapter
 
-Datasource is responsible for making the actual database operations.
+Adapter is responsible for making the actual database operations.
 
 ## Available
 
@@ -218,17 +218,17 @@ Datasource is responsible for making the actual database operations.
 
 ## Usage
 
-You would hardly ever need to create an instance of a Datasource. Database class would take care of it.
+You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
 
-A datasource instance is created with the same options passed when creating a Database instance:
+An adapter instance is created with the same options passed when creating a Database instance:
 
 ```js
-var datasoure = new lib.Datasource(options);
+var adapter = new lib.Adapter(options);
 ```
 
 ## Methods
 
-Every datasource needs to implement at least these methods below:
+Every adapter needs to implement at least these methods below:
 
 ### getConnection()
 
@@ -268,7 +268,7 @@ Runs fixtures for multiple models
 
 arr = [{model: post, data: rows}]
 
-<!--/docume:src/Datasource.js-->
+<!--/docume:src/Adapter.js-->
 
 <!--docume:src/Collection.js-->
 # Collection
@@ -464,9 +464,9 @@ Get an instance of this Collection's model
 
 Get in instance of the current Database
 
-### getDatasource()
+### getAdapter()
 
-Get datasource of the Collections' database
+Get adapter of the Collections' database
 
 ### setDatabase(db)
 
