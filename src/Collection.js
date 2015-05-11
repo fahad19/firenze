@@ -1,5 +1,5 @@
-var _ = require('lodash');
-var Promise = require('bluebird');
+let _ = require('lodash');
+let Promise = require('bluebird');
 
 // # Collection
 //
@@ -210,11 +210,11 @@ class Collection {
       return new Error('Cannot find any modelClass');
     }
 
-    var isInstance = function (i) {
+    let isInstance = function (i) {
       return !_.isFunction(i) && _.isObject(i.schema);
     };
 
-    var M = this.modelClass;
+    let M = this.modelClass;
 
     M = new M(attributes, extend);
     if (isInstance(M)) {
@@ -274,15 +274,15 @@ class Collection {
   }
 
   findAll(options = {}) {
-    var q = this.query(options);
+    let q = this.query(options);
 
-    var self = this;
+    let self = this;
     return new Promise(function (resolve, reject) {
       return self
         .getAdapter()
         .read(q)
         .then(function (results) {
-          var models = [];
+          let models = [];
           _.each(results, function (v) {
             models.push(self.model(v));
           });
@@ -293,11 +293,11 @@ class Collection {
   }
 
   findFirst(options = {}) {
-    var q = this.query(_.merge(options, {
+    let q = this.query(_.merge(options, {
       limit: 1
     }));
 
-    var self = this;
+    let self = this;
     return new Promise(function (resolve, reject) {
       return self
         .getAdapter()
@@ -314,11 +314,11 @@ class Collection {
   }
 
   findCount(options = {}) {
-    var q = this.query(_.merge(options, {
+    let q = this.query(_.merge(options, {
       count: true
     }));
 
-    var self = this;
+    let self = this;
     return new Promise(function (resolve, reject) {
       return self
         .getAdapter()
@@ -328,8 +328,8 @@ class Collection {
             return resolve(null);
           }
 
-          var firstKey = _.first(_.keys(results[0]));
-          var count = results[0][firstKey];
+          let firstKey = _.first(_.keys(results[0]));
+          let count = results[0][firstKey];
 
           return resolve(count);
         })
@@ -338,7 +338,7 @@ class Collection {
   }
 
   findList(options = {}) {
-    var model = this.model();
+    let model = this.model();
     if (!_.isArray(options.fields)) {
       options.fields = [
         model.primaryKey,
@@ -346,15 +346,15 @@ class Collection {
       ];
     }
 
-    var q = this.query(options);
+    let q = this.query(options);
 
     return new Promise(function (resolve, reject) {
       return q.then(function (results) {
-        var list = {};
+        let list = {};
 
         _.each(results, function (v) {
-          var listK = v[model.primaryKey];
-          var listV = v[model.displayField];
+          let listK = v[model.primaryKey];
+          let listV = v[model.displayField];
           list[listK] = listV;
         });
 
@@ -368,11 +368,11 @@ class Collection {
 // Save the given model. This method is not usually called directly, but rather via `Model.save()`.
 //
   save(model, options = {}) {
-    var obj = model.toObject();
-    var self = this;
+    let obj = model.toObject();
+    let self = this;
     return new Promise(function (resolve, reject) {
-      var promise = null;
-      var q = null;
+      let promise = null;
+      let q = null;
 
       if (model.isNew()) {
         q = self.query({
@@ -397,7 +397,7 @@ class Collection {
       }
 
       promise.then(function (ids) {
-        var id = null;
+        let id = null;
         if ((_.isArray(ids) && ids.length === 0) || !ids) {
           return resolve(id);
         } else if (_.isArray(ids)) {
@@ -420,14 +420,14 @@ class Collection {
 // Deletes the given model. Usually called via `Model.delete()`.
 //
   delete(model) {
-    var self = this;
+    let self = this;
     return new Promise(function (resolve, reject) {
       if (model.isNew()) {
-        var error = new Error('Cannot delete a model without ID');
+        let error = new Error('Cannot delete a model without ID');
         return reject(error);
       }
 
-      var q = self.query({
+      let q = self.query({
         alias: false,
         conditions: {
           [model.primaryKey]: model.getId()

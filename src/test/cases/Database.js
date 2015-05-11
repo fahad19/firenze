@@ -1,29 +1,29 @@
 /* global describe, it */
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../index');
-var config = require('../config');
+let should = require('should'); //eslint-disable-line
+let lib = require('../../index');
+let config = require('../config');
 
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
-    var db = new lib.Database(config.mysql);
+    let db = new lib.Database(config.mysql);
     db.close(done);
   });
 
   it('should generate Collection class', function (done) {
-    var db = new lib.Database(config.mysql);
-    var Posts = require('../collections/Posts')(db);
+    let db = new lib.Database(config.mysql);
+    let Posts = require('../collections/Posts')(db);
 
-    var posts = new Posts();
+    let posts = new Posts();
     posts.table.should.be.exactly('posts');
     db.close(done);
   });
 
   it('should generate Model class', function (done) {
-    var db = new lib.Database(config.mysql);
-    var Post = require('../models/Post')(db);
+    let db = new lib.Database(config.mysql);
+    let Post = require('../models/Post')(db);
 
-    var post = new Post();
+    let post = new Post();
     post.alias.should.be.exactly('Post');
     db.close(done);
   });

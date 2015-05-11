@@ -1,9 +1,9 @@
-var knex = require('knex');
-var _ = require('lodash');
-var Promise = require('bluebird');
-var async = require('async');
+let knex = require('knex');
+let _ = require('lodash');
+let Promise = require('bluebird');
+let async = require('async');
 
-var Adapter = require('../Adapter');
+let Adapter = require('../Adapter');
 
 class Mysql extends Adapter {
   constructor(options) {
@@ -11,7 +11,7 @@ class Mysql extends Adapter {
 
     this.options = options;
 
-    var config = {
+    let config = {
       client: this.options.type,
       connection: _.pick(this.options, [
         'host',
@@ -58,8 +58,8 @@ class Mysql extends Adapter {
 
   loadFixture(model, rows) {
     return new Promise(function (resolve, reject) {
-      var connection = model.collection().getDatabase().getConnection();
-      var table = model.collection().table;
+      let connection = model.collection().getDatabase().getConnection();
+      let table = model.collection().table;
 
       async.series([
         function (callback) {
@@ -104,7 +104,7 @@ class Mysql extends Adapter {
   }
 
   loadAllFixtures(arr) {
-    var self = this;
+    let self = this;
     return new Promise(function (resolve, reject) {
       async.map(arr, function (fixture, callback) {
         self.loadFixture(fixture.model, fixture.data).then(function (results) {
@@ -123,12 +123,12 @@ class Mysql extends Adapter {
   }
 
   query(collection, options = {}) {
-    var exp = collection.table;
-    var alias = collection.model().alias;
+    let exp = collection.table;
+    let alias = collection.model().alias;
     if ((_.isUndefined(options.alias) || options.alias) && alias) {
       exp += ' as ' + alias;
     }
-    var query = collection.getDatabase().getConnection()(exp);
+    let query = collection.getDatabase().getConnection()(exp);
     query = this.queryOptions(query, options);
     return query;
   }
@@ -144,8 +144,8 @@ class Mysql extends Adapter {
   }
 
   queryConditions(query, options = {}) {
-    var conditions = _.isObject(options.conditions) ? options.conditions : null;
-    var self = this;
+    let conditions = _.isObject(options.conditions) ? options.conditions : null;
+    let self = this;
     _.each(conditions, function (v, k) {
       k = _.trim(k);
 
@@ -168,9 +168,9 @@ class Mysql extends Adapter {
           });
         });
       } else if (_.includes(k, ' ')) {
-        var parts = k.split(' ');
-        var field = parts[0];
-        var operator = parts[1];
+        let parts = k.split(' ');
+        let field = parts[0];
+        let operator = parts[1];
 
         if (_.isNull(v) && _.includes(['!=', '<>'], operator)) {
           query.whereNotNull(field);
@@ -194,7 +194,7 @@ class Mysql extends Adapter {
   }
 
   queryOrder(query, options = {}) {
-    var order = _.isObject(options.order) ? options.order : {};
+    let order = _.isObject(options.order) ? options.order : {};
     _.each(order, function (v, k) {
       query.orderBy(k, v);
     });
@@ -202,7 +202,7 @@ class Mysql extends Adapter {
   }
 
   queryGroup(query, options = {}) {
-    var group = _.isObject(options.group) ? options.group : [];
+    let group = _.isObject(options.group) ? options.group : [];
     _.each(group, function (v, k) {
       query.groupBy(k, v);
     });
@@ -210,7 +210,7 @@ class Mysql extends Adapter {
   }
 
   queryFields(query, options = {}) {
-    var fields = _.isArray(options.fields) ? options.fields : [];
+    let fields = _.isArray(options.fields) ? options.fields : [];
     if (fields.length === 0) {
       return query;
     }
@@ -223,8 +223,8 @@ class Mysql extends Adapter {
 
   queryLimit(query, options = {}) {
     if (options.limit && options.page) {
-      var limit = parseInt(options.limit, 10);
-      var page = parseInt(options.page, 10);
+      let limit = parseInt(options.limit, 10);
+      let page = parseInt(options.page, 10);
 
       query
         .limit(limit)

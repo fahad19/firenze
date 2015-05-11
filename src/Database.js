@@ -1,7 +1,7 @@
-var _ = require('lodash');
+let _ = require('lodash');
 
-var Collection = require('./Collection');
-var Model = require('./Model');
+let Collection = require('./Collection');
+let Model = require('./Model');
 
 // # Database
 //
@@ -39,10 +39,10 @@ class Database {
 
     this.options = _.merge(this.defaultOptions, options);
 
-    var AdapterClass = require('./adapters/Mysql');
+    let AdapterClass = require('./adapters/Mysql');
     this.adapter = new AdapterClass(this.options);
 
-    var self = this;
+    let self = this;
 
 // ## Methods
 //

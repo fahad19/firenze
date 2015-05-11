@@ -1,8 +1,8 @@
 /* global describe, before, after, it */
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../index');
-var config = require('../config');
+let should = require('should'); //eslint-disable-line
+let lib = require('../../index');
+let config = require('../config');
 
 describe('Model', function () {
   before(function () {
@@ -15,20 +15,20 @@ describe('Model', function () {
   });
 
   it('should have an instance', function () {
-    var post = new this.Post();
+    let post = new this.Post();
     post.should.have.property('alias').which.is.exactly('Post');
   });
 
   it('should have a collection', function () {
-    var post = new this.Post();
+    let post = new this.Post();
     post.should.have.property('collection');
 
-    var posts = post.collection();
+    let posts = post.collection();
     posts.should.have.property('table').which.is.exactly('posts');
   });
 
   it('should fetch itself', function (done) {
-    var post = new this.Post({
+    let post = new this.Post({
       id: 2
     });
     post.fetch().then(function (model) {
@@ -40,14 +40,14 @@ describe('Model', function () {
   });
 
   it('should get its attributes', function () {
-    var post = new this.Post({
+    let post = new this.Post({
       id: 2
     });
     post.get('id').should.eql(2);
   });
 
   it('should set its attributes', function () {
-    var post = new this.Post({
+    let post = new this.Post({
       id: 2
     });
     post.set('title', 'Hello World');
@@ -56,7 +56,7 @@ describe('Model', function () {
     post.set({
       body: 'blah...'
     });
-    var postObj = post.toObject();
+    let postObj = post.toObject();
     postObj.should.eql({
       id: 2,
       title: 'Hello World',
@@ -65,12 +65,12 @@ describe('Model', function () {
   });
 
   it('should check if it is new', function () {
-    var post = new this.Post({
+    let post = new this.Post({
       title: 'Post here'
     });
     post.isNew().should.be.true; //eslint-disable-line
 
-    var anotherPost = new this.Post({
+    let anotherPost = new this.Post({
       id: 1,
       title: 'Yo'
     });
@@ -78,11 +78,11 @@ describe('Model', function () {
   });
 
   it('should get plain object', function () {
-    var post = new this.Post({
+    let post = new this.Post({
       id: 2,
       title: 'Post here'
     });
-    var postObj = post.toObject();
+    let postObj = post.toObject();
     postObj.should.eql({
       id: 2,
       title: 'Post here'
@@ -90,7 +90,7 @@ describe('Model', function () {
   });
 
   it('should create a new record', function (done) {
-    var post = new this.Post({
+    let post = new this.Post({
       title: 'New Post',
       body: 'text...'
     });
@@ -103,7 +103,7 @@ describe('Model', function () {
   });
 
   it('should update existing record', function (done) {
-    var post = new this.Post({id: 1});
+    let post = new this.Post({id: 1});
     post.fetch().then(function (model) {
       model.set('title', 'Hello Universe');
       model.save().then(function (m) {
@@ -114,7 +114,7 @@ describe('Model', function () {
   });
 
   it('should update particular field', function (done) {
-    var post = new this.Post({id: 1});
+    let post = new this.Post({id: 1});
     post.fetch().then(function (model) {
       model.saveField('title', 'Hello Universe').then(function (m) {
         m.get('title').should.eql('Hello Universe');
@@ -124,7 +124,7 @@ describe('Model', function () {
   });
 
   it('should clear', function () {
-    var post = new this.Post({
+    let post = new this.Post({
       id: 1,
       title: 'Hi'
     });
@@ -135,7 +135,7 @@ describe('Model', function () {
   });
 
   it('should delete a record', function (done) {
-    var post = new this.Post({id: 2});
+    let post = new this.Post({id: 2});
     post.delete().then(function (affectedRows) {
       affectedRows.should.eql(1);
       done();

@@ -1,6 +1,6 @@
-var _ = require('lodash');
-var Promise = require('bluebird');
-var dotProp = require('dot-prop');
+let _ = require('lodash');
+let Promise = require('bluebird');
+let dotProp = require('dot-prop');
 
 // # Models
 //
@@ -114,7 +114,7 @@ class Model {
       this.alias = this.collection().table;
     }
 
-    var id = this.get(this.primaryKey);
+    let id = this.get(this.primaryKey);
     if (id) {
       this.id = id;
     }
@@ -150,11 +150,11 @@ class Model {
       return new Error('Cannot find any collectionClass');
     }
 
-    var isInstance = function (i) {
+    let isInstance = function (i) {
       return !_.isFunction(i) && _.isString(i.table);
     };
 
-    var C = this.collectionClass;
+    let C = this.collectionClass;
 
     C = new C(options);
     if (isInstance(C)) {
@@ -174,7 +174,7 @@ class Model {
 // Get the field of current model
 //
   get(field) {
-    var obj = this.toObject();
+    let obj = this.toObject();
     return dotProp.get(obj, field);
   }
 
@@ -212,12 +212,12 @@ class Model {
 // ```
 //
   fetch(options = {}) {
-    var id = this.getId();
+    let id = this.getId();
     if (!id) {
       throw new Error('No ID found');
     }
 
-    var collection = this.collection();
+    let collection = this.collection();
     _.merge(options, {
       conditions: {
         [this.alias + '.' + this.primaryKey]: id
@@ -235,7 +235,7 @@ class Model {
 // Get the ID of model
 //
   getId() {
-    var id = this.id || this.get(this.primaryKey);
+    let id = this.id || this.get(this.primaryKey);
     if (!_.isUndefined(id)) {
       return id;
     }
