@@ -49,7 +49,7 @@ class Database {
         constructor(_extend = {}) {
           super(_extend);
 
-          if (!this.database()) {
+          if (!this.getDatabase()) {
             this.setDatabase(self);
           }
 
@@ -76,12 +76,12 @@ class Database {
     return this.datasource;
   }
 
-  connection() {
-    return this.datasource.getConnection();
+  getConnection() {
+    return this.getDatasource().getConnection();
   }
 
   close(cb = null) {
-    return this.connection().destroy(cb);
+    return this.getConnection().destroy(cb);
   }
 }
 

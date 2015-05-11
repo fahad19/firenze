@@ -229,11 +229,11 @@ class Collection {
     return new M(attributes, extend);
   }
 
-// ### database()
+// ### getDatabase()
 //
 // Get in instance of the current Database
 //
-  database() {
+  getDatabase() {
     return this.db;
   }
 
@@ -242,7 +242,7 @@ class Collection {
 // Get datasource of the Collections' database
 //
   getDatasource() {
-    return this.database().getDatasource();
+    return this.getDatabase().getDatasource();
   }
 
 // ### setDatabase(db)
@@ -253,12 +253,12 @@ class Collection {
     this.db = db;
   }
 
-// ### getQuery(options = {})
+// ### query(options = {})
 //
 // Get query object for this Collection
 //
-  getQuery(options = {}) {
-    return this.database().getDatasource().getQuery(this, options);
+  query(options = {}) {
+    return this.getDatasource().query(this, options);
   }
 
 // ### find()
@@ -274,7 +274,7 @@ class Collection {
   }
 
   findAll(options = {}) {
-    var q = this.getQuery(options);
+    var q = this.query(options);
 
     var self = this;
     return new Promise(function (resolve, reject) {
@@ -293,7 +293,7 @@ class Collection {
   }
 
   findFirst(options = {}) {
-    var q = this.getQuery(_.merge(options, {
+    var q = this.query(_.merge(options, {
       limit: 1
     }));
 
@@ -314,7 +314,7 @@ class Collection {
   }
 
   findCount(options = {}) {
-    var q = this.getQuery(_.merge(options, {
+    var q = this.query(_.merge(options, {
       count: true
     }));
 
@@ -346,7 +346,7 @@ class Collection {
       ];
     }
 
-    var q = this.getQuery(options);
+    var q = this.query(options);
 
     return new Promise(function (resolve, reject) {
       return q.then(function (results) {
@@ -375,7 +375,7 @@ class Collection {
       var q = null;
 
       if (model.isNew()) {
-        q = self.getQuery({
+        q = self.query({
           alias: false
         });
         promise = self.getDatasource().create(q, obj);
@@ -385,7 +385,7 @@ class Collection {
           obj = _.pick(obj, options.fields);
         }
 
-        q = self.getQuery({
+        q = self.query({
           alias: false,
           conditions: {
             [model.primaryKey]: model.getId()
@@ -427,7 +427,7 @@ class Collection {
         return reject(error);
       }
 
-      var q = self.getQuery({
+      var q = self.query({
         alias: false,
         conditions: {
           [model.primaryKey]: model.getId()

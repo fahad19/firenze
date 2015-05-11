@@ -46,11 +46,11 @@ class Datasource {
     }
   }
 
-// ### getQuery()
+// ### query()
 //
 // Gets a query object
 //
-  getQuery(options = {}) { //eslint-disable-line
+  query(options = {}) { //eslint-disable-line
 
   }
 

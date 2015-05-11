@@ -54,13 +54,13 @@ class Mysql extends Datasource {
     return q.del();
   }
 
-  getQuery(collection, options = {}) {
+  query(collection, options = {}) {
     var exp = collection.table;
     var alias = collection.model().alias;
     if ((_.isUndefined(options.alias) || options.alias) && alias) {
       exp += ' as ' + alias;
     }
-    var query = collection.database().connection()(exp);
+    var query = collection.getDatabase().getConnection()(exp);
     query = this.queryOptions(query, options);
     return query;
   }

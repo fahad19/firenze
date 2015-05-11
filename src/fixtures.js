@@ -11,7 +11,7 @@ module.exports = {
    */
   load: function (model, rows) {
     return new Promise(function (resolve, reject) {
-      var connection = model.collection().database().connection();
+      var connection = model.collection().getDatabase().getConnection();
       var table = model.collection().table;
 
       async.series([
