@@ -8,9 +8,10 @@ Node.js ORM for MySQL.
 
 - [Quickstart](#quickstart)
 - [Database](#database)
+  - [Usage](#usage)
 - [Datasource](#datasource)
   - [Available](#available)
-  - [Usage](#usage)
+  - [Usage](#usage-1)
   - [Methods](#methods)
     - [getConnection()](#getconnection)
     - [closeConnection(cb = null)](#closeconnectioncb--null)
@@ -24,7 +25,7 @@ Node.js ORM for MySQL.
     - [Properties](#properties)
       - [table](#table)
       - [modelClass](#modelclass)
-  - [Usage](#usage-1)
+  - [Usage](#usage-2)
     - [Finders](#finders)
       - [first](#first)
       - [all](#all)
@@ -56,7 +57,7 @@ Node.js ORM for MySQL.
       - [displayField](#displayfield)
       - [id](#id)
       - [alias](#alias)
-  - [Usage](#usage-2)
+  - [Usage](#usage-3)
   - [Methods](#methods-2)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
@@ -155,6 +156,8 @@ post.save().then(function (model) {
 # Database
 
 Before anything else, you need to create an instance of `Database` with your credentials which will be referenced in your Collections and Models.
+
+## Usage
 
 ```js
 var f = require('firenze');
