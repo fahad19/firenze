@@ -1,6 +1,6 @@
 let knex = require('knex');
 let _ = require('lodash');
-let Promise = require('bluebird');
+let P = require('bluebird');
 let async = require('async');
 
 let Adapter = require('../Adapter');
@@ -57,7 +57,7 @@ class Mysql extends Adapter {
   }
 
   loadFixture(model, rows) {
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       let connection = model.collection().getDatabase().getConnection();
       let table = model.collection().table;
 
@@ -105,7 +105,7 @@ class Mysql extends Adapter {
 
   loadAllFixtures(arr) {
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       async.map(arr, function (fixture, callback) {
         self.loadFixture(fixture.model, fixture.data).then(function (results) {
           callback(null, results);

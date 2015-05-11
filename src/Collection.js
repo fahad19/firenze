@@ -1,5 +1,5 @@
 let _ = require('lodash');
-let Promise = require('bluebird');
+let P = require('bluebird');
 
 // # Collection
 //
@@ -277,7 +277,7 @@ class Collection {
     let q = this.query(options);
 
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       return self
         .getAdapter()
         .read(q)
@@ -298,7 +298,7 @@ class Collection {
     }));
 
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       return self
         .getAdapter()
         .read(q)
@@ -319,7 +319,7 @@ class Collection {
     }));
 
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       return self
         .getAdapter()
         .read(q)
@@ -348,7 +348,7 @@ class Collection {
 
     let q = this.query(options);
 
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       return q.then(function (results) {
         let list = {};
 
@@ -370,7 +370,7 @@ class Collection {
   save(model, options = {}) {
     let obj = model.toObject();
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       let promise = null;
       let q = null;
 
@@ -421,7 +421,7 @@ class Collection {
 //
   delete(model) {
     let self = this;
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       if (model.isNew()) {
         let error = new Error('Cannot delete a model without ID');
         return reject(error);

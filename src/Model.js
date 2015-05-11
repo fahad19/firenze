@@ -1,5 +1,5 @@
 let _ = require('lodash');
-let Promise = require('bluebird');
+let P = require('bluebird');
 let dotProp = require('dot-prop');
 
 // # Models
@@ -223,7 +223,7 @@ class Model {
         [this.alias + '.' + this.primaryKey]: id
       }
     });
-    return new Promise(function (resolve, reject) {
+    return new P(function (resolve, reject) {
       return collection.find('first', options).then(function (model) {
         resolve(model);
       }).catch(reject);
