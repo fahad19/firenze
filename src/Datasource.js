@@ -1,33 +1,88 @@
+var _ = require('lodash');
+
+// # Datasource
+//
+// Datasource is responsible for making the actual database operations.
+//
+// ## Available
+//
+// * MySQL
+//
+
 class Datasource {
-  constructor(options = {}) {
+// ## Usage
+//
+// You would hardly ever need to create an instance of a Datasource. Database class would take care of it.
+//
+// A datasource instance is created with the same options passed when creating a Database instance:
+//
+// ```js
+// var datasoure = new lib.Datasource(options);
+// ```
+//
+  constructor(options = {}) { //eslint-disable-line
 
   }
 
+// ## Methods
+//
+// Every datasource needs to implement at least these methods below:
+//
+// ### getConnection()
+//
+// Returns the current connection
+//
   getConnection() {
 
   }
 
-  closeConnection() {
+// ### closeConnection(cb = null)
+//
+// Closes the current connection, and calls the callback function `cb()` if passed.
+//
+  closeConnection(cb = null) {
+    if (_.isFunction(cb)) {
+      cb();
+    }
+  }
+
+// ### getQuery()
+//
+// Gets a query object
+//
+  getQuery(options = {}) { //eslint-disable-line
 
   }
 
-  getQuery() {
+// ### create(q, obj)
+//
+// Creates a new record
+//
+  create(q, obj) { //eslint-disable-line
 
   }
 
-  create() {
+// ### read(q)
+//
+// Fetches the results found against the query object
+//
+  read(q) { //eslint-disable-line
 
   }
 
-  read() {
+// ### update(q, obj)
+//
+// Updates the records matching againt query object with given data
+//
+  update(q, obj) { //eslint-disable-line
 
   }
 
-  update() {
-
-  }
-
-  delete() {
+// ### delete(q)
+//
+// Deletes the records matching against query object
+//
+  delete(q) { //eslint-disable-line
 
   }
 }

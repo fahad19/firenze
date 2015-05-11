@@ -8,12 +8,23 @@ Node.js ORM for MySQL.
 
 - [Quickstart](#quickstart)
 - [Database](#database)
+- [Datasource](#datasource)
+  - [Available](#available)
+  - [Usage](#usage)
+  - [Methods](#methods)
+    - [getConnection()](#getconnection)
+    - [closeConnection(cb = null)](#closeconnectioncb--null)
+    - [getQuery()](#getquery)
+    - [create(q, obj)](#createq-obj)
+    - [read(q)](#readq)
+    - [update(q, obj)](#updateq-obj)
+    - [delete(q)](#deleteq)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
     - [Properties](#properties)
       - [table](#table)
       - [modelClass](#modelclass)
-  - [Usage](#usage)
+  - [Usage](#usage-1)
     - [Finders](#finders)
       - [first](#first)
       - [all](#all)
@@ -26,9 +37,10 @@ Node.js ORM for MySQL.
       - [AND](#and)
       - [OR](#or)
       - [NOT](#not)
-  - [Methods](#methods)
+  - [Methods](#methods-1)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [database()](#database)
+    - [getDatasource()](#getdatasource)
     - [setDatabase(db)](#setdatabasedb)
     - [getQuery(options = {})](#getqueryoptions--)
     - [find()](#find)
@@ -44,8 +56,8 @@ Node.js ORM for MySQL.
       - [displayField](#displayfield)
       - [id](#id)
       - [alias](#alias)
-  - [Usage](#usage-1)
-  - [Methods](#methods-1)
+  - [Usage](#usage-2)
+  - [Methods](#methods-2)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
@@ -57,7 +69,6 @@ Node.js ORM for MySQL.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete()](#delete)
-- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -162,6 +173,59 @@ var db = new Database({
 });
 ```
 <!--/docume:src/Database.js-->
+
+<!--docume:src/Datasource.js-->
+# Datasource
+
+Datasource is responsible for making the actual database operations.
+
+## Available
+
+* MySQL
+
+## Usage
+
+You would hardly ever need to create an instance of a Datasource. Database class would take care of it.
+
+A datasource instance is created with the same options passed when creating a Database instance:
+
+```js
+var datasoure = new lib.Datasource(options);
+```
+
+## Methods
+
+Every datasource needs to implement at least these methods below:
+
+### getConnection()
+
+Returns the current connection
+
+### closeConnection(cb = null)
+
+Closes the current connection, and calls the callback function `cb()` if passed.
+
+### getQuery()
+
+Gets a query object
+
+### create(q, obj)
+
+Creates a new record
+
+### read(q)
+
+Fetches the results found against the query object
+
+### update(q, obj)
+
+Updates the records matching againt query object with given data
+
+### delete(q)
+
+Deletes the records matching against query object
+
+<!--/docume:src/Datasource.js-->
 
 <!--docume:src/Collection.js-->
 # Collection
@@ -357,6 +421,10 @@ Get an instance of this Collection's model
 
 Get in instance of the current Database
 
+### getDatasource()
+
+Get datasource of the Collections' database
+
 ### setDatabase(db)
 
 Change database instance of this Collection to `db`
@@ -542,7 +610,3 @@ Clear the current instance of model of any data
 Delete the current model
 
 <!--/docume:src/Model.js-->
-
-# License
-
-MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
