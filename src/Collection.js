@@ -258,7 +258,7 @@ class Collection {
 // Get query object for this Collection
 //
   getQuery(options = {}) {
-    return this.database().getDatasource().getQuery(options);
+    return this.database().getDatasource().getQuery(this, options);
   }
 
 // ### find()
@@ -375,7 +375,7 @@ class Collection {
       var q = null;
 
       if (model.isNew()) {
-        q = this.getQuery({
+        q = self.getQuery({
           alias: false
         });
         promise = self.getDatasource().create(q, obj);
@@ -385,13 +385,13 @@ class Collection {
           obj = _.pick(obj, options.fields);
         }
 
-        q = this.getQuery({
+        q = self.getQuery({
           alias: false,
           conditions: {
             [model.primaryKey]: model.getId()
           }
         });
-        promise = this
+        promise = self
           .getDatasource()
           .update(q, obj);
       }
@@ -434,7 +434,7 @@ class Collection {
         }
       });
 
-      return this
+      return self
         .getDatasource()
         .delete(q)
         .then(resolve)
