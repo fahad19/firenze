@@ -276,15 +276,14 @@ export default class Collection {
   findAll(options = {}) {
     let q = this.query(options);
 
-    let self = this;
-    return new P(function (resolve, reject) {
-      return self
+    return new P((resolve, reject) => {
+      return this
         .getAdapter()
         .read(q)
-        .then(function (results) {
+        .then((results) => {
           let models = [];
-          _.each(results, function (v) {
-            models.push(self.model(v));
+          _.each(results, (v) => {
+            models.push(this.model(v));
           });
           return resolve(models);
         })
@@ -297,17 +296,16 @@ export default class Collection {
       limit: 1
     }));
 
-    let self = this;
-    return new P(function (resolve, reject) {
-      return self
+    return new P((resolve, reject) => {
+      return this
         .getAdapter()
         .read(q)
-        .then(function (results) {
+        .then((results) => {
           if (results.length === 0) {
             return resolve(null);
           }
 
-          return resolve(self.model(results[0]));
+          return resolve(this.model(results[0]));
         })
         .catch(reject);
     });
@@ -318,9 +316,8 @@ export default class Collection {
       count: true
     }));
 
-    let self = this;
-    return new P(function (resolve, reject) {
-      return self
+    return new P((resolve, reject) => {
+      return this
         .getAdapter()
         .read(q)
         .then(function (results) {
@@ -369,34 +366,33 @@ export default class Collection {
 //
   save(model, options = {}) {
     let obj = model.toObject();
-    let self = this;
-    return new P(function (resolve, reject) {
+    return new P((resolve, reject) => {
       let promise = null;
       let q = null;
 
       if (model.isNew()) {
-        q = self.query({
+        q = this.query({
           alias: false
         });
-        promise = self.getAdapter().create(q, obj);
+        promise = this.getAdapter().create(q, obj);
       } else {
         obj = _.omit(obj, model.primaryKey);
         if (_.isArray(options.fields)) {
           obj = _.pick(obj, options.fields);
         }
 
-        q = self.query({
+        q = this.query({
           alias: false,
           conditions: {
             [model.primaryKey]: model.getId()
           }
         });
-        promise = self
+        promise = this
           .getAdapter()
           .update(q, obj);
       }
 
-      promise.then(function (ids) {
+      promise.then((ids) => {
         let id = null;
         if ((_.isArray(ids) && ids.length === 0) || !ids) {
           return resolve(id);
@@ -406,7 +402,7 @@ export default class Collection {
           id = ids;
         }
 
-        return self.model({id: id}).fetch().then(function (m) {
+        return this.model({id: id}).fetch().then(function (m) {
           resolve(m);
         }).catch(function (error) {
           reject(error);
@@ -420,21 +416,20 @@ export default class Collection {
 // Deletes the given model. Usually called via `Model.delete()`.
 //
   delete(model) {
-    let self = this;
-    return new P(function (resolve, reject) {
+    return new P((resolve, reject) => {
       if (model.isNew()) {
         let error = new Error('Cannot delete a model without ID');
         return reject(error);
       }
 
-      let q = self.query({
+      let q = this.query({
         alias: false,
         conditions: {
           [model.primaryKey]: model.getId()
         }
       });
 
-      return self
+      return this
         .getAdapter()
         .delete(q)
         .then(resolve)

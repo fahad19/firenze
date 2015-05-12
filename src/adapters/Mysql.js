@@ -104,10 +104,9 @@ export default class Mysql extends Adapter {
   }
 
   loadAllFixtures(arr) {
-    let self = this;
-    return new P(function (resolve, reject) {
-      async.map(arr, function (fixture, callback) {
-        self.loadFixture(fixture.model, fixture.data).then(function (results) {
+    return new P((resolve, reject) => {
+      async.map(arr, (fixture, callback) => {
+        this.loadFixture(fixture.model, fixture.data).then(function (results) {
           callback(null, results);
         }).catch(function (error) {
           callback(error);
