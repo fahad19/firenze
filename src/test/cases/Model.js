@@ -5,9 +5,21 @@ var lib = require('../../index');
 var config = require('../config');
 
 describe('Model', function () {
-  before(function () {
+  before(function (done) {
     this.db = new lib.Database(config.mysql);
     this.Post = require('../models/Post')(this.db);
+    this.postsData = require('../fixtures/posts');
+
+    this.db.getAdapter().loadAllFixtures([
+      {
+        model: new this.Post(),
+        rows: this.postsData
+      }
+    ]).then(function () {
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
   });
 
   after(function (done) {

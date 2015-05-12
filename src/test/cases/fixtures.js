@@ -29,11 +29,11 @@ describe('Fixtures', function () {
     this.db.getAdapter().loadAllFixtures([
       {
         model: new this.Post(),
-        data: require('../fixtures/posts')
+        rows: require('../fixtures/posts')
       },
       {
         model: new this.Author(),
-        data: require('../fixtures/authors')
+        rows: require('../fixtures/authors')
       }
     ]).then(function () {
       done();

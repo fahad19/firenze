@@ -271,4 +271,12 @@ export default class Model {
   delete() {
     return this.collection().delete(this);
   }
+
+// ### fixturify(rows)
+//
+// Drop, create, and populate table with data
+//
+  fixturify(rows) {
+    return this.collection().getAdapter().loadFixture(this, rows);
+  }
 }

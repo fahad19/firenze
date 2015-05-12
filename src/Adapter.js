@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import async from 'async';
+import P from 'bluebird';
 
 // # Adapter
 //
@@ -61,9 +63,13 @@ export default class Adapter {
 // Closes the current connection, and calls the callback function `cb()` if passed.
 //
   closeConnection(cb = null) {
-    if (_.isFunction(cb)) {
-      cb();
-    }
+    return new P(function (resolve, reject) {
+      return resolve();
+    }).then(function () {
+      if (_.isFunction(cb)) {
+        return cb();
+      }
+    });
   }
 
 // ### query()
@@ -71,7 +77,9 @@ export default class Adapter {
 // Gets a query object
 //
   query(options = {}) { //eslint-disable-line
-
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
   }
 
 // ### create(q, obj)
@@ -79,7 +87,9 @@ export default class Adapter {
 // Creates a new record
 //
   create(q, obj) { //eslint-disable-line
-
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
   }
 
 // ### read(q)
@@ -87,7 +97,9 @@ export default class Adapter {
 // Fetches the results found against the query object
 //
   read(q) { //eslint-disable-line
-
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
   }
 
 // ### update(q, obj)
@@ -95,7 +107,9 @@ export default class Adapter {
 // Updates the records matching againt query object with given data
 //
   update(q, obj) { //eslint-disable-line
-
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
   }
 
 // ### delete(q)
@@ -103,7 +117,39 @@ export default class Adapter {
 // Deletes the records matching against query object
 //
   delete(q) { //eslint-disable-line
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
+  }
 
+// ### dropTable(model)
+//
+// Drop table if exists
+//
+  dropTable(model) {
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
+  }
+
+// ### createTable(model)
+//
+// Create table based on model's schema
+//
+  createTable(model) {
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
+  }
+
+// ### populateTable(model, rows)
+//
+// Insert rows into model's table
+//
+  populateTable(model, rows) {
+    return new P(function (resolve, reject) {
+      return resolve();
+    });
   }
 
 // ### loadFixture(model, rows)
@@ -111,16 +157,61 @@ export default class Adapter {
 // Creates table, and loads data for given model
 //
   loadFixture(model, rows) { //eslint-disable-line
-
+    return new P((resolve, reject) => {
+      async.series([
+        (callback) => {
+          this.dropTable(model)
+            .then(function (response) {
+              callback(null, response);
+            })
+            .catch(function (error) {
+              callback(error);
+            })
+        },
+        (callback) => {
+          this.createTable(model)
+            .then(function (response) {
+              callback(null, response);
+            })
+            .catch(function (error) {
+              callback(error);
+            })
+        },
+        (callback) => {
+          this.populateTable(model, rows)
+            .then(function (response) {
+              callback(null, response);
+            })
+            .catch(function (error) {
+              callback(error);
+            })
+        }
+      ]);
+    });
   }
 
 // ### loadAllFixtures(arr)
 //
 // Runs fixtures for multiple models
 //
-// arr = [{model: post, data: rows}]
+// arr = [{model: post, rows: rows}]
 //
   loadAllFixtures(arr) { //eslint-disable-line
+    return new P((resolve, reject) => {
+      async.map(arr, (fixture, callback) => {
+        this.loadFixture(fixture.model, fixture.data).then(function (results) {
+          callback(null, results);
+        }).catch(function (error) {
+          callback(error);
+        });
+      }, function (err, results) {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(results);
+      });
+    });
 
   }
 }

@@ -190,68 +190,52 @@ export default class Mysql extends Adapter {
     return q.del();
   }
 
-  loadFixture(model, rows) {
+  dropTable(model) {
+    let connection = this.getConnection();
+    let table = model.collection().table;
+
     return new P(function (resolve, reject) {
-      let connection = model.collection().getDatabase().getConnection();
-      let table = model.collection().table;
-
-      async.series([
-        function (callback) {
-          connection.schema.dropTableIfExists(table)
-            .then(function (response) {
-              callback(null, response);
-            })
-            .catch(function (error) {
-              callback(error);
-            });
-        },
-        function (callback) {
-          connection.schema.createTable(table, function (t) {
-            _.each(model.schema, function (column, name) {
-              t[column.type](name);
-            });
-          })
-            .then(function (response) {
-              callback(null, response);
-            })
-            .catch(function (error) {
-              callback(error);
-            });
-        },
-        function (callback) {
-          connection(table).insert(rows)
-            .then(function (response) {
-              callback(null, response);
-            })
-            .catch(function (error) {
-              callback(error);
-            });
-        }
-      ], function (err, results) {
-        if (err) {
-          return reject(err);
-        }
-
-        return resolve(results);
-      });
+      connection.schema.dropTableIfExists(table)
+        .then(function (response) {
+          return resolve(response);
+        })
+        .catch(function (error) {
+          reject(error);
+        });
     });
   }
 
-  loadAllFixtures(arr) {
-    return new P((resolve, reject) => {
-      async.map(arr, (fixture, callback) => {
-        this.loadFixture(fixture.model, fixture.data).then(function (results) {
-          callback(null, results);
-        }).catch(function (error) {
-          callback(error);
-        });
-      }, function (err, results) {
-        if (err) {
-          return reject(err);
-        }
+  createTable(model) {
+    let connection = this.getConnection();
+    let table = model.collection().table;
 
-        return resolve(results);
-      });
+    return new P(function (resolve, reject) {
+      connection.schema.createTable(table, function (t) {
+        _.each(model.schema, function (column, name) {
+          t[column.type](name);
+        });
+      })
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error);
+        });
+    });
+  }
+
+  populateTable(model) {
+    let connection = this.getConnection();
+    let table = model.collection().table;
+
+    return new P(function (resolve, reject) {
+      connection(table).insert(rows)
+        .then(function (response) {
+          resolve(response);
+        })
+        .catch(function (error) {
+          reject(error);
+        });
     });
   }
 

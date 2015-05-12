@@ -58,6 +58,7 @@ Node.js ORM for MySQL.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete()](#delete)
+    - [fixturify(rows)](#fixturifyrows)
 - [Adapter](#adapter)
   - [Available](#available)
   - [Usage](#usage-3)
@@ -69,6 +70,9 @@ Node.js ORM for MySQL.
     - [read(q)](#readq)
     - [update(q, obj)](#updateq-obj)
     - [delete(q)](#deleteq)
+    - [dropTable(model)](#droptablemodel)
+    - [createTable(model)](#createtablemodel)
+    - [populateTable(model, rows)](#populatetablemodel-rows)
     - [loadFixture(model, rows)](#loadfixturemodel-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
   - [MySQL Adapter](#mysql-adapter)
@@ -474,6 +478,10 @@ Clear the current instance of model of any data
 
 Delete the current model
 
+### fixturify(rows)
+
+Drop, create, and populate table with data
+
 <!--/docume:src/Model.js-->
 
 <!--docume:src/Adapter.js-->
@@ -547,6 +555,18 @@ Updates the records matching againt query object with given data
 
 Deletes the records matching against query object
 
+### dropTable(model)
+
+Drop table if exists
+
+### createTable(model)
+
+Create table based on model's schema
+
+### populateTable(model, rows)
+
+Insert rows into model's table
+
 ### loadFixture(model, rows)
 
 Creates table, and loads data for given model
@@ -555,7 +575,7 @@ Creates table, and loads data for given model
 
 Runs fixtures for multiple models
 
-arr = [{model: post, data: rows}]
+arr = [{model: post, rows: rows}]
 
 <!--/docume:src/Adapter.js-->
 

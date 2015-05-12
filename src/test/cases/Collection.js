@@ -15,7 +15,7 @@ describe('Collection', function () {
     this.db.getAdapter().loadAllFixtures([
       {
         model: new this.Post(),
-        data: this.postsData
+        rows: this.postsData
       }
     ]).then(function () {
       done();
