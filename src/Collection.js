@@ -21,16 +21,51 @@ import P from 'bluebird';
 //
 // There is also a short method for creating Collection class via `db.Collection()`.
 //
+
+export default class Collection {
+  constructor(extend = {}) {
+
 // ### Properties
-//
-// #### table
-//
-// The name of the table that this Collection represents. Always as a string.
 //
 // #### modelClass
 //
 // Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
 //
+    this.modelClass = null;
+
+// #### table
+//
+// The name of the table that this Collection represents. Always as a string.
+//
+    this.table = null;
+
+// #### finders
+//
+// List of mapped finder methods that you want available in `.find(mappedName, options)`
+//
+// By default these are set:
+//
+// ```js
+// {
+//   all: 'findAll',
+//   first: 'findFirst',
+//   count: 'findCount',
+//   list: 'findList'
+// }
+// ```
+//
+// This mapping allows you to later call `.find('all')`, which eventually calls `.findFirst()`.
+//
+    this.finders = {
+      all: 'findAll',
+      first: 'findFirst',
+      count: 'findCount',
+      list: 'findList'
+    };
+
+    _.merge(this, extend);
+  }
+
 // ## Usage
 //
 // Before using the Collection, you need to create an instance of it:
@@ -39,165 +74,6 @@ import P from 'bluebird';
 // var posts = new Posts();
 // ```
 //
-// ### Finders
-//
-// There are various ways you can find results:
-//
-// #### first
-//
-// Gives you the first matched result:
-//
-// ```js
-// posts.find('first', {
-//   conditions: {
-//     id: 1
-//   }
-// }).then(function (post) {
-//   // post is now an instance of Post model
-//   var title = post.get('title');
-// });
-// ```
-//
-// #### all
-//
-// Gives you all matched results:
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     published: true
-//   }
-// }).then(function (models) {
-//   models.forEach(function (model) {
-//     var title = model.get('title');
-//   });
-// });
-// ```
-// #### list
-//
-// Gives you a list of key/value paired object of matched results:
-//
-// ```js
-// posts.find('list', {
-//   conditions: {},
-//   fields: [
-//     'id',
-//     'title'
-//   ]
-// }).then(function (list) {
-//   // list is now:
-//   //
-//   // {
-//   //   1: 'Hello World',
-//   //   2: 'About'
-//   // }
-// });
-// ```
-//
-// #### count
-//
-// Gives you the total count of matched results:
-//
-// ```js
-// posts.find('count').then(function (count) {
-//   // count is an integer here
-// });
-// ```
-//
-// ### Complex conditions
-//
-// #### equals
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     id: 1
-//   }
-// });
-// ```
-//
-// #### in list
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     id: [
-//       1,
-//       2,
-//       3
-//     ]
-//   }
-// });
-// ```
-//
-// #### comparisons
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     'Post.rating >': 3
-//   }
-// })
-// ```
-//
-// Example comparisons that you can try:
-//
-// * greater than `ModelAlias.field >`
-// * greater than or equel to `ModelAlias.field >=`
-// * less than `ModelAlias.field <`
-// * less than or equal to `ModelAlias.field <=`
-// * not equal to `ModelAlias.field !=`
-//
-// #### AND
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     AND: {
-//       'Post.published': 1
-//     }
-//   }
-// });
-// ```
-//
-// #### OR
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     OR: {
-//       'Post.published': 1
-//     }
-//   }
-// });
-// ```
-//
-// #### NOT
-//
-// ```js
-// posts.find('all', {
-//   conditions: {
-//     NOT: {
-//       'Post.published': 1
-//     }
-//   }
-// });
-// ```
-//
-
-export default class Collection {
-  constructor(extend = {}) {
-    this.modelClass = null;
-    this.table = null;
-    this.alias = null;
-    this.finders = {
-      all: 'findAll',
-      first: 'findFirst',
-      count: 'findCount',
-      list: 'findList'
-    };
-    _.merge(this, extend);
-  }
 
 // ## Methods
 //
@@ -261,18 +137,22 @@ export default class Collection {
     return this.getAdapter().query(this, options);
   }
 
-// ### find()
+// ### find(type, options = {})
 //
 // Explained above in `Finders` section
 //
-  find(type = 'first', options = {}) {
-    if (!this.finders[type] || !_.isFunction(this[this.finders[type]])) {
+  find(type = null, options = {}) {
+    if (!type || !this.finders[type] || !_.isFunction(this[this.finders[type]])) {
       throw new Error('Invalid find type');
     }
 
     return this[this.finders[type]](options);
   }
 
+// ### findAll(options = {})
+//
+// Returns an array of matched models
+//
   findAll(options = {}) {
     let q = this.query(options);
 
@@ -291,6 +171,10 @@ export default class Collection {
     });
   }
 
+// ### findFirst(options = {})
+//
+// Returns matched model if any
+//
   findFirst(options = {}) {
     let q = this.query(_.merge(options, {
       limit: 1
@@ -311,6 +195,10 @@ export default class Collection {
     });
   }
 
+// ### findCount(options = {})
+//
+// Returns count of matched results
+//
   findCount(options = {}) {
     let q = this.query(_.merge(options, {
       count: true
@@ -334,6 +222,10 @@ export default class Collection {
     });
   }
 
+// ### findList(options = {})
+//
+// Returns key/value pair of matched results
+//
   findList(options = {}) {
     let model = this.model();
     if (!_.isArray(options.fields)) {
