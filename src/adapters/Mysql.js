@@ -5,6 +5,44 @@ import async from 'async';
 
 import Adapter from '../Adapter';
 
+// # MySQL Adapter
+//
+// MySQL adapter for Firenze.js
+//
+// ## Install
+//
+// ```
+// $ npm install --save firenze-adapter-mysql
+// ```
+//
+// ## Usage
+//
+// You aren't expected to deal with the Adapter directly. Just pass the adapter to Database config when you create an instance.
+//
+// ```js
+// var f = require('firenze');
+// var Database = f.Database;
+// var MysqlAdapter = require('firenze-adapter-mysql');
+//
+// var db = new Database({
+//   adapter: MysqlAdapter,
+//   host: '127.0.0.1',
+//   database: 'my_database',
+//   user: '',
+//   password: '',
+//   pool: {
+//     min: 0,
+//     max: 1
+//   }
+// });
+// ```
+//
+// Examples below assumes you have an instance of Collection already:
+//
+// ```js
+// var posts = new Posts();
+// ```
+//
 export default class Mysql extends Adapter {
   constructor(options) {
     super(options);
@@ -44,6 +82,69 @@ export default class Mysql extends Adapter {
     return q.insert(obj);
   }
 
+// ## Finders
+//
+// ### first
+//
+// Gives you the first matched result:
+//
+// ```js
+// posts.find('first', {
+//   conditions: {
+//     id: 1
+//   }
+// }).then(function (post) {
+//   // post is now an instance of Post model
+//   var title = post.get('title');
+// });
+// ```
+//
+// ### all
+//
+// Gives you all matched results:
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     published: true
+//   }
+// }).then(function (models) {
+//   models.forEach(function (model) {
+//     var title = model.get('title');
+//   });
+// });
+// ```
+// ### list
+//
+// Gives you a list of key/value paired object of matched results:
+//
+// ```js
+// posts.find('list', {
+//   conditions: {},
+//   fields: [
+//     'id',
+//     'title'
+//   ]
+// }).then(function (list) {
+//   // list is now:
+//   //
+//   // {
+//   //   1: 'Hello World',
+//   //   2: 'About'
+//   // }
+// });
+// ```
+//
+// ### count
+//
+// Gives you the total count of matched results:
+//
+// ```js
+// posts.find('count').then(function (count) {
+//   // count is an integer here
+// });
+// ```
+//
   read(q) {
     return q;
   }
@@ -149,6 +250,86 @@ export default class Mysql extends Adapter {
     return query;
   }
 
+// ## Complex conditions
+//
+// ### equals
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     id: 1
+//   }
+// });
+// ```
+//
+// ### in list
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     id: [
+//       1,
+//       2,
+//       3
+//     ]
+//   }
+// });
+// ```
+//
+// ### comparisons
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     'Post.rating >': 3
+//   }
+// })
+// ```
+//
+// Example comparisons that you can try:
+//
+// * greater than `ModelAlias.field >`
+// * greater than or equel to `ModelAlias.field >=`
+// * less than `ModelAlias.field <`
+// * less than or equal to `ModelAlias.field <=`
+// * not equal to `ModelAlias.field !=`
+//
+// ### AND
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     AND: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+//
+// ### OR
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     OR: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+//
+// ### NOT
+//
+// ```js
+// posts.find('all', {
+//   conditions: {
+//     NOT: {
+//       'Post.published': 1
+//     }
+//   }
+// });
+// ```
+//
   queryConditions(query, options = {}) {
     let conditions = _.isObject(options.conditions) ? options.conditions : null;
     let self = this;

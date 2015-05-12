@@ -655,3 +655,7 @@ Clear the current instance of model of any data
 Delete the current model
 
 <!--/docume:src/Model.js-->
+
+# License
+
+MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
