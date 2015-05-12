@@ -1,7 +1,7 @@
-let _ = require('lodash');
+import _ from 'lodash';
 
-let Collection = require('./Collection');
-let Model = require('./Model');
+import Collection from './Collection'
+import Model from './Model'
 
 // # Database
 //
@@ -27,7 +27,7 @@ let Model = require('./Model');
 // });
 // ```
 
-class Database {
+export default class Database {
   constructor(options = {}) {
     this.defaultOptions = {
       adapter: null,
@@ -107,5 +107,3 @@ class Database {
     return this.getConnection().destroy(cb);
   }
 }
-
-module.exports = Database;

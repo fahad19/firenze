@@ -1,6 +1,11 @@
-module.exports = {
-  Database: require('./Database'),
-  Adapter: require('./Adapter'),
-  Collection: require('./Collection'),
-  Model: require('./Model')
+import Database from './Database';
+import Adapter from './Adapter';
+import Collection from './Collection';
+import Model from './Model'
+
+export default {
+  Database: Database,
+  Adapter: Adapter,
+  Collection: Collection,
+  Model: Model
 };

@@ -1,4 +1,4 @@
-let _ = require('lodash');
+import _ from 'lodash';
 
 // # Adapter
 //
@@ -9,7 +9,7 @@ let _ = require('lodash');
 // * MySQL
 //
 
-class Adapter {
+export default class Adapter {
 // ## Usage
 //
 // You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
@@ -104,5 +104,3 @@ class Adapter {
 
   }
 }
-
-module.exports = Adapter;

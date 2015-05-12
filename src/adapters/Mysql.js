@@ -1,11 +1,11 @@
-let knex = require('knex');
-let _ = require('lodash');
-let P = require('bluebird');
-let async = require('async');
+import knex from 'knex';
+import _ from 'lodash';
+import P from 'bluebird';
+import async from 'async';
 
-let Adapter = require('../Adapter');
+import Adapter from '../Adapter';
 
-class Mysql extends Adapter {
+export default class Mysql extends Adapter {
   constructor(options) {
     super(options);
 
@@ -244,5 +244,3 @@ class Mysql extends Adapter {
     return query;
   }
 }
-
-module.exports = Mysql;

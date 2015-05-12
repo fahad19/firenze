@@ -1,13 +1,13 @@
-let _ = require('lodash');
-let P = require('bluebird');
-let dotProp = require('dot-prop');
+import _ from 'lodash';
+import P from 'bluebird';
+import dotProp from 'dot-prop';
 
 // # Models
 //
 // A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
 //
 
-class Model {
+export default class Model {
 
 // ## Creating classes
 //
@@ -287,5 +287,3 @@ class Model {
     return this.collection().delete(this);
   }
 }
-
-module.exports = Model;

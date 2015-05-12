@@ -1,5 +1,5 @@
-let _ = require('lodash');
-let P = require('bluebird');
+import _ from 'lodash';
+import P from 'bluebird';
 
 // # Collection
 //
@@ -185,7 +185,7 @@ let P = require('bluebird');
 // ```
 //
 
-class Collection {
+export default class Collection {
   constructor(extend = {}) {
     this.modelClass = null;
     this.table = null;
@@ -442,5 +442,3 @@ class Collection {
     });
   }
 }
-
-module.exports = Collection;
