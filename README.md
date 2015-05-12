@@ -332,7 +332,7 @@ By default these are set:
 }
 ```
 
-This mapping allows you to later call `.find('all')`, which eventually calls `.findFirst()`.
+This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
 
 ## Usage
 

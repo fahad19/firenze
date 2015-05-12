@@ -54,7 +54,7 @@ export default class Collection {
 // }
 // ```
 //
-// This mapping allows you to later call `.find('all')`, which eventually calls `.findFirst()`.
+// This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
 //
     this.finders = {
       all: 'findAll',
