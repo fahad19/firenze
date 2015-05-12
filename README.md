@@ -31,28 +31,21 @@ Node.js ORM for MySQL.
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
     - [Properties](#properties)
-      - [table](#table)
       - [modelClass](#modelclass)
+      - [table](#table)
+      - [finders](#finders)
   - [Usage](#usage-2)
-    - [Finders](#finders)
-      - [first](#first)
-      - [all](#all)
-      - [list](#list)
-      - [count](#count)
-    - [Complex conditions](#complex-conditions)
-      - [equals](#equals)
-      - [in list](#in-list)
-      - [comparisons](#comparisons)
-      - [AND](#and)
-      - [OR](#or)
-      - [NOT](#not)
   - [Methods](#methods-2)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
     - [getAdapter()](#getadapter-1)
     - [setDatabase(db)](#setdatabasedb)
     - [query(options = {})](#queryoptions--)
-    - [find()](#find)
+    - [find(type, options = {})](#findtype-options--)
+    - [findAll(options = {})](#findalloptions--)
+    - [findFirst(options = {})](#findfirstoptions--)
+    - [findCount(options = {})](#findcountoptions--)
+    - [findList(options = {})](#findlistoptions--)
     - [save(model, options = {})](#savemodel-options--)
     - [delete(model)](#deletemodel)
 - [Models](#models)
@@ -78,6 +71,7 @@ Node.js ORM for MySQL.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete()](#delete)
+- [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -216,7 +210,9 @@ Adapter is responsible for making the actual database operations.
 
 ## Available
 
-* MySQL
+You can find further documentation on querying on their own sites:
+
+* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
 
 ## Usage
 
@@ -224,8 +220,26 @@ You would hardly ever need to create an instance of a Adapter. Database class wo
 
 An adapter instance is created with the same options passed when creating a Database instance:
 
+For example, if you are using MySQL adapter, it would be like this:
+
+```
+$ npm install --save firenze-adapter-mysql
+```
+
+Now let's create an instance of Database:
+
 ```js
-var adapter = new lib.Adapter(options);
+var f = require('firenze');
+var Database = f.Database;
+var MysqlAdapter = require('firenze-adapter-mysql');
+
+var db = new Database({
+  adapter: MysqlAdapter,
+  host: '127.0.0.1',
+  database: 'my_database',
+  user: '',
+  password: ''
+});
 ```
 
 ## Methods
@@ -295,13 +309,30 @@ There is also a short method for creating Collection class via `db.Collection()`
 
 ### Properties
 
+#### modelClass
+
+Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+
 #### table
 
 The name of the table that this Collection represents. Always as a string.
 
-#### modelClass
+#### finders
 
-Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+List of mapped finder methods that you want available in `.find(mappedName, options)`
+
+By default these are set:
+
+```js
+{
+  all: 'findAll',
+  first: 'findFirst',
+  count: 'findCount',
+  list: 'findList'
+}
+```
+
+This mapping allows you to later call `.find('all')`, which eventually calls `.findFirst()`.
 
 ## Usage
 
@@ -309,151 +340,6 @@ Before using the Collection, you need to create an instance of it:
 
 ```js
 var posts = new Posts();
-```
-
-### Finders
-
-There are various ways you can find results:
-
-#### first
-
-Gives you the first matched result:
-
-```js
-posts.find('first', {
-  conditions: {
-    id: 1
-  }
-}).then(function (post) {
-  // post is now an instance of Post model
-  var title = post.get('title');
-});
-```
-
-#### all
-
-Gives you all matched results:
-
-```js
-posts.find('all', {
-  conditions: {
-    published: true
-  }
-}).then(function (models) {
-  models.forEach(function (model) {
-    var title = model.get('title');
-  });
-});
-```
-#### list
-
-Gives you a list of key/value paired object of matched results:
-
-```js
-posts.find('list', {
-  conditions: {},
-  fields: [
-    'id',
-    'title'
-  ]
-}).then(function (list) {
-  // list is now:
-  //
-  // {
-  //   1: 'Hello World',
-  //   2: 'About'
-  // }
-});
-```
-
-#### count
-
-Gives you the total count of matched results:
-
-```js
-posts.find('count').then(function (count) {
-  // count is an integer here
-});
-```
-
-### Complex conditions
-
-#### equals
-
-```js
-posts.find('all', {
-  conditions: {
-    id: 1
-  }
-});
-```
-
-#### in list
-
-```js
-posts.find('all', {
-  conditions: {
-    id: [
-      1,
-      2,
-      3
-    ]
-  }
-});
-```
-
-#### comparisons
-
-```js
-posts.find('all', {
-  conditions: {
-    'Post.rating >': 3
-  }
-})
-```
-
-Example comparisons that you can try:
-
-* greater than `ModelAlias.field >`
-* greater than or equel to `ModelAlias.field >=`
-* less than `ModelAlias.field <`
-* less than or equal to `ModelAlias.field <=`
-* not equal to `ModelAlias.field !=`
-
-#### AND
-
-```js
-posts.find('all', {
-  conditions: {
-    AND: {
-      'Post.published': 1
-    }
-  }
-});
-```
-
-#### OR
-
-```js
-posts.find('all', {
-  conditions: {
-    OR: {
-      'Post.published': 1
-    }
-  }
-});
-```
-
-#### NOT
-
-```js
-posts.find('all', {
-  conditions: {
-    NOT: {
-      'Post.published': 1
-    }
-  }
-});
 ```
 
 ## Methods
@@ -478,9 +364,25 @@ Change database instance of this Collection to `db`
 
 Get query object for this Collection
 
-### find()
+### find(type, options = {})
 
 Explained above in `Finders` section
+
+### findAll(options = {})
+
+Returns an array of matched models
+
+### findFirst(options = {})
+
+Returns matched model if any
+
+### findCount(options = {})
+
+Returns count of matched results
+
+### findList(options = {})
+
+Returns key/value pair of matched results
 
 ### save(model, options = {})
 
