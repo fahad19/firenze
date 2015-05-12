@@ -1,9 +1,9 @@
 /* global describe, before, after, it */
 
-let _ = require('lodash');
-let should = require('should'); //eslint-disable-line
-let lib = require('../../index');
-let config = require('../config');
+var _ = require('lodash');
+var should = require('should'); //eslint-disable-line
+var lib = require('../../index');
+var config = require('../config');
 
 describe('Collection', function () {
   before(function (done) {
@@ -29,25 +29,25 @@ describe('Collection', function () {
   });
 
   it('should have an instance', function () {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.should.have.property('table').which.is.exactly('posts');
   });
 
   it('should have a model', function () {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.should.have.property('model');
 
-    let post = posts.model();
+    var post = posts.model();
     post.should.have.property('alias').which.is.exactly('Post');
   });
 
   it('should find all results', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('all').then(function (models) {
       models.should.be.instanceOf(Array);
       models.should.have.lengthOf(3);
 
-      let firstPost = models[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.attributes.title.should.be.exactly('Hello World');
 
@@ -58,7 +58,7 @@ describe('Collection', function () {
   });
 
   it('should find all results with AND conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('all', {
       conditions: {
         'Post.id': 2,
@@ -70,7 +70,7 @@ describe('Collection', function () {
       models.should.be.instanceOf(Array);
       models.should.have.lengthOf(1);
 
-      let firstPost = models[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.attributes.title.should.be.exactly('About');
 
@@ -81,7 +81,7 @@ describe('Collection', function () {
   });
 
   it('should find all results with IN conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('all', {
       conditions: {
         'Post.id': [
@@ -96,11 +96,11 @@ describe('Collection', function () {
       models.should.be.instanceOf(Array);
       models.should.have.lengthOf(2);
 
-      let firstPost = models[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.attributes.title.should.be.exactly('Hello World');
 
-      let secondPost = models[1];
+      var secondPost = models[1];
       secondPost.should.have.property('attributes');
       secondPost.attributes.title.should.be.exactly('About');
 
@@ -111,7 +111,7 @@ describe('Collection', function () {
   });
 
   it('should find all results with ordering', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('all', {
       order: {
         title: 'asc'
@@ -119,7 +119,7 @@ describe('Collection', function () {
     }).then(function (models) {
       models.should.be.instanceOf(Array);
 
-      let firstPost = models[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.get('title').should.be.exactly('About');
 
@@ -130,7 +130,7 @@ describe('Collection', function () {
   });
 
   it('should find all results with pagination', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('all', {
       order: {
         title: 'asc'
@@ -140,7 +140,7 @@ describe('Collection', function () {
     }).then(function (models) {
       models.should.be.instanceOf(Array);
 
-      let firstPost = models[0];
+      var firstPost = models[0];
       firstPost.should.have.property('attributes');
       firstPost.get('title').should.be.exactly('Hello World');
 
@@ -151,7 +151,7 @@ describe('Collection', function () {
   });
 
   it('should find single result', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('first', {
       conditions: {
         id: 1
@@ -165,7 +165,7 @@ describe('Collection', function () {
   });
 
   it('should find single result with selected fields', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('first', {
       fields: [
         'id',
@@ -186,7 +186,7 @@ describe('Collection', function () {
   });
 
   it('should find single result with aliased conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('first', {
       conditions: {
         'Post.id': 2
@@ -200,7 +200,7 @@ describe('Collection', function () {
   });
 
   it('should find list', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('list').then(function (list) {
       list.should.eql({
         1: 'Hello World',
@@ -214,7 +214,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count').then(function (count) {
       count.should.equal(3);
       done();
@@ -224,7 +224,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with `greater than (>)` conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.views >': 15
@@ -238,7 +238,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with `greater than and equal (>=)` conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.views >=': 20
@@ -252,7 +252,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with `less than (<)` conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.views <': 15
@@ -266,7 +266,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with `not equal (!=)` conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.title !=': 'Hello World'
@@ -280,7 +280,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with NULL conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.note': null
@@ -294,7 +294,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results, with NOT NULL conditions', function (done) {
-    let posts = new this.Posts();
+    var posts = new this.Posts();
     posts.find('count', {
       conditions: {
         'Post.note !=': null

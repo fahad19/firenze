@@ -1,8 +1,8 @@
 /* global describe, before, after, it */
 
-let should = require('should'); //eslint-disable-line
-let lib = require('../../index');
-let config = require('../config');
+var should = require('should'); //eslint-disable-line
+var lib = require('../../index');
+var config = require('../config');
 
 describe('Fixtures', function () {
   before(function () {
@@ -16,8 +16,8 @@ describe('Fixtures', function () {
   });
 
   it('should load fixtures for a single Model', function (done) {
-    let post = new this.Post();
-    let data = require('../fixtures/posts');
+    var post = new this.Post();
+    var data = require('../fixtures/posts');
     this.db.getAdapter().loadFixture(post, data).then(function () {
       done();
     }).catch(function (error) {
