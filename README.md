@@ -71,22 +71,22 @@ Node.js ORM for MySQL.
     - [delete(q)](#deleteq)
     - [loadFixture(model, rows)](#loadfixturemodel-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
-- [MySQL Adapter](#mysql-adapter)
+  - [MySQL Adapter](#mysql-adapter)
   - [Install](#install)
-  - [Usage](#usage-4)
-  - [Schema](#schema)
-  - [Finders](#finders)
-    - [first](#first)
-    - [all](#all)
-    - [list](#list)
-    - [count](#count)
-  - [Complex conditions](#complex-conditions)
-    - [equals](#equals)
-    - [in list](#in-list)
-    - [comparisons](#comparisons)
-    - [AND](#and)
-    - [OR](#or)
-    - [NOT](#not)
+    - [Usage](#usage-4)
+    - [Schema](#schema)
+    - [Finders](#finders)
+      - [first](#first)
+      - [all](#all)
+      - [list](#list)
+      - [count](#count)
+    - [Complex conditions](#complex-conditions)
+      - [equals](#equals)
+      - [in list](#in-list)
+      - [comparisons](#comparisons)
+      - [AND](#and)
+      - [OR](#or)
+      - [NOT](#not)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -575,7 +575,7 @@ arr = [{model: post, data: rows}]
 <!--/docume:src/Adapter.js-->
 
 <!--docume:src/adapters/Mysql.js-->
-# MySQL Adapter
+## MySQL Adapter
 
 MySQL adapter for Firenze.js
 
@@ -585,7 +585,7 @@ MySQL adapter for Firenze.js
 $ npm install --save firenze-adapter-mysql
 ```
 
-## Usage
+### Usage
 
 You aren't expected to deal with the Adapter directly. Just pass the adapter to Database config when you create an instance.
 
@@ -607,7 +607,7 @@ var db = new Database({
 });
 ```
 
-## Schema
+### Schema
 
 When defining a Model's schema, you need to pass option for each column's `type`.
 
@@ -640,7 +640,7 @@ var Post = db.createModelClass({
 });
 ```
 
-## Finders
+### Finders
 
 Examples below assumes you have an instance of Collection already:
 
@@ -648,7 +648,7 @@ Examples below assumes you have an instance of Collection already:
 var posts = new Posts();
 ```
 
-### first
+#### first
 
 Gives you the first matched result:
 
@@ -663,7 +663,7 @@ posts.find('first', {
 });
 ```
 
-### all
+#### all
 
 Gives you all matched results:
 
@@ -678,7 +678,7 @@ posts.find('all', {
   });
 });
 ```
-### list
+#### list
 
 Gives you a list of key/value paired object of matched results:
 
@@ -699,7 +699,7 @@ posts.find('list', {
 });
 ```
 
-### count
+#### count
 
 Gives you the total count of matched results:
 
@@ -709,9 +709,9 @@ posts.find('count').then(function (count) {
 });
 ```
 
-## Complex conditions
+### Complex conditions
 
-### equals
+#### equals
 
 ```js
 posts.find('all', {
@@ -721,7 +721,7 @@ posts.find('all', {
 });
 ```
 
-### in list
+#### in list
 
 ```js
 posts.find('all', {
@@ -735,7 +735,7 @@ posts.find('all', {
 });
 ```
 
-### comparisons
+#### comparisons
 
 ```js
 posts.find('all', {
@@ -753,7 +753,7 @@ Example comparisons that you can try:
 * less than or equal to `ModelAlias.field <=`
 * not equal to `ModelAlias.field !=`
 
-### AND
+#### AND
 
 ```js
 posts.find('all', {
@@ -765,7 +765,7 @@ posts.find('all', {
 });
 ```
 
-### OR
+#### OR
 
 ```js
 posts.find('all', {
@@ -777,7 +777,7 @@ posts.find('all', {
 });
 ```
 
-### NOT
+#### NOT
 
 ```js
 posts.find('all', {

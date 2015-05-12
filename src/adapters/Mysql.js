@@ -5,7 +5,7 @@ import async from 'async';
 
 import Adapter from '../Adapter';
 
-// # MySQL Adapter
+// ## MySQL Adapter
 //
 // MySQL adapter for Firenze.js
 //
@@ -15,7 +15,7 @@ import Adapter from '../Adapter';
 // $ npm install --save firenze-adapter-mysql
 // ```
 //
-// ## Usage
+// ### Usage
 //
 // You aren't expected to deal with the Adapter directly. Just pass the adapter to Database config when you create an instance.
 //
@@ -37,7 +37,7 @@ import Adapter from '../Adapter';
 // });
 // ```
 //
-// ## Schema
+// ### Schema
 //
 // When defining a Model's schema, you need to pass option for each column's `type`.
 //
@@ -109,7 +109,7 @@ export default class Mysql extends Adapter {
     return q.insert(obj);
   }
 
-// ## Finders
+// ### Finders
 //
 // Examples below assumes you have an instance of Collection already:
 //
@@ -117,7 +117,7 @@ export default class Mysql extends Adapter {
 // var posts = new Posts();
 // ```
 //
-// ### first
+// #### first
 //
 // Gives you the first matched result:
 //
@@ -132,7 +132,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### all
+// #### all
 //
 // Gives you all matched results:
 //
@@ -147,7 +147,7 @@ export default class Mysql extends Adapter {
 //   });
 // });
 // ```
-// ### list
+// #### list
 //
 // Gives you a list of key/value paired object of matched results:
 //
@@ -168,7 +168,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### count
+// #### count
 //
 // Gives you the total count of matched results:
 //
@@ -283,9 +283,9 @@ export default class Mysql extends Adapter {
     return query;
   }
 
-// ## Complex conditions
+// ### Complex conditions
 //
-// ### equals
+// #### equals
 //
 // ```js
 // posts.find('all', {
@@ -295,7 +295,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### in list
+// #### in list
 //
 // ```js
 // posts.find('all', {
@@ -309,7 +309,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### comparisons
+// #### comparisons
 //
 // ```js
 // posts.find('all', {
@@ -327,7 +327,7 @@ export default class Mysql extends Adapter {
 // * less than or equal to `ModelAlias.field <=`
 // * not equal to `ModelAlias.field !=`
 //
-// ### AND
+// #### AND
 //
 // ```js
 // posts.find('all', {
@@ -339,7 +339,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### OR
+// #### OR
 //
 // ```js
 // posts.find('all', {
@@ -351,7 +351,7 @@ export default class Mysql extends Adapter {
 // });
 // ```
 //
-// ### NOT
+// #### NOT
 //
 // ```js
 // posts.find('all', {
