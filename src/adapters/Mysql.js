@@ -224,7 +224,7 @@ export default class Mysql extends Adapter {
     });
   }
 
-  populateTable(model) {
+  populateTable(model, rows) {
     let connection = this.getConnection();
     let table = model.collection().table;
 

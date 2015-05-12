@@ -18,7 +18,7 @@ describe('Fixtures', function () {
   it('should load fixtures for a single Model', function (done) {
     var post = new this.Post();
     var data = require('../fixtures/posts');
-    this.db.getAdapter().loadFixture(post, data).then(function () {
+    this.db.getAdapter().loadFixture(post, data).then(function (response) {
       done();
     }).catch(function (error) {
       throw error;

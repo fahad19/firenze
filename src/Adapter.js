@@ -186,7 +186,13 @@ export default class Adapter {
               callback(error);
             })
         }
-      ]);
+      ], function (err, results) {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(results);
+      });
     });
   }
 
@@ -199,7 +205,7 @@ export default class Adapter {
   loadAllFixtures(arr) { //eslint-disable-line
     return new P((resolve, reject) => {
       async.map(arr, (fixture, callback) => {
-        this.loadFixture(fixture.model, fixture.data).then(function (results) {
+        this.loadFixture(fixture.model, fixture.rows).then(function (results) {
           callback(null, results);
         }).catch(function (error) {
           callback(error);
