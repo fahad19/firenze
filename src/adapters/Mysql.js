@@ -9,7 +9,7 @@ import Adapter from '../Adapter';
 //
 // MySQL adapter for Firenze.js
 //
-// ## Install
+// ### Install
 //
 // ```
 // $ npm install --save firenze-adapter-mysql

@@ -72,7 +72,7 @@ Node.js ORM for MySQL.
     - [loadFixture(model, rows)](#loadfixturemodel-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
   - [MySQL Adapter](#mysql-adapter)
-  - [Install](#install)
+    - [Install](#install)
     - [Usage](#usage-4)
     - [Schema](#schema)
     - [Finders](#finders)
@@ -579,7 +579,7 @@ arr = [{model: post, data: rows}]
 
 MySQL adapter for Firenze.js
 
-## Install
+### Install
 
 ```
 $ npm install --save firenze-adapter-mysql
