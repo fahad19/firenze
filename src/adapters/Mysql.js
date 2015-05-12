@@ -133,12 +133,19 @@ export default class Mysql extends Adapter {
   }
 
   queryOptions(query, options) {
-    query = this.queryConditions(query, options);
-    query = this.queryFields(query, options);
-    query = this.queryOrder(query, options);
-    query = this.queryLimit(query, options);
-    query = this.queryGroup(query, options);
-    query = this.queryCount(query, options);
+    let apply = [
+      'Conditions',
+      'Fields',
+      'Count',
+      'Order',
+      'Group',
+      'Limit'
+    ];
+
+    apply.forEach((a) => {
+      this['query' + a](query, options);
+    });
+
     return query;
   }
 
