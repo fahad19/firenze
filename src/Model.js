@@ -53,7 +53,7 @@ export default class Model {
 // ```js
 // {
 //   id: {
-//     type: 'increments'
+//     type: 'integer'
 //   },
 //   title {
 //     type: 'string'
@@ -61,7 +61,7 @@ export default class Model {
 // }
 // ```
 //
-// List of available column types:
+// Column types can vary depending on the adapter you are using. For example, MySQL adapter supports these types for columns:
 //
 // * increments
 // * integer

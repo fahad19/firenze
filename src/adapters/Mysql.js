@@ -37,10 +37,37 @@ import Adapter from '../Adapter';
 // });
 // ```
 //
-// Examples below assumes you have an instance of Collection already:
+// ## Schema
+//
+// When defining a Model's schema, you need to pass option for each column's `type`.
+//
+// Here are the supported types from this adapter:
+//
+// * increments
+// * integer
+// * bigInteger
+// * text
+// * string
+// * float
+// * decimal
+// * boolean
+// * date
+// * dateTime
+// * time
+// * enum
+// * binary
+// * uuid
+//
+// Example:
 //
 // ```js
-// var posts = new Posts();
+// var Post = db.createModelClass({
+//   schema: {
+//     id: {
+//       type: 'increments'
+//     }
+//   }
+// });
 // ```
 //
 export default class Mysql extends Adapter {
@@ -83,6 +110,12 @@ export default class Mysql extends Adapter {
   }
 
 // ## Finders
+//
+// Examples below assumes you have an instance of Collection already:
+//
+// ```js
+// var posts = new Posts();
+// ```
 //
 // ### first
 //

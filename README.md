@@ -15,27 +15,14 @@ Node.js ORM for MySQL.
     - [getAdapter()](#getadapter)
     - [getConnection()](#getconnection)
     - [close(cb = null)](#closecb--null)
-- [Adapter](#adapter)
-  - [Available](#available)
-  - [Usage](#usage-1)
-  - [Methods](#methods-1)
-    - [getConnection()](#getconnection-1)
-    - [closeConnection(cb = null)](#closeconnectioncb--null)
-    - [query()](#query)
-    - [create(q, obj)](#createq-obj)
-    - [read(q)](#readq)
-    - [update(q, obj)](#updateq-obj)
-    - [delete(q)](#deleteq)
-    - [loadFixture(model, rows)](#loadfixturemodel-rows)
-    - [loadAllFixtures(arr)](#loadallfixturesarr)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
     - [Properties](#properties)
       - [modelClass](#modelclass)
       - [table](#table)
       - [finders](#finders)
-  - [Usage](#usage-2)
-  - [Methods](#methods-2)
+  - [Usage](#usage-1)
+  - [Methods](#methods-1)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
     - [getAdapter()](#getadapter-1)
@@ -58,8 +45,8 @@ Node.js ORM for MySQL.
       - [displayField](#displayfield)
       - [id](#id)
       - [alias](#alias)
-  - [Usage](#usage-3)
-  - [Methods](#methods-3)
+  - [Usage](#usage-2)
+  - [Methods](#methods-2)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
@@ -71,6 +58,19 @@ Node.js ORM for MySQL.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete()](#delete)
+- [Adapter](#adapter)
+  - [Available](#available)
+  - [Usage](#usage-3)
+  - [Methods](#methods-3)
+    - [getConnection()](#getconnection-1)
+    - [closeConnection(cb = null)](#closeconnectioncb--null)
+    - [query()](#query)
+    - [create(q, obj)](#createq-obj)
+    - [read(q)](#readq)
+    - [update(q, obj)](#updateq-obj)
+    - [delete(q)](#deleteq)
+    - [loadFixture(model, rows)](#loadfixturemodel-rows)
+    - [loadAllFixtures(arr)](#loadallfixturesarr)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -202,89 +202,6 @@ Returns connection of the Adapter
 Closes the connection
 
 <!--/docume:src/Database.js-->
-
-<!--docume:src/Adapter.js-->
-# Adapter
-
-Adapter is responsible for making the actual database operations.
-
-## Available
-
-You can find further documentation on querying on their own sites:
-
-* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
-
-## Usage
-
-You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
-
-An adapter instance is created with the same options passed when creating a Database instance:
-
-For example, if you are using MySQL adapter, it would be like this:
-
-```
-$ npm install --save firenze-adapter-mysql
-```
-
-Now let's create an instance of Database:
-
-```js
-var f = require('firenze');
-var Database = f.Database;
-var MysqlAdapter = require('firenze-adapter-mysql');
-
-var db = new Database({
-  adapter: MysqlAdapter,
-  host: '127.0.0.1',
-  database: 'my_database',
-  user: '',
-  password: ''
-});
-```
-
-## Methods
-
-Every adapter needs to implement at least these methods below:
-
-### getConnection()
-
-Returns the current connection
-
-### closeConnection(cb = null)
-
-Closes the current connection, and calls the callback function `cb()` if passed.
-
-### query()
-
-Gets a query object
-
-### create(q, obj)
-
-Creates a new record
-
-### read(q)
-
-Fetches the results found against the query object
-
-### update(q, obj)
-
-Updates the records matching againt query object with given data
-
-### delete(q)
-
-Deletes the records matching against query object
-
-### loadFixture(model, rows)
-
-Creates table, and loads data for given model
-
-### loadAllFixtures(arr)
-
-Runs fixtures for multiple models
-
-arr = [{model: post, data: rows}]
-
-<!--/docume:src/Adapter.js-->
 
 <!--docume:src/Collection.js-->
 # Collection
@@ -439,7 +356,7 @@ The keys of this object are the column names, and the value defines what type of
 ```js
 {
   id: {
-    type: 'increments'
+    type: 'integer'
   },
   title {
     type: 'string'
@@ -447,7 +364,7 @@ The keys of this object are the column names, and the value defines what type of
 }
 ```
 
-List of available column types:
+Column types can vary depending on the adapter you are using. For example, MySQL adapter supports these types for columns:
 
 * increments
 * integer
@@ -557,6 +474,89 @@ Clear the current instance of model of any data
 Delete the current model
 
 <!--/docume:src/Model.js-->
+
+<!--docume:src/Adapter.js-->
+# Adapter
+
+Adapter is responsible for making the actual database operations.
+
+## Available
+
+You can find further documentation on querying on their own sites:
+
+* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
+
+## Usage
+
+You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
+
+An adapter instance is created with the same options passed when creating a Database instance:
+
+For example, if you are using MySQL adapter, it would be like this:
+
+```
+$ npm install --save firenze-adapter-mysql
+```
+
+Now let's create an instance of Database:
+
+```js
+var f = require('firenze');
+var Database = f.Database;
+var MysqlAdapter = require('firenze-adapter-mysql');
+
+var db = new Database({
+  adapter: MysqlAdapter,
+  host: '127.0.0.1',
+  database: 'my_database',
+  user: '',
+  password: ''
+});
+```
+
+## Methods
+
+Every adapter needs to implement at least these methods below:
+
+### getConnection()
+
+Returns the current connection
+
+### closeConnection(cb = null)
+
+Closes the current connection, and calls the callback function `cb()` if passed.
+
+### query()
+
+Gets a query object
+
+### create(q, obj)
+
+Creates a new record
+
+### read(q)
+
+Fetches the results found against the query object
+
+### update(q, obj)
+
+Updates the records matching againt query object with given data
+
+### delete(q)
+
+Deletes the records matching against query object
+
+### loadFixture(model, rows)
+
+Creates table, and loads data for given model
+
+### loadAllFixtures(arr)
+
+Runs fixtures for multiple models
+
+arr = [{model: post, data: rows}]
+
+<!--/docume:src/Adapter.js-->
 
 # License
 
