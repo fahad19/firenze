@@ -380,22 +380,7 @@ The keys of this object are the column names, and the value defines what type of
 }
 ```
 
-Column types can vary depending on the adapter you are using. For example, MySQL adapter supports these types for columns:
-
-* increments
-* integer
-* bigInteger
-* text
-* string
-* float
-* decimal
-* boolean
-* date
-* dateTime
-* time
-* enum
-* binary
-* uuid
+Column types can vary depending on the adapter you are using.
 
 #### attributes
 
