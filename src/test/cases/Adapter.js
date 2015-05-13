@@ -4,7 +4,7 @@ var should = require('should'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
 
-describe('Fixtures', function () {
+describe('Adapter', function () {
   before(function () {
     this.db = new lib.Database(config.mysql);
     this.Post = require('../models/Post')(this.db);
