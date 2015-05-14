@@ -124,7 +124,7 @@ export default class Model {
 //     type: 'string',
 //     validate: {
 //       rule: function (field, value, done) {
-//         checkIfFoodIsHealthy(function (healthy) {
+//         checkIfFoodIsHealthy(value, function (healthy) {
 //           var isHealthy = healthy === true;
 //           done(isHealthy);
 //         });
