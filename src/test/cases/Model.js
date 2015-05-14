@@ -1,6 +1,7 @@
 /* global describe, before, after, it */
 
-var should = require('should'); //eslint-disable-line
+var should = require('should');
+var should = require('should-promised');
 var lib = require('../../index');
 var config = require('../config');
 
@@ -154,7 +155,7 @@ describe('Model', function () {
     });
   });
 
-  it('should validate a single field', function (done) {
+  it('should validate a single field', function () {
     var post = new this.Post({
       title: 'Hello World'
     }, {
@@ -168,10 +169,18 @@ describe('Model', function () {
       }
     });
 
-    post.validateField('title')
-      .then(function (validated) {
-        validated.should.eql('Must be alphanumeric');
-        done();
-      });
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be alphanumeric');
+
+    post.set('title', 'hello');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .be
+      .true;
   });
 });
