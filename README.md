@@ -47,6 +47,12 @@ Node.js ORM for MySQL.
       - [validationRules](#validationrules)
       - [alias](#alias)
   - [Usage](#usage-2)
+  - [Validations](#validations)
+    - [Single rule](#single-rule)
+    - [Multiple rules](#multiple-rules)
+    - [Rule with options](#rule-with-options)
+    - [Rule as a function](#rule-as-a-function)
+    - [Asynchronouse rule](#asynchronouse-rule)
   - [Methods](#methods-2)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
@@ -393,65 +399,11 @@ For example:
 
 ```js
 {
-  // single rule
   email: {
     type: 'string',
     validate: {
       rule: 'isEmail',
       message: 'Please enter a valid email address'
-    }
-  },
-
-  // multiple rules
-  email: {
-    type: 'string',
-    validate: [
-      {
-        rule: 'isLowercase',
-        message: 'Please enter email address in lowercase',
-      },
-      {
-        rule: 'isEmail',
-        message: 'Please enter a valid email address'
-      }
-    ]
-  },
-
-  // rule with options
-  fruit: {
-    type: 'string',
-    validate: {
-      rule: [
-       'contains', // `contains` is the rule name
-       [
-         'apple',
-         'banana'
-       ] // this array is passed as an argument to rule function
-      ],
-      message: 'Must be either apple or banana'
-    }
-  },
-
-  // rule passed as a custom function
-  mood: {
-    type: 'string',
-    validate: {
-      rule: function (field, value) {
-        return true;
-      }
-    }
-  },
-
-  // async rule
-  food: {
-    type: 'string',
-    validate: {
-      rule: function (field, value, done) {
-        checkIfFoodIsHealthy(value, function (healthy) {
-          var isHealthy = healthy === true;
-          done(isHealthy);
-        });
-      }
     }
   }
 }
@@ -512,6 +464,97 @@ var post = new Post({
   title: 'Hello World',
   body: 'blah...'
 });
+```
+
+## Validations
+
+Validation rules for fields can be set when defining the schema:
+
+### Single rule
+
+```js
+{
+  email: {
+    type: 'string',
+    validate: {
+      rule: 'isEmail',
+      message: 'Please enter a valid email address'
+    }
+  }
+}
+```
+
+### Multiple rules
+
+```js
+{
+  email: {
+    type: 'string',
+    validate: [
+      {
+        rule: 'isLowercase',
+        message: 'Please enter email address in lowercase',
+      },
+      {
+        rule: 'isEmail',
+        message: 'Please enter a valid email address'
+      }
+    ]
+  }
+}
+```
+
+### Rule with options
+
+```js
+{
+  fruit: {
+    type: 'string',
+    validate: {
+      rule: [
+       'contains', // `contains` is the rule name
+       [
+         'apple',
+         'banana'
+       ] // this array is passed as an argument to rule function
+      ],
+      message: 'Must be either apple or banana'
+    }
+  }
+}
+```
+
+### Rule as a function
+
+```js
+{
+  mood: {
+    type: 'string',
+    validate: {
+      rule: function (field, value) {
+        return true;
+      }
+    }
+  }
+}
+```
+
+### Asynchronouse rule
+
+```js
+{
+  food: {
+    type: 'string',
+    validate: {
+      rule: function (field, value, done) {
+        checkIfFoodIsHealthy(value, function (healthy) {
+          var isHealthy = healthy === true;
+          done(isHealthy);
+        });
+      }
+    }
+  }
+}
 ```
 
 ## Methods
