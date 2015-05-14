@@ -2,6 +2,7 @@ import _ from 'lodash';
 import P from 'bluebird';
 import dotProp from 'dot-prop';
 import validator from 'validator';
+import async from 'async';
 
 // # Models
 //
@@ -495,8 +496,29 @@ export default class Model {
 
   }
 
-  validateField(field, value) {
+  validateField(field, value = null, returnMessages = false) {
+    if (!value) {
+      value = this.get(field);
+    }
 
+    let validate = this.schema[field];
+    if (!validate) {
+      return new P((resolve, reject) => {
+        resolve(true);
+      });
+    }
+
+    if (!_.isArray(validate)) {
+      validate = [validate];
+    }
+
+    return new P((resolve, reject) => {
+      async.each(validate, (rule, cb) => {
+
+      }, (err) => {
+
+      });
+    });
   }
 
 // ### fixturify(rows)
