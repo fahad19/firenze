@@ -496,27 +496,39 @@ export default class Model {
 
   }
 
-  validateField(field, value = null, returnMessages = false) {
+  validateField(field, value = null) {
     if (!value) {
       value = this.get(field);
     }
 
-    let validate = this.schema[field];
-    if (!validate) {
+    let fieldSchema = this.schema[field];
+    if (!_.isObject(fieldSchema) || !fieldSchema.validate) {
       return new P((resolve, reject) => {
         resolve(true);
       });
     }
 
+    let validate = fieldSchema.validate;
     if (!_.isArray(validate)) {
       validate = [validate];
     }
 
     return new P((resolve, reject) => {
-      async.each(validate, (rule, cb) => {
+      async.eachSeries(validate, (ruleObj, cb) => {
+        let rule = ruleObj.rule;
 
+        let passed = validator[rule](value);
+        if (!passed) {
+          return cb(ruleObj.message);
+        }
+
+        cb();
       }, (err) => {
+        if (err) {
+          return resolve(err);
+        }
 
+        return resolve(true);
       });
     });
   }

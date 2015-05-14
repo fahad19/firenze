@@ -153,4 +153,25 @@ describe('Model', function () {
       done();
     });
   });
+
+  it('should validate a single field', function (done) {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'isAlphanumeric',
+            message: 'Must be alphanumeric'
+          }
+        }
+      }
+    });
+
+    post.validateField('title')
+      .then(function (validated) {
+        validated.should.eql('Must be alphanumeric');
+        done();
+      });
+  });
 });
