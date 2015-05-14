@@ -303,7 +303,7 @@ export default class Model {
 //
 // Validation rules can be defined when creating a Model class:
 //
-// ```
+// ```js
 // var Post = db.createModelClass({
 //   schema: {
 //     name: {

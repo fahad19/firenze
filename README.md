@@ -609,7 +609,7 @@ But of course, you can always override them or add new custom rules.
 
 Validation rules can be defined when creating a Model class:
 
-```
+```js
 var Post = db.createModelClass({
   schema: {
     name: {
