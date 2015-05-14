@@ -253,6 +253,48 @@ export default class Model {
 // }
 // ```
 //
+// ### Custom rules
+//
+// Validation rules can be defined when creating a Model class:
+//
+// ```
+// var Post = db.createModelClass({
+//   schema: {
+//     name: {
+//       type: 'string',
+//       validate: {
+//         rule: 'myFirstRule'
+//       }
+//     },
+//     title: {
+//       type: 'string',
+//       validate: {
+//         rule: [
+//           'myRuleWithOptions',
+//           'arg1 value',
+//           'arg2 value'
+//         ]
+//       }
+//     }
+//   },
+//
+//   validationRules: {
+//     myFirstRule: function (field, value) {
+//       return true; // validated successfully
+//     },
+//     myRuleWithOptions: function (field, value, arg1, arg2) {
+//       return true;
+//     },
+//     myAsyncRule: function (field, value, done) {
+//       doSomething(value, function (result) {
+//         var validated = result === true;
+//         done(validated);
+//       });
+//     }
+//   }
+// });
+// ```
+//
 
 // ## Methods
 //
