@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import P from 'bluebird';
 import dotProp from 'dot-prop';
+import validator from 'validator';
 
 // # Models
 //
@@ -55,13 +56,85 @@ export default class Model {
 //   id: {
 //     type: 'integer'
 //   },
-//   title {
+//   title: {
 //     type: 'string'
 //   }
 // }
 // ```
 //
 // Column types can vary depending on the adapter you are using.
+//
+// You also use the `schema` property to set validation rules.
+//
+// For example:
+//
+// ```js
+// {
+//   // single rule
+//   email: {
+//     type: 'string',
+//     validate: {
+//       rule: 'isEmail',
+//       message: 'Please enter a valid email address'
+//     }
+//   },
+//
+//   // multiple rules
+//   email: {
+//     type: 'string',
+//     validate: [
+//       {
+//         rule: 'isLowercase',
+//         message: 'Please enter email address in lowercase',
+//       },
+//       {
+//         rule: 'isEmail',
+//         message: 'Please enter a valid email address'
+//       }
+//     ]
+//   },
+//
+//   // rule with options
+//   fruit: {
+//     type: 'string',
+//     validate: {
+//       rule: [
+//        'contains', // `contains` is the rule name
+//        [
+//          'apple',
+//          'banana'
+//        ] // this array is passed as an argument to rule function
+//       ],
+//       message: 'Must be either apple or banana'
+//     }
+//   },
+//
+//   // rule passed as a custom function
+//   mood: {
+//     type: 'string',
+//     validate: {
+//       rule: function (field, value) {
+//         return true;
+//       }
+//     }
+//   },
+//
+//   // async rule
+//   food: {
+//     type: 'string',
+//     validate: {
+//       rule: function (field, value, done) {
+//         checkIfFoodIsHealthy(function (healthy) {
+//           var isHealthy = healthy === true;
+//           done(isHealthy);
+//         });
+//       }
+//     }
+//   }
+// }
+// ```
+//
+// Validations will be discussed further later in its own section.
 //
     this.schema = {};
 
@@ -88,6 +161,26 @@ export default class Model {
 // For convenience, stores the ID of the model in this property
 //
     this.id = null;
+
+// #### validationRules
+//
+// Example:
+//
+// ```js
+// {
+//   ruleName: function (field, value) {
+//     return true;
+//   },
+//   asyncRule: function (value, field, validated) {
+//     return validated(true);
+//   },
+//   ruleWithOptions: function (value, field, arg1, arg2) {
+//     return true;
+//   }
+// }
+// ```
+//
+    this.validationRules = {};
 
     _.merge(this, extend);
 
@@ -270,6 +363,14 @@ export default class Model {
 //
   delete() {
     return this.collection().delete(this);
+  }
+
+  validate() {
+
+  }
+
+  validateField(field, value) {
+
   }
 
 // ### fixturify(rows)
