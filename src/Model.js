@@ -517,6 +517,7 @@ export default class Model {
         let ruleName;
         let ruleOptions = [];
         let message = ruleObj.message;
+        let validatorFunc;
 
         if (_.isString(rule)) {
           ruleName = rule;
@@ -527,10 +528,12 @@ export default class Model {
 
         if (!_.isFunction(validator[ruleName])) {
           return cb(message);
+        } else {
+          validatorFunc = validator[ruleName];
         }
 
         let validatorOptions = [value].concat(ruleOptions);
-        let passed = validator[ruleName].apply(
+        let passed = validatorFunc.apply(
           this,
           validatorOptions
         );

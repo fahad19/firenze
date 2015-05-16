@@ -183,6 +183,59 @@ describe('Model', function () {
       .true;
   });
 
+  it('should validate a single field with multiple rules', function () {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: [
+            {
+              rule: 'isAlphanumeric',
+              message: 'Must be alphanumeric'
+            },
+            {
+              rule: [
+                'isIn',
+                [
+                  'Strawberry',
+                  'banana',
+                  'apple'
+                ]
+              ],
+              message: 'Must be a fruit'
+            },
+            {
+              rule: 'isLowercase',
+              message: 'Must be lowercase'
+            }
+          ]
+        }
+      }
+    });
+
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be alphanumeric');
+
+    post.set('title', 'hello');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be a fruit');
+
+    post.set('title', 'apple');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .be
+      .true;
+  });
+
   it('should validate a single field with validator options', function () {
     var post = new this.Post({
       title: 'Hello World'
