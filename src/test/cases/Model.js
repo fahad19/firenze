@@ -1,6 +1,5 @@
 /* global describe, before, after, it */
 
-var should = require('should');
 var should = require('should-promised');
 var lib = require('../../index');
 var config = require('../config');
@@ -176,6 +175,43 @@ describe('Model', function () {
       .equal('Must be alphanumeric');
 
     post.set('title', 'hello');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .be
+      .true;
+  });
+
+  it('should validate a single field with validator options', function () {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: [
+            {
+              rule: [
+                'isIn',
+                [
+                  'apple',
+                  'banana'
+                ]
+              ],
+              message: 'Must be a fruit'
+            }
+          ]
+        }
+      }
+    });
+
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be a fruit');
+
+    post.set('title', 'apple');
     post
       .validateField('title')
       .should

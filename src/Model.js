@@ -503,9 +503,7 @@ export default class Model {
 
     let fieldSchema = this.schema[field];
     if (!_.isObject(fieldSchema) || !fieldSchema.validate) {
-      return new P((resolve, reject) => {
-        resolve(true);
-      });
+      return new P.resolve(true);
     }
 
     let validate = fieldSchema.validate;
@@ -516,10 +514,29 @@ export default class Model {
     return new P((resolve, reject) => {
       async.eachSeries(validate, (ruleObj, cb) => {
         let rule = ruleObj.rule;
+        let ruleName;
+        let ruleOptions = [];
+        let message = ruleObj.message;
 
-        let passed = validator[rule](value);
+        if (_.isString(rule)) {
+          ruleName = rule;
+        } else if (_.isArray(rule)) {
+          ruleName = _.first(rule);
+          ruleOptions = _.rest(rule);
+        }
+
+        if (!_.isFunction(validator[ruleName])) {
+          return cb(message);
+        }
+
+        let validatorOptions = [value].concat(ruleOptions);
+        let passed = validator[ruleName].apply(
+          this,
+          validatorOptions
+        );
+
         if (!passed) {
-          return cb(ruleObj.message);
+          return cb(message);
         }
 
         cb();
