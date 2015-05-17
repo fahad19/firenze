@@ -532,6 +532,10 @@ export default class Model {
           // rule is a direct function
           validatorFunc = rule;
           validatorOptions = [field, value];
+        } else if (ruleName && _.isFunction(this.validationRules[ruleName])) {
+          // rule is an pre-defined function
+          validatorFunc = this.validationRules[ruleName];
+          validatorOptions = [field, value];
         } else if (_.isFunction(validator[ruleName])) {
           // validator.js
           validatorFunc = validator[ruleName];
