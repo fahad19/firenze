@@ -493,10 +493,52 @@ export default class Model {
     return this.collection().delete(this);
   }
 
+// ### validate()
+//
+// Validates all fields of the current Model
+//
+// Returns true if all validated, otherwise an object of error messages keyed by field names.
+//
   validate() {
+    let fields = [];
+    _.each(this.toObject(), (v, field) => {
+      if (!_.isObject(v)) {
+        fields.push(field);
+      }
+    });
+    let list = {};
 
+    return new P((resolve, reject) => {
+      async.mapSeries(fields, (field, cb) => {
+        this
+          .validateField(field)
+          .then((validated) => {
+            if (validated !== true) {
+              list[field] = validated;
+            }
+
+            cb();
+          });
+      }, (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+
+        if (_.isEmpty(list)) {
+          return resolve(true);
+        }
+
+        return resolve(list);
+      });
+    });
   }
 
+// ### validateField(field, value = null)
+//
+// Validates a single field
+//
+// Returns true if validated, otherwise error message
+//
   validateField(field, value = null) {
     if (!value) {
       value = this.get(field);

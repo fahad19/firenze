@@ -374,4 +374,64 @@ describe('Model', function () {
       .be
       .true;
   });
+
+  it('should try to validate model with all fields', function () {
+    var post = new this.Post({
+      title: 'Hello World',
+      body: 'Blah... 123'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'isAlphanumeric',
+            message: 'Must be alphanumeric'
+          }
+        },
+        body: {
+          validate: {
+            rule: 'isAlpha',
+            message: 'Must be alphabets only'
+          }
+        }
+      }
+    });
+
+    post
+      .validate()
+      .should
+      .eventually
+      .eql({
+        title: 'Must be alphanumeric',
+        body: 'Must be alphabets only'
+      });
+  });
+
+  it('should validate model with all fields successfully', function () {
+    var post = new this.Post({
+      title: 'hello',
+      body: 'blah'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'isAlphanumeric',
+            message: 'Must be alphanumeric'
+          }
+        },
+        body: {
+          validate: {
+            rule: 'isAlpha',
+            message: 'Must be alphabets only'
+          }
+        }
+      }
+    });
+
+    post
+      .validate()
+      .should
+      .eventually
+      .be
+      .true;
+  });
 });
