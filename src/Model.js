@@ -462,7 +462,21 @@ export default class Model {
 // Save the current model
 //
   save(options = {}) {
-    return this.collection().save(this, options);
+    if (!_.isUndefined(options.validate) || options.validate === false) {
+      return this.collection().save(this, options);
+    }
+
+    return new P((resolve, reject) => {
+      this.validate().then((validated) => {
+        if (validated === true) {
+          return resolve(this.collection().save(this, options));
+        }
+
+        return reject({
+          validationErrors: validated
+        });
+      });
+    });
   }
 
 // ### saveField(field, value)

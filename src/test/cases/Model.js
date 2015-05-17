@@ -434,4 +434,32 @@ describe('Model', function () {
       .be
       .true;
   });
+
+  it('should not save if validation fails', function (done) {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'isAlphanumeric',
+            message: 'Must be alphanumeric'
+          }
+        }
+      }
+    });
+
+    post
+      .save()
+      .catch(function (error) {
+        error
+          .should
+          .eql({
+            validationErrors: {
+              title: 'Must be alphanumeric'
+            }
+          });
+        done();
+      });
+  });
 });
