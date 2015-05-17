@@ -3,6 +3,7 @@ import P from 'bluebird';
 import dotProp from 'dot-prop';
 import validator from 'validator';
 import async from 'async';
+import getParams from 'get-params';
 
 // # Models
 //
@@ -545,16 +546,29 @@ export default class Model {
           return cb(message);
         }
 
-        let passed = validatorFunc.apply(
-          this,
-          validatorOptions
-        );
+        let params = getParams(validatorFunc);
+        if (_.last(params) === 'done') {
+          // async
+          validatorOptions.push(function (passed) {
+            if (!passed) {
+              return cb(message);
+            }
 
-        if (!passed) {
-          return cb(message);
+            cb();
+          });
+        } else {
+          // sync
+          let passed = validatorFunc.apply(
+            this,
+            validatorOptions
+          );
+
+          if (!passed) {
+            return cb(message);
+          }
+
+          cb();
         }
-
-        cb();
       }, (err) => {
         if (err) {
           return resolve(err);

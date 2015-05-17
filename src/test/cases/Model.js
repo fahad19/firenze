@@ -337,4 +337,41 @@ describe('Model', function () {
       .be
       .true;
   });
+
+  it('should validate a single field with async rule function', function () {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'voldemort',
+            message: 'Must be Voldemort'
+          }
+        }
+      },
+      validationRules: {
+        voldemort: function (field, value, done) {
+          setTimeout(function () {
+            var passed = value === 'Voldemort';
+            done(passed);
+          }, 100);
+        }
+      }
+    });
+
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be Voldemort');
+
+    post.set('title', 'Voldemort');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .be
+      .true;
+  });
 });
