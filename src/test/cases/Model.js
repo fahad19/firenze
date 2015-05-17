@@ -272,4 +272,35 @@ describe('Model', function () {
       .be
       .true;
   });
+
+  it('should validate a single field with custom rule function', function () {
+    var post = new this.Post({
+      title: 'Hello World'
+    }, {
+      schema: {
+        title: {
+          validate: {
+            rule: function (field, value) {
+              return value === 'Voldemort';
+            },
+            message: 'Must be Voldemort'
+          }
+        }
+      }
+    });
+
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .equal('Must be Voldemort');
+
+    post.set('title', 'Voldemort');
+    post
+      .validateField('title')
+      .should
+      .eventually
+      .be
+      .true;
+  });
 });

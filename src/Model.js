@@ -517,7 +517,9 @@ export default class Model {
         let ruleName;
         let ruleOptions = [];
         let message = ruleObj.message;
+
         let validatorFunc;
+        let validatorOptions;
 
         if (_.isString(rule)) {
           ruleName = rule;
@@ -526,13 +528,19 @@ export default class Model {
           ruleOptions = _.rest(rule);
         }
 
-        if (!_.isFunction(validator[ruleName])) {
-          return cb(message);
-        } else {
+        if (_.isFunction(rule)) {
+          // rule is a direct function
+          validatorFunc = rule;
+          validatorOptions = [field, value];
+        } else if (_.isFunction(validator[ruleName])) {
+          // validator.js
           validatorFunc = validator[ruleName];
+          validatorOptions = [value].concat(ruleOptions);
+        } else {
+          // no rule found
+          return cb(message);
         }
 
-        let validatorOptions = [value].concat(ruleOptions);
         let passed = validatorFunc.apply(
           this,
           validatorOptions
