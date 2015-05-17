@@ -67,6 +67,8 @@ Node.js ORM for MySQL.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete()](#delete)
+    - [validate()](#validate)
+    - [validateField(field, value = null)](#validatefieldfield-value--null)
     - [fixturify(rows)](#fixturifyrows)
 - [Adapter](#adapter)
   - [Available](#available)
@@ -701,6 +703,18 @@ Clear the current instance of model of any data
 ### delete()
 
 Delete the current model
+
+### validate()
+
+Validates all fields of the current Model
+
+Returns true if all validated, otherwise an object of error messages keyed by field names.
+
+### validateField(field, value = null)
+
+Validates a single field
+
+Returns true if validated, otherwise error message
 
 ### fixturify(rows)
 
