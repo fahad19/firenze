@@ -343,6 +343,27 @@ export default class Model {
 // });
 // ```
 //
+// ### Required fields
+//
+// By default, validation rules are only checked against fields that are set.
+//
+// But if you wish to make sure that certain fields are required, meaning they should always be present, you can mark them as required in your schema:
+//
+// ```js
+// var Post = db.createModelClass({
+//   schema: {
+//     name: {
+//       type: 'string',
+//       validate: {
+//         rule: 'isAlpha',
+//         require: true,
+//         message: 'Must be alphabets only'
+//       }
+//     }
+//   }
+// });
+// ```
+//
 
 // ## Methods
 //
@@ -528,6 +549,29 @@ export default class Model {
         fields.push(field);
       }
     });
+
+    _.each(this.schema, (schema, field) => {
+      if (_.isUndefined(schema.validate)) {
+        return;
+      }
+
+      if (_.isObject(schema.validate) && schema.validate.required) {
+        fields.push(field);
+        return;
+      }
+
+      if (!_.isArray(schema.validate)) {
+        return;
+      }
+
+      _.each(schema.validate, (ruleObj) => {
+        if (ruleObj.required) {
+          fields.push(field);
+        }
+      });
+    });
+
+    fields = _.uniq(fields);
     let list = {};
 
     return new P((resolve, reject) => {

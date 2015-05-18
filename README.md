@@ -55,6 +55,7 @@ Node.js ORM for MySQL.
     - [Asynchronouse rule](#asynchronouse-rule)
     - [Available rules](#available-rules)
     - [Custom rules](#custom-rules)
+    - [Required fields](#required-fields)
   - [Methods](#methods-2)
     - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
@@ -645,6 +646,27 @@ var Post = db.createModelClass({
         var validated = result === true;
         done(validated);
       });
+    }
+  }
+});
+```
+
+### Required fields
+
+By default, validation rules are only checked against fields that are set.
+
+But if you wish to make sure that certain fields are required, meaning they should always be present, you can mark them as required in your schema:
+
+```js
+var Post = db.createModelClass({
+  schema: {
+    name: {
+      type: 'string',
+      validate: {
+        rule: 'isAlpha',
+        require: true,
+        message: 'Must be alphabets only'
+      }
     }
   }
 });

@@ -435,6 +435,28 @@ describe('Model', function () {
       .true;
   });
 
+  it('should validate required fields', function () {
+    var post = new this.Post({}, {
+      schema: {
+        title: {
+          validate: {
+            rule: 'isAlpha',
+            required: true,
+            message: 'Must be alphabets only'
+          }
+        },
+      },
+    });
+
+    post
+      .validate()
+      .should
+      .eventually
+      .eql({
+        title: 'Must be alphabets only'
+      });
+  });
+
   it('should not save if validation fails', function (done) {
     var post = new this.Post({
       title: 'Hello World'
