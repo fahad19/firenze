@@ -21,6 +21,18 @@ import P from 'bluebird';
 //
 // There is also a short method for creating Collection class via `db.Collection()`.
 //
+// You can also create a Collection class like this:
+//
+// ```js
+// var Posts = f.createCollectionClass({
+//   db: db, // instance of your Database
+//
+//   table: 'posts',
+//
+//   // ...
+// });
+// ```
+//
 
 export default class Collection {
   constructor(extend = {}) {

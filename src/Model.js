@@ -37,6 +37,14 @@ export default class Model {
 //
 // There is a short method for creating a Model class via `db.Model()`.
 //
+// You can also create a Model class like this:
+//
+// ```js
+// var Post = f.createModelClass({
+//   // ...
+// });
+// ```
+//
   constructor(attributes = {}, extend = {}) {
 
 // ### Properties

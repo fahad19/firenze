@@ -3,6 +3,9 @@ import _ from 'lodash';
 import Collection from './Collection'
 import Model from './Model'
 
+import modelFactory from './common/modelFactory';
+import collectionFactory from './common/collectionFactory';
+
 // # Database
 //
 // Before anything else, you need to create an instance of `Database` with your credentials which will be referenced in your Collections and Models.
@@ -51,36 +54,13 @@ export default class Database {
 //
 // Also aliased as `.Collection(extend)`.
 //
-    this.createCollectionClass = this.Collection = function (extend) {
-      class GeneratedCollection extends Collection {
-        constructor(_extend = {}) {
-          super(_extend);
-
-          if (!this.getDatabase()) {
-            this.setDatabase(self);
-          }
-
-          _.merge(this, extend);
-        }
-      }
-
-      return GeneratedCollection;
-    };
+    this.createCollectionClass = this.Collection = collectionFactory(this);
 
 // ### createModelClass(extend)
 //
 // Also aliased as `.Model(extend)`
 //
-    this.createModelClass = this.Model = function (extend) {
-      class GeneratedModel extends Model {
-        constructor(attributes = {}, _extend = {}) {
-          super(attributes, _extend);
-          _.merge(this, extend);
-        }
-      }
-
-      return GeneratedModel;
-    };
+    this.createModelClass = this.Model = modelFactory();
   }
 
 // ### getAdapter()
