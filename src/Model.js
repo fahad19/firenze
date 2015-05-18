@@ -210,7 +210,7 @@ export default class Model {
 //     type: 'string',
 //     validate: {
 //       rule: [
-//        'contains', // `contains` is the rule name
+//        'isIn', // `isIn` is the rule name
 //        [
 //          'apple',
 //          'banana'
