@@ -1,6 +1,7 @@
 /* global describe, before, after, it */
+/* eslint-disable no-unused-expressions */
 
-var should = require('should-promised');
+var should = require('should-promised'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
 
@@ -444,8 +445,8 @@ describe('Model', function () {
             required: true,
             message: 'Must be alphabets only'
           }
-        },
-      },
+        }
+      }
     });
 
     post

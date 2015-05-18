@@ -1,7 +1,7 @@
 import Database from './Database';
 import Adapter from './Adapter';
 import Collection from './Collection';
-import Model from './Model'
+import Model from './Model';
 
 import collectionFactory from './common/collectionFactory';
 import modelFactory from './common/modelFactory';

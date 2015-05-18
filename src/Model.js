@@ -593,7 +593,7 @@ export default class Model {
 
             cb();
           });
-      }, (err, results) => {
+      }, (err) => {
         if (err) {
           return reject(err);
         }
@@ -620,7 +620,7 @@ export default class Model {
 
     let fieldSchema = this.schema[field];
     if (!_.isObject(fieldSchema) || !fieldSchema.validate) {
-      return new P.resolve(true);
+      return new P.resolve(true); //eslint-disable-line
     }
 
     let validate = fieldSchema.validate;
@@ -628,7 +628,7 @@ export default class Model {
       validate = [validate];
     }
 
-    return new P((resolve, reject) => {
+    return new P((resolve) => {
       async.eachSeries(validate, (ruleObj, cb) => {
         let rule = ruleObj.rule;
         let ruleName;

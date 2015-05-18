@@ -1,7 +1,6 @@
 import knex from 'knex';
 import _ from 'lodash';
 import P from 'bluebird';
-import async from 'async';
 
 import Adapter from '../Adapter';
 

@@ -1,8 +1,5 @@
 import _ from 'lodash';
 
-import Collection from './Collection'
-import Model from './Model'
-
 import modelFactory from './common/modelFactory';
 import collectionFactory from './common/collectionFactory';
 
@@ -45,8 +42,6 @@ export default class Database {
 
     let AdapterClass = this.options.adapter;
     this.adapter = new AdapterClass(_.omit(this.options, 'adapter'));
-
-    let self = this;
 
 // ## Methods
 //

@@ -63,7 +63,7 @@ export default class Adapter {
 // Closes the current connection, and calls the callback function `cb()` if passed.
 //
   closeConnection(cb = null) {
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     }).then(function () {
       if (_.isFunction(cb)) {
@@ -77,7 +77,7 @@ export default class Adapter {
 // Gets a query object
 //
   query(options = {}) { //eslint-disable-line
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -87,7 +87,7 @@ export default class Adapter {
 // Creates a new record
 //
   create(q, obj) { //eslint-disable-line
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -97,7 +97,7 @@ export default class Adapter {
 // Fetches the results found against the query object
 //
   read(q) { //eslint-disable-line
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -107,7 +107,7 @@ export default class Adapter {
 // Updates the records matching againt query object with given data
 //
   update(q, obj) { //eslint-disable-line
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -117,7 +117,7 @@ export default class Adapter {
 // Deletes the records matching against query object
 //
   delete(q) { //eslint-disable-line
-    return new P(function (resolve, reject) {
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -126,8 +126,8 @@ export default class Adapter {
 //
 // Drop table if exists
 //
-  dropTable(model) {
-    return new P(function (resolve, reject) {
+  dropTable(model) { //eslint-disable-line
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -136,8 +136,8 @@ export default class Adapter {
 //
 // Create table based on model's schema
 //
-  createTable(model) {
-    return new P(function (resolve, reject) {
+  createTable(model) { //eslint-disable-line
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -146,8 +146,8 @@ export default class Adapter {
 //
 // Insert rows into model's table
 //
-  populateTable(model, rows) {
-    return new P(function (resolve, reject) {
+  populateTable(model, rows) { //eslint-disable-line
+    return new P(function (resolve) {
       return resolve();
     });
   }
@@ -166,7 +166,7 @@ export default class Adapter {
             })
             .catch(function (error) {
               callback(error);
-            })
+            });
         },
         (callback) => {
           this.createTable(model)
@@ -175,7 +175,7 @@ export default class Adapter {
             })
             .catch(function (error) {
               callback(error);
-            })
+            });
         },
         (callback) => {
           this.populateTable(model, rows)
@@ -184,7 +184,7 @@ export default class Adapter {
             })
             .catch(function (error) {
               callback(error);
-            })
+            });
         }
       ], function (err, results) {
         if (err) {

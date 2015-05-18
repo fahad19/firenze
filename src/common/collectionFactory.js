@@ -17,4 +17,4 @@ module.exports = function (db = null) {
 
     return GeneratedCollection;
   };
-}
+};
