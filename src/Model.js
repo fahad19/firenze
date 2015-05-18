@@ -404,6 +404,14 @@ export default class Model {
     return this.attributes;
   }
 
+// ### toJSON()
+//
+// Alias of `.toObject()`.
+//
+  toJSON() {
+    return this.toObject();
+  }
+
 // ### fetch(options = {})
 //
 // Fetches the model again from the Database.

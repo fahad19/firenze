@@ -60,6 +60,7 @@ Node.js ORM for MySQL.
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
     - [toObject()](#toobject)
+    - [toJSON()](#tojson)
     - [fetch(options = {})](#fetchoptions--)
     - [getId()](#getid)
     - [isNew()](#isnew)
@@ -666,6 +667,10 @@ Set an attribute with given value for the field
 ### toObject()
 
 Returns a plain object of the model
+
+### toJSON()
+
+Alias of `.toObject()`.
 
 ### fetch(options = {})
 
