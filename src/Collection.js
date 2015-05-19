@@ -33,6 +33,17 @@ import P from 'bluebird';
 // });
 // ```
 //
+// If you are using ES6:
+//
+// ```js
+// class Posts extends f.Collection {
+//   constructor(extend = {}) {
+//     super(extend);
+//     this.setDatabase(db);
+//   }
+// }
+// ```
+//
 
 export default class Collection {
   constructor(extend = {}) {

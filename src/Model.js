@@ -45,6 +45,16 @@ export default class Model {
 // });
 // ```
 //
+// If you are using ES6:
+//
+// ```js
+// class Post extends f.Model {
+//   constructor(attributes = {}, extend = {}) {
+//     super(attributes, extend);
+//   }
+// }
+// ```
+//
   constructor(attributes = {}, extend = {}) {
 
 // ### Properties

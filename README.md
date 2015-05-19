@@ -269,6 +269,17 @@ var Posts = f.createCollectionClass({
 });
 ```
 
+If you are using ES6:
+
+```js
+class Posts extends f.Collection {
+  constructor(extend = {}) {
+    super(extend);
+    this.setDatabase(db);
+  }
+}
+```
+
 ### Properties
 
 #### modelClass
@@ -392,6 +403,16 @@ You can also create a Model class like this:
 var Post = f.createModelClass({
   // ...
 });
+```
+
+If you are using ES6:
+
+```js
+class Post extends f.Model {
+  constructor(attributes = {}, extend = {}) {
+    super(attributes, extend);
+  }
+}
 ```
 
 ### Properties
