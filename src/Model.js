@@ -523,13 +523,13 @@ export default class Model {
             });
         },
         (proceed, cb) => {
-          //if (!_.isUndefined(options.validate) || options.validate === false) {
+          if (!_.isUndefined(options.validate) || options.validate === false) {
             return cb(null, this.collection().save(this, options));
-          //}
+          }
 
           return this.validate().then((validated) => {
             if (validated === true) {
-              cb(null, this.collection().save(this, options));
+              return cb(null, this.collection().save(this, options));
             }
 
             return cb({
@@ -541,7 +541,7 @@ export default class Model {
           return this
             .afterSave()
             .then(() => {
-              cb(null, result);
+              return cb(null, result);
             })
         }
       ], function (err, result) {
