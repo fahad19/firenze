@@ -4,6 +4,7 @@
 var should = require('should-promised'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
+var P = require('bluebird');
 
 describe('Model', function () {
   before(function (done) {
@@ -484,5 +485,23 @@ describe('Model', function () {
           });
         done();
       });
+  });
+
+  it('should fire beforeSave callback', function (done) {
+    var post = new this.Post({
+      title: 'I am new'
+    }, {
+      beforeSave: function () {
+        return new P((resolve, reject) => {
+          this.set('title', 'I am new again');
+          return resolve(true);
+        });
+      }
+    });
+
+    post.save().then(function (model) {
+      model.get('title').should.equal('I am new again');
+      done();
+    });
   });
 });

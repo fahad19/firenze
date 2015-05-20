@@ -509,19 +509,47 @@ export default class Model {
 // Save the current model
 //
   save(options = {}) {
-    if (!_.isUndefined(options.validate) || options.validate === false) {
-      return this.collection().save(this, options);
-    }
-
     return new P((resolve, reject) => {
-      this.validate().then((validated) => {
-        if (validated === true) {
-          return resolve(this.collection().save(this, options));
+      return async.waterfall([
+        (cb) => {
+          return this
+            .beforeSave()
+            .then((proceed) => {
+              if (proceed === true) {
+                return cb(null, proceed);
+              }
+
+              return cb(proceed);
+            });
+        },
+        (proceed, cb) => {
+          //if (!_.isUndefined(options.validate) || options.validate === false) {
+            return cb(null, this.collection().save(this, options));
+          //}
+
+          return this.validate().then((validated) => {
+            if (validated === true) {
+              cb(null, this.collection().save(this, options));
+            }
+
+            return cb({
+              validationErrors: validated
+            });
+          });
+        },
+        (result, cb) => {
+          return this
+            .afterSave()
+            .then(() => {
+              cb(null, result);
+            })
+        }
+      ], function (err, result) {
+        if (err) {
+          return reject(err);
         }
 
-        return reject({
-          validationErrors: validated
-        });
+        return resolve(result);
       });
     });
   }
@@ -711,5 +739,27 @@ export default class Model {
 //
   fixturify(rows) {
     return this.collection().getAdapter().loadFixture(this, rows);
+  }
+
+// ### beforeSave()
+//
+// Should return a Promise with `true` to continue.
+//
+// To stop the save, return a Promise with an error
+//
+  beforeSave() {
+    return new P((resolve, reject) => {
+      return resolve(true);
+    });
+  }
+
+// ### afterSave()
+//
+// Should return a Promise.
+//
+  afterSave() {
+    return new P((resolve, reject) => {
+      return resolve(true);
+    });
   }
 }
