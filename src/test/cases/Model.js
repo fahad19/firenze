@@ -504,4 +504,22 @@ describe('Model', function () {
       done();
     });
   });
+
+  it('should fire afterSave callback', function (done) {
+    var post = new this.Post({
+      title: 'I am new'
+    }, {
+      afterSave: function () {
+        return new P((resolve, reject) => {
+          this.set('title', 'I am modified in afterSave');
+          return resolve(true);
+        });
+      }
+    });
+
+    post.save().then(function (model) {
+      model.get('title').should.equal('I am modified in afterSave');
+      done();
+    });
+  });
 });
