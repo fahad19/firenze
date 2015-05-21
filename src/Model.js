@@ -605,6 +605,53 @@ export default class Model {
 // Returns true if all validated, otherwise an object of error messages keyed by field names.
 //
   validate() {
+    return new P((resolve, reject) => {
+      return async.waterfall([
+        (cb) => {
+          return this
+            .beforeValidate()
+            .then((proceed) => {
+              return cb(null, proceed);
+            })
+            .catch((error) => {
+              return cb(error);
+            });
+        },
+        (proceed, cb) => {
+          return this
+            ._validate()
+            .then((res) => {
+              return cb(null, res);
+            })
+            .catch((error) => {
+              return cb(error);
+            });
+        },
+        (res, cb) => {
+          return this
+            .afterValidate()
+            .then(() => {
+              return cb(this);
+            })
+            .catch((error) => {
+              return cb(error);
+            });
+        }
+      ], (err, result) => {
+        console.log('err', err);
+        console.log('---');
+        console.log('this', this);
+        console.log('result', result);
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(result);
+      });
+    });
+  }
+
+  _validate() {
     let fields = [];
     _.each(this.toObject(), (v, field) => {
       if (!_.isObject(v)) {
@@ -764,9 +811,7 @@ export default class Model {
 // To stop the save, return a Promise with an error
 //
   beforeSave() {
-    return new P((resolve, reject) => {
-      return resolve(true);
-    });
+    return new P.resolve(true);
   }
 
 // ### afterSave()
@@ -774,8 +819,24 @@ export default class Model {
 // Should return a Promise.
 //
   afterSave() {
-    return new P((resolve, reject) => {
-      return resolve(true);
-    });
+    return new P.resolve(true);
+  }
+
+// ### beforeValidate()
+//
+// Should return a Promise with `true` to continue.
+//
+// To stop the validation, return a Promise with an error
+//
+  beforeValidate() {
+    return new P.resolve(true);
+  }
+
+// ### afterValidate()
+//
+// Should return a Promise.
+//
+  afterValidate() {
+    return new P.resolve(true);
   }
 }

@@ -522,4 +522,22 @@ describe('Model', function () {
       done();
     });
   });
+
+  it('should fire beforeValidate callback', function (done) {
+    var post = new this.Post({
+      title: 'I am new'
+    }, {
+      beforeValidate: function () {
+        return new P((resolve, reject) => {
+          this.set('title', 'I am modified in beforeValidate');
+          return resolve(true);
+        });
+      }
+    });
+
+    post.save().then(function (model) {
+      model.get('title').should.equal('I am modified in beforeValidate');
+      done();
+    });
+  });
 });
