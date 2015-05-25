@@ -619,6 +619,7 @@ export default class Model {
             });
         },
         (result, cb) => {
+          console.log('calling afterDelete...');
           this
             .afterDelete()
             .then(() => {
@@ -636,8 +637,6 @@ export default class Model {
         return resolve(result);
       });
     });
-
-    return this.collection().delete(this);
   }
 
 // ### validate()

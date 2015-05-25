@@ -24,6 +24,15 @@ module.exports = function (db) {
 
     beforeDelete: function () {
       return new P.reject(true);
+    },
+
+    afterDelete: function () {
+      var self = this;
+      console.log('after delete');
+      return new P(function (resolve, reject) {
+        self.set('title', 'Deleted');
+        reject(true);
+      });
     }
   });
 };

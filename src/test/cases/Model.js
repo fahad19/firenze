@@ -582,4 +582,21 @@ describe('Model', function () {
         });
     });
   });
+
+  it.only('should fire afterDelete callback', function (done) {
+    var author = new this.Author({
+      id: 1
+    });
+    author.fetch().then(function (model) {
+      model
+        .delete()
+        .catch(function (error) {
+          error.should.eql(true);
+        })
+        .finally(function () {
+          done();
+        });
+    });
+  });
+
 });
