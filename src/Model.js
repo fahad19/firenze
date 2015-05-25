@@ -523,7 +523,7 @@ export default class Model {
             });
         },
         (proceed, cb) => {
-          if (!_.isUndefined(options.validate) || options.validate === false) {
+          if (!_.isUndefined(options.validate) && options.validate === false) {
             return this
               .collection()
               .save(this, options)
@@ -621,7 +621,11 @@ export default class Model {
           return this
             ._validate()
             .then((res) => {
-              return cb(null, res);
+              if (res === true) {
+                return cb(null, true);
+              }
+
+              return cb(res);
             })
             .catch((error) => {
               return cb(error);
@@ -631,7 +635,7 @@ export default class Model {
           return this
             .afterValidate()
             .then(() => {
-              return cb(null, this);
+              return cb(null, res);
             })
             .catch((error) => {
               return cb(error);
@@ -639,10 +643,14 @@ export default class Model {
         }
       ], (err, result) => {
         if (err) {
+          if (_.isObject(err)) {
+            return resolve(err);
+          }
+
           return reject(err);
         }
 
-        return resolve(true);
+        return resolve(result);
       });
     });
   }
