@@ -595,6 +595,48 @@ export default class Model {
 // Delete the current model
 //
   delete() {
+    return new P((resolve, reject) => {
+      return async.waterfall([
+        (cb) => {
+          return this
+            .beforeDelete()
+            .then((proceed) => {
+              return cb(null, proceed);
+            })
+            .catch((error) => {
+              return cb(error);
+            })
+        },
+        (proceed, cb) => {
+          this
+            .collection()
+            .delete(this)
+            .then((res) => {
+              return cb(null, res);
+            })
+            .catch((error) => {
+              return cb(error);
+            });
+        },
+        (result, cb) => {
+          this
+            .afterDelete()
+            .then(() => {
+              return cb(null, result);
+            })
+            .catch((error) => {
+              return cb(error);
+            });
+        }
+      ], (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        return resolve(result);
+      });
+    });
+
     return this.collection().delete(this);
   }
 
@@ -815,7 +857,7 @@ export default class Model {
 //
 // Should return a Promise with `true` to continue.
 //
-// To stop the save, return a Promise with an error
+// To stop the save, return a Promise with an error.
 //
   beforeSave() {
     return new P.resolve(true);
@@ -833,7 +875,7 @@ export default class Model {
 //
 // Should return a Promise with `true` to continue.
 //
-// To stop the validation, return a Promise with an error
+// To stop the validation, return a Promise with an error.
 //
   beforeValidate() {
     return new P.resolve(true);
@@ -844,6 +886,24 @@ export default class Model {
 // Should return a Promise.
 //
   afterValidate() {
+    return new P.resolve(true);
+  }
+
+// ### beforeDelete()
+//
+// Should return a Promise with `true` to continue.
+//
+// To stop from deleting, return a Promise with an error.
+//
+  beforeDelete() {
+    return new P.resolve(true);
+  }
+
+// ### afterDelete()
+//
+// Should return a Promise.
+//
+  afterDelete() {
     return new P.resolve(true);
   }
 }

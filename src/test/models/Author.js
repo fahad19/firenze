@@ -1,3 +1,5 @@
+var P = require('bluebird');
+
 module.exports = function (db) {
   return db.createModelClass({
     alias: 'Author',
@@ -18,6 +20,10 @@ module.exports = function (db) {
 
     collectionClass: function () {
       return require('../collections/Authors')(db);
+    },
+
+    beforeDelete: function () {
+      return new P.reject(true);
     }
   });
 };

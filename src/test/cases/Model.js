@@ -9,13 +9,21 @@ var P = require('bluebird');
 describe('Model', function () {
   before(function (done) {
     this.db = new lib.Database(config.mysql);
+
     this.Post = require('../models/Post')(this.db);
     this.postsData = require('../fixtures/posts');
+
+    this.Author = require('../models/Author')(this.db);
+    this.authorsData = require('../fixtures/authors');
 
     this.db.getAdapter().loadAllFixtures([
       {
         model: new this.Post(),
         rows: this.postsData
+      },
+      {
+        model: new this.Author(),
+        rows: this.authorsData
       }
     ]).then(function () {
       done();
@@ -556,6 +564,22 @@ describe('Model', function () {
     post.save().then(function (model) {
       model.get('title').should.equal('I am modified in afterValidate');
       done();
+    });
+  });
+
+  it('should fire beforeDelete callback', function (done) {
+    var author = new this.Author({
+      id: 1
+    });
+    author.fetch().then(function (model) {
+      model
+        .delete()
+        .catch(function (error) {
+          error.should.eql(true);
+        })
+        .finally(function () {
+          done();
+        });
     });
   });
 });
