@@ -631,22 +631,18 @@ export default class Model {
           return this
             .afterValidate()
             .then(() => {
-              return cb(this);
+              return cb(null, this);
             })
             .catch((error) => {
               return cb(error);
             });
         }
       ], (err, result) => {
-        console.log('err', err);
-        console.log('---');
-        console.log('this', this);
-        console.log('result', result);
         if (err) {
           return reject(err);
         }
 
-        return resolve(result);
+        return resolve(true);
       });
     });
   }
@@ -693,6 +689,9 @@ export default class Model {
             }
 
             cb();
+          })
+          .catch((error) => {
+            cb(error);
           });
       }, (err) => {
         if (err) {

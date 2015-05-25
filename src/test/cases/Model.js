@@ -528,7 +528,7 @@ describe('Model', function () {
       title: 'I am new'
     }, {
       beforeValidate: function () {
-        return new P((resolve, reject) => {
+        return new P((resolve) => {
           this.set('title', 'I am modified in beforeValidate');
           return resolve(true);
         });
@@ -537,6 +537,24 @@ describe('Model', function () {
 
     post.save().then(function (model) {
       model.get('title').should.equal('I am modified in beforeValidate');
+      done();
+    });
+  });
+
+  it('should fire afterValidate callback', function (done) {
+    var post = new this.Post({
+      title: 'I am new'
+    }, {
+      afterValidate: function () {
+        return new P((resolve) => {
+          this.set('title', 'I am modified in afterValidate');
+          return resolve(true);
+        });
+      }
+    });
+
+    post.save().then(function (model) {
+      model.get('title').should.equal('I am modified in afterValidate');
       done();
     });
   });
