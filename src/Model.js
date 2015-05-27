@@ -508,10 +508,20 @@ export default class Model {
 //
 // Save the current model
 //
+// Options:
+//
+// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+//
   save(options = {}) {
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+
     return new P((resolve, reject) => {
       return async.waterfall([
         (cb) => {
+          if (!callbacks) {
+            return cb(null, true);
+          }
+
           return this
             .beforeSave()
             .then((proceed) => {
@@ -554,6 +564,10 @@ export default class Model {
           });
         },
         (result, cb) => {
+          if (!callbacks) {
+            return cb(null, this);
+          }
+
           return this
             .afterSave()
             .then(() => {
@@ -590,14 +604,24 @@ export default class Model {
     this.attributes = {};
   }
 
-// ### delete()
+// ### delete(options = {})
 //
 // Delete the current model
 //
-  delete() {
+// Options:
+//
+// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+//
+  delete(options = {}) {
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+
     return new P((resolve, reject) => {
       return async.waterfall([
         (cb) => {
+          if (!callbacks) {
+            return cb(null, true);
+          }
+
           return this
             .beforeDelete()
             .then((proceed) => {
@@ -619,6 +643,10 @@ export default class Model {
             });
         },
         (result, cb) => {
+          if (!callbacks) {
+            return cb(null, result);
+          }
+
           this
             .afterDelete()
             .then(() => {
@@ -644,10 +672,20 @@ export default class Model {
 //
 // Returns true if all validated, otherwise an object of error messages keyed by field names.
 //
-  validate() {
+// Options:
+//
+// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+//
+  validate(options = {}) {
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+
     return new P((resolve, reject) => {
       return async.waterfall([
         (cb) => {
+          if (!callbacks) {
+            return cb(null, true);
+          }
+
           return this
             .beforeValidate()
             .then((proceed) => {
@@ -672,6 +710,10 @@ export default class Model {
             });
         },
         (res, cb) => {
+          if (!callbacks) {
+            return cb(null, res);
+          }
+
           return this
             .afterValidate()
             .then(() => {
@@ -850,6 +892,11 @@ export default class Model {
   fixturify(rows) {
     return this.collection().getAdapter().loadFixture(this, rows);
   }
+
+// ## Callbacks
+//
+// Models also support callbacks that you can define when creating classes.
+//
 
 // ### beforeSave()
 //

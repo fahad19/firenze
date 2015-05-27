@@ -68,10 +68,17 @@ Node.js ORM for MySQL.
     - [save(options = {})](#saveoptions--)
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
-    - [delete()](#delete)
+    - [delete(options = {})](#deleteoptions--)
     - [validate()](#validate)
     - [validateField(field, value = null)](#validatefieldfield-value--null)
     - [fixturify(rows)](#fixturifyrows)
+  - [Callbacks](#callbacks)
+    - [beforeSave()](#beforesave)
+    - [afterSave()](#aftersave)
+    - [beforeValidate()](#beforevalidate)
+    - [afterValidate()](#aftervalidate)
+    - [beforeDelete()](#beforedelete)
+    - [afterDelete()](#afterdelete)
 - [Adapter](#adapter)
   - [Available](#available)
   - [Usage](#usage-3)
@@ -760,6 +767,10 @@ Is the current model new? As in saved in Database, or yet to be saved?
 
 Save the current model
 
+Options:
+
+* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+
 ### saveField(field, value)
 
 Save a particular field with value
@@ -768,15 +779,23 @@ Save a particular field with value
 
 Clear the current instance of model of any data
 
-### delete()
+### delete(options = {})
 
 Delete the current model
+
+Options:
+
+* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 
 ### validate()
 
 Validates all fields of the current Model
 
 Returns true if all validated, otherwise an object of error messages keyed by field names.
+
+Options:
+
+* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 
 ### validateField(field, value = null)
 
@@ -787,6 +806,40 @@ Returns true if validated, otherwise error message
 ### fixturify(rows)
 
 Drop, create, and populate table with data
+
+## Callbacks
+
+Models also support callbacks that you can define when creating classes.
+
+### beforeSave()
+
+Should return a Promise with `true` to continue.
+
+To stop the save, return a Promise with an error.
+
+### afterSave()
+
+Should return a Promise.
+
+### beforeValidate()
+
+Should return a Promise with `true` to continue.
+
+To stop the validation, return a Promise with an error.
+
+### afterValidate()
+
+Should return a Promise.
+
+### beforeDelete()
+
+Should return a Promise with `true` to continue.
+
+To stop from deleting, return a Promise with an error.
+
+### afterDelete()
+
+Should return a Promise.
 
 <!--/docume:src/Model.js-->
 
