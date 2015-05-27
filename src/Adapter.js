@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import async from 'async';
-import P from 'bluebird';
+import P from './Promise';
 
 // # Adapter
 //

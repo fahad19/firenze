@@ -4,7 +4,7 @@
 var should = require('should-promised'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
-var P = require('bluebird');
+var P = require('../../Promise');
 
 describe('Model', function () {
   before(function (done) {

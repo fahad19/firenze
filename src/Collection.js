@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import P from 'bluebird';
+import P from './Promise';
 
 // # Collection
 //

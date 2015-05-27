@@ -1,6 +1,6 @@
 import knex from 'knex';
 import _ from 'lodash';
-import P from 'bluebird';
+import P from '../Promise';
 
 import Adapter from '../Adapter';
 

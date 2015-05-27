@@ -1,5 +1,5 @@
 /*eslint camelcase: [2, {properties: "never"}]*/
-var P = require('bluebird');
+var P = require('../../Promise');
 
 module.exports = function (db) {
   return db.createModelClass({

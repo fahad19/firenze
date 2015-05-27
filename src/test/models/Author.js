@@ -1,4 +1,4 @@
-var P = require('bluebird');
+var P = require('../../Promise');
 
 module.exports = function (db) {
   return db.createModelClass({
