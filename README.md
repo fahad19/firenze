@@ -71,7 +71,6 @@ Node.js ORM for MySQL.
     - [delete(options = {})](#deleteoptions--)
     - [validate()](#validate)
     - [validateField(field, value = null)](#validatefieldfield-value--null)
-    - [fixturify(rows)](#fixturifyrows)
   - [Callbacks](#callbacks)
     - [beforeSave()](#beforesave)
     - [afterSave()](#aftersave)
@@ -802,10 +801,6 @@ Options:
 Validates a single field
 
 Returns true if validated, otherwise error message
-
-### fixturify(rows)
-
-Drop, create, and populate table with data
 
 ## Callbacks
 

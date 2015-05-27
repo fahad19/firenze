@@ -885,14 +885,6 @@ export default class Model {
     });
   }
 
-// ### fixturify(rows)
-//
-// Drop, create, and populate table with data
-//
-  fixturify(rows) {
-    return this.collection().getAdapter().loadFixture(this, rows);
-  }
-
 // ## Callbacks
 //
 // Models also support callbacks that you can define when creating classes.
