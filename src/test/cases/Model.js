@@ -583,17 +583,15 @@ describe('Model', function () {
     });
   });
 
-  it.only('should fire afterDelete callback', function (done) {
-    var author = new this.Author({
+  it('should fire afterDelete callback', function (done) {
+    var post = new this.Post({
       id: 1
     });
-    author.fetch().then(function (model) {
+    post.fetch().then(function (model) {
       model
         .delete()
-        .catch(function (error) {
-          error.should.eql(true);
-        })
-        .finally(function () {
+        .then(function () {
+          model.get('_field').should.eql('afterDelete');
           done();
         });
     });

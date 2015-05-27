@@ -619,7 +619,6 @@ export default class Model {
             });
         },
         (result, cb) => {
-          console.log('calling afterDelete...');
           this
             .afterDelete()
             .then(() => {
