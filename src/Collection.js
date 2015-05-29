@@ -162,7 +162,7 @@ export default class Collection {
 
 // ### find(type, options = {})
 //
-// Explained above in `Finders` section
+// Explained above in `finders` section
 //
   find(type = null, options = {}) {
     if (!type || !this.finders[type] || !_.isFunction(this[this.finders[type]])) {
@@ -174,7 +174,9 @@ export default class Collection {
 
 // ### findAll(options = {})
 //
-// Returns an array of matched models
+// Returns a promise with matched results.
+//
+// Same as `collection.find('all', options)`.
 //
   findAll(options = {}) {
     let q = this.query(options);
@@ -196,7 +198,9 @@ export default class Collection {
 
 // ### findFirst(options = {})
 //
-// Returns matched model if any
+// Returns a promise with matched model if any.
+//
+// Same as `collection.find('first', options)`.
 //
   findFirst(options = {}) {
     let q = this.query(_.merge(options, {
@@ -220,7 +224,9 @@ export default class Collection {
 
 // ### findCount(options = {})
 //
-// Returns count of matched results
+// Returns a promise with count of matched results.
+//
+// Same as `collection.find('count', options)`.
 //
   findCount(options = {}) {
     let q = this.query(_.merge(options, {
@@ -247,7 +253,9 @@ export default class Collection {
 
 // ### findList(options = {})
 //
-// Returns key/value pair of matched results
+// Returns a promise with key/value pair of matched results.
+//
+// Same as `collection.find('list', options)`.
 //
   findList(options = {}) {
     let model = this.model();
@@ -278,6 +286,8 @@ export default class Collection {
 // ### save(model, options = {})
 //
 // Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+//
+// Returns a promise with model instance.
 //
   save(model, options = {}) {
     let obj = model.toObject();
@@ -329,6 +339,8 @@ export default class Collection {
 // ### delete(model)
 //
 // Deletes the given model. Usually called via `Model.delete()`.
+//
+// Returns a promise.
 //
   delete(model) {
     return new P((resolve, reject) => {

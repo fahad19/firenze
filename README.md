@@ -351,31 +351,43 @@ Get query object for this Collection
 
 ### find(type, options = {})
 
-Explained above in `Finders` section
+Explained above in `finders` section
 
 ### findAll(options = {})
 
-Returns an array of matched models
+Returns a promise with matched results.
+
+Same as `collection.find('all', options)`.
 
 ### findFirst(options = {})
 
-Returns matched model if any
+Returns a promise with matched model if any.
+
+Same as `collection.find('first', options)`.
 
 ### findCount(options = {})
 
-Returns count of matched results
+Returns a promise with count of matched results.
+
+Same as `collection.find('count', options)`.
 
 ### findList(options = {})
 
-Returns key/value pair of matched results
+Returns a promise with key/value pair of matched results.
+
+Same as `collection.find('list', options)`.
 
 ### save(model, options = {})
 
 Save the given model. This method is not usually called directly, but rather via `Model.save()`.
 
+Returns a promise with model instance.
+
 ### delete(model)
 
 Deletes the given model. Usually called via `Model.delete()`.
+
+Returns a promise.
 
 <!--/docume:src/Collection.js-->
 
@@ -749,7 +761,7 @@ Alias of `.toObject()`.
 
 ### fetch(options = {})
 
-Fetches the model again from the Database.
+Fetches the model again from the Database, and returns it with a promise.
 
 A quick example:
 
@@ -770,7 +782,7 @@ Is the current model new? As in saved in Database, or yet to be saved?
 
 ### save(options = {})
 
-Save the current model
+Save the current model, and returns a promise.
 
 Options:
 
@@ -778,7 +790,9 @@ Options:
 
 ### saveField(field, value)
 
-Save a particular field with value
+Save a particular field with value.
+
+Returns a promise.
 
 ### clear()
 
@@ -786,7 +800,7 @@ Clear the current instance of model of any data
 
 ### delete(options = {})
 
-Delete the current model
+Delete the current model, and return a promise.
 
 Options:
 
@@ -796,7 +810,9 @@ Options:
 
 Validates all fields of the current Model
 
-Returns true if all validated, otherwise an object of error messages keyed by field names.
+Returns a promise with `true` if all validated, otherwise an object of error messages keyed by field names.
+
+@TODO: `reject()` instead on error?
 
 Options:
 
@@ -806,11 +822,27 @@ Options:
 
 Validates a single field
 
-Returns true if validated, otherwise error message
+Returns a promise with true if validated, otherwise error message
 
 ## Callbacks
 
 Models also support callbacks that you can define when creating classes.
+
+For example:
+
+```js
+var Promise = f.Promise;
+var Post = f.createModelClass({
+  alias: 'Post',
+
+  beforeSave: function () {
+    // do something before saving...
+
+    // end the callback with a promise
+    return new Promise.resolve(true);
+  }
+});
+```
 
 ### beforeSave()
 

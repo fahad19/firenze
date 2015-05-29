@@ -455,7 +455,7 @@ export default class Model {
 
 // ### fetch(options = {})
 //
-// Fetches the model again from the Database.
+// Fetches the model again from the Database, and returns it with a promise.
 //
 // A quick example:
 //
@@ -508,7 +508,7 @@ export default class Model {
 
 // ### save(options = {})
 //
-// Save the current model
+// Save the current model, and returns a promise.
 //
 // Options:
 //
@@ -588,7 +588,9 @@ export default class Model {
 
 // ### saveField(field, value)
 //
-// Save a particular field with value
+// Save a particular field with value.
+//
+// Returns a promise.
 //
   saveField(field, value) {
     this.set(field, value);
@@ -608,7 +610,7 @@ export default class Model {
 
 // ### delete(options = {})
 //
-// Delete the current model
+// Delete the current model, and return a promise.
 //
 // Options:
 //
@@ -672,7 +674,9 @@ export default class Model {
 //
 // Validates all fields of the current Model
 //
-// Returns true if all validated, otherwise an object of error messages keyed by field names.
+// Returns a promise with `true` if all validated, otherwise an object of error messages keyed by field names.
+//
+// @TODO: `reject()` instead on error?
 //
 // Options:
 //
@@ -803,7 +807,7 @@ export default class Model {
 //
 // Validates a single field
 //
-// Returns true if validated, otherwise error message
+// Returns a promise with true if validated, otherwise error message
 //
   validateField(field, value = null) {
     if (!value) {
@@ -890,6 +894,22 @@ export default class Model {
 // ## Callbacks
 //
 // Models also support callbacks that you can define when creating classes.
+//
+// For example:
+//
+// ```js
+// var Promise = f.Promise;
+// var Post = f.createModelClass({
+//   alias: 'Post',
+//
+//   beforeSave: function () {
+//     // do something before saving...
+//
+//     // end the callback with a promise
+//     return new Promise.resolve(true);
+//   }
+// });
+// ```
 //
 
 // ### beforeSave()
