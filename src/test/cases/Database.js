@@ -6,7 +6,7 @@ var config = require('../config');
 
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
-    var db = new lib.Database(config.mysql);
+    var db = new lib.Database(config);
     db.close(done);
   });
 

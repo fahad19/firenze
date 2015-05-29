@@ -8,7 +8,7 @@ var P = require('../../Promise');
 
 describe('Model', function () {
   before(function (done) {
-    this.db = new lib.Database(config.mysql);
+    this.db = new lib.Database(config);
 
     this.Post = require('../models/Post')(this.db);
     this.postsData = require('../fixtures/posts');

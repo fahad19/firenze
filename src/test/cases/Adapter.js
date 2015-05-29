@@ -6,7 +6,7 @@ var config = require('../config');
 
 describe('Adapter', function () {
   before(function () {
-    this.db = new lib.Database(config.mysql);
+    this.db = new lib.Database(config);
     this.Post = require('../models/Post')(this.db);
     this.Author = require('../models/Author')(this.db);
   });
