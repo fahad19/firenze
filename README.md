@@ -1,6 +1,12 @@
 # firenze
 
-Node.js ORM for MySQL.
+> Node.js ORM for relational databases.
+
+Install it with npm:
+
+```
+$ npm install --save firenze
+```
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
