@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import _ from 'lodash';
 import P from './Promise';
 import dotProp from 'dot-prop';
@@ -629,7 +631,7 @@ export default class Model {
             })
             .catch((error) => {
               return cb(error);
-            })
+            });
         },
         (proceed, cb) => {
           this
@@ -696,7 +698,7 @@ export default class Model {
             });
         },
         (proceed, cb) => {
-          return this
+          return this //eslint-disable-line
             ._validate()
             .then((res) => {
               if (res === true) {
@@ -737,7 +739,7 @@ export default class Model {
     });
   }
 
-  _validate() {
+  _validate() { //eslint-disable-line
     let fields = [];
     _.each(this.toObject(), (v, field) => {
       if (!_.isObject(v)) {

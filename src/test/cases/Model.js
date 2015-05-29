@@ -500,7 +500,7 @@ describe('Model', function () {
       title: 'I am new'
     }, {
       beforeSave: function () {
-        return new P((resolve, reject) => {
+        return new P((resolve) => {
           this.set('title', 'I am new again');
           return resolve(true);
         });
@@ -518,7 +518,7 @@ describe('Model', function () {
       title: 'I am new'
     }, {
       afterSave: function () {
-        return new P((resolve, reject) => {
+        return new P((resolve) => {
           this.set('title', 'I am modified in afterSave');
           return resolve(true);
         });

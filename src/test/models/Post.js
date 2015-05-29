@@ -1,4 +1,5 @@
 /*eslint camelcase: [2, {properties: "never"}]*/
+/* eslint-disable new-cap */
 var P = require('../../Promise');
 
 module.exports = function (db) {

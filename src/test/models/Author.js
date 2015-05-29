@@ -1,3 +1,4 @@
+/* eslint-disable new-cap */
 var P = require('../../Promise');
 
 module.exports = function (db) {
@@ -28,7 +29,6 @@ module.exports = function (db) {
 
     afterDelete: function () {
       var self = this;
-      console.log('after delete');
       return new P(function (resolve, reject) {
         self.set('title', 'Deleted');
         reject(true);
