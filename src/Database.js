@@ -79,6 +79,6 @@ export default class Database {
 // Closes the connection
 //
   close(cb = null) {
-    return this.getConnection().destroy(cb);
+    return this.getAdapter().closeConnection(cb);
   }
 }

@@ -55,7 +55,7 @@ export default class Adapter {
 // Returns the current connection
 //
   getConnection() {
-
+    return null;
   }
 
 // ### closeConnection(cb = null)

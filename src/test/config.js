@@ -1,7 +1,7 @@
-var Mysql = require('firenze-adapter-mysql');
+var MemoryAdapter = require('./adapters/Memory');
 
 module.exports = {
-  adapter: Mysql,
+  adapter: MemoryAdapter,
   host: '127.0.0.1',
   user: 'root',
   password: '',

@@ -11,7 +11,7 @@ describe('Database', function () {
   });
 
   it('should generate Collection class', function (done) {
-    var db = new lib.Database(config.mysql);
+    var db = new lib.Database(config);
     var Posts = require('../collections/Posts')(db);
 
     var posts = new Posts();
@@ -20,7 +20,7 @@ describe('Database', function () {
   });
 
   it('should generate Model class', function (done) {
-    var db = new lib.Database(config.mysql);
+    var db = new lib.Database(config);
     var Post = require('../models/Post')(db);
 
     var post = new Post();
