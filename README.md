@@ -1,4 +1,4 @@
-# firenze
+# firenze.js
 
 > Node.js ORM for relational databases.
 
