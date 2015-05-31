@@ -44,9 +44,7 @@
     "bluebird": "^2.9.25",
     "dot-prop": "^2.0.0",
     "get-params": "^0.1.2",
-    "knex": "^0.8.3",
     "lodash": "^3.7.0",
-    "mysql": "^2.6.2",
     "validator": "^3.39.0"
   }
 }
