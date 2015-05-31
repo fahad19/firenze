@@ -1,5 +1,7 @@
 # firenze.js
 
+[![Build Status](https://secure.travis-ci.org/fahad19/firenze.png?branch=master)](http://travis-ci.org/fahad19/firenze)
+
 > Node.js ORM for relational databases.
 
 Install it with npm:
