@@ -7,7 +7,7 @@
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src",
-    "test": "mocha $(find lib/test/cases -name '*.js')",
+    "test": "mocha $(find ./lib/test/cases -name '*.js')",
     "doctoc": "doctoc README.md --github --title '# Contents'",
     "docume": "docume README.md",
     "docs": "npm run docume && npm run doctoc"
