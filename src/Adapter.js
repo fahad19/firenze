@@ -6,7 +6,7 @@ import P from './Promise';
 //
 // Adapter is responsible for making the actual database operations.
 //
-// ## Available
+// ## Available adapters
 //
 // You can find further documentation on querying on their own sites:
 //
