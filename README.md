@@ -100,6 +100,7 @@ $ npm install --save firenze
     - [afterValidate()](#aftervalidate)
     - [beforeDelete()](#beforedelete)
     - [afterDelete()](#afterdelete)
+- [Testing](#testing)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -980,6 +981,14 @@ Should return a Promise.
 
 <!--docume:node_modules/firenze-adapter-mysql/src/index.js-->
 <!--/docume:node_modules/firenze-adapter-mysql/src/index.js-->
+
+# Testing
+
+Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be run via npm:
+
+```
+$ npm test
+```
 
 # License
 
