@@ -399,7 +399,7 @@ export default class Model {
 //       type: 'string',
 //       validate: {
 //         rule: 'isAlpha',
-//         require: true,
+//         required: true,
 //         message: 'Must be alphabets only'
 //       }
 //     }
