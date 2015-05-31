@@ -191,15 +191,17 @@ export default class Model {
 // ### Single rule
 //
 // ```js
-// {
-//   email: {
-//     type: 'string',
-//     validate: {
-//       rule: 'isEmail',
-//       message: 'Please enter a valid email address'
+// db.createModelClass({
+//   schema: {
+//     email: {
+//       type: 'string',
+//       validate: {
+//         rule: 'isEmail',
+//         message: 'Please enter a valid email address'
+//       }
 //     }
 //   }
-// }
+// });
 // ```
 //
 // ### Multiple rules
@@ -318,6 +320,27 @@ export default class Model {
 // - **isSurrogatePair(str)** - check if the string contains any surrogate pairs chars.
 // - **isMongoId(str)** - check if the string is a valid hex-encoded representation of a [MongoDB ObjectId][mongoid].
 // - **isCurrency(str, options)** - check if the string is a valid currency amount. `options` is an object which defaults to `{symbol: '$', require_symbol: false, allow_space_after_symbol: false, symbol_after_digits: false, allow_negatives: true, parens_for_negatives: false, negative_sign_before_digits: false, negative_sign_after_digits: false, allow_negative_sign_placeholder: false, thousands_separator: ',', decimal_separator: '.', allow_space_after_digits: false }`.
+//
+// Example usage of the above mentioned rules:
+//
+// ```js
+// db.createModelClass({
+//   schema: {
+//     title: {
+//       // direct rule
+//       validate: {
+//         rule: 'isAlphanumeric'
+//       }
+//     },
+//     body: {
+//       // rule with options
+//       validate: {
+//         rule: ['isLength', min, max]
+//       }
+//     }
+//   }
+// });
+// ```
 //
 // But of course, you can always override them or add new custom rules.
 //
