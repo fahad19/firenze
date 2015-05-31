@@ -45,6 +45,9 @@ export default class Memory extends Adapter {
     let table = q.collection.table;
     let primaryKey = q.collection.model().primaryKey;
     let ids = _.map(this.data[table], (row) => {
+      if (_.isUndefined(row)) {
+        return;
+      }
       return row[primaryKey];
     });
 
@@ -72,6 +75,10 @@ export default class Memory extends Adapter {
     if (!_.isUndefined(q.conditions) &&
       (!_.isUndefined(q.conditions[primaryKey]) || !_.isUndefined(q.conditions[alias + '.' + primaryKey]))) {
       let record = _.find(this.data[table], (row) => {
+        if (_.isUndefined(row)) {
+          return;
+        }
+
         return row[primaryKey] == q.conditions[primaryKey] || row[primaryKey] == q.conditions[alias + '.' + primaryKey];
       });
 
