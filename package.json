@@ -13,7 +13,7 @@
     "docume": "docume README.md",
     "docs": "npm run docume && npm run doctoc",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha $(find lib/test/cases -name '*.js')",
-    "codecov": "cat ./coverage/coverage.json | ./node_modules/codecov.io/bin/codecov.io.js",
+    "coveralls": "cat ./coverage/lcov-report/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "run-scripts istanbul codecov"
   },
   "repository": {
@@ -36,7 +36,7 @@
   "devDependencies": {
     "babel": "^5.1.10",
     "babel-eslint": "^3.0.1",
-    "codecov.io": "^0.1.2",
+    "coveralls": "^2.11.2",
     "doctoc": "^0.13.0",
     "docume": "^0.1.4",
     "eslint": "^0.20.0",
