@@ -2,13 +2,33 @@
 
 [![Build Status](https://secure.travis-ci.org/fahad19/firenze.png?branch=master)](http://travis-ci.org/fahad19/firenze)
 
-> Node.js ORM for relational databases.
-
 Install it with npm:
 
 ```
 $ npm install --save firenze
 ```
+
+---
+
+firenze.js is a node.js object relational mapper targetting SQL databases.
+
+Key features include:
+
+* Written in ES6 (works in both node and io.js)
+* Adapter based structure to plug in any database
+* Promise based workflow
+* Strong validation support
+
+The project is still in heavy development, and more features are expected to land in future releases.
+
+Terminologies for developing with firenze.js can be broken down into a handful of items:
+
+* Database
+  * Adapter
+* Collection
+* Model
+
+Each of them are discussed in the documentation below.
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
