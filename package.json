@@ -7,11 +7,14 @@
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src",
-    "test": "mocha $(find lib/test/cases -name '*.js')",
-    "test-travis": "npm run babel && npm run test",
+    "mocha": "mocha $(find lib/test/cases -name '*.js')",
+    "test": "run-scripts babel mocha",
     "doctoc": "doctoc README.md --github --title '# Contents'",
     "docume": "docume README.md",
-    "docs": "npm run docume && npm run doctoc"
+    "docs": "npm run docume && npm run doctoc",
+    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha $(find lib/test/cases -name '*.js')",
+    "codecov": "cat ./coverage/coverage.json | ./node_modules/codecov.io/bin/codecov.io.js",
+    "coverage": "run-scripts istanbul codecov"
   },
   "repository": {
     "type": "git",
@@ -33,10 +36,13 @@
   "devDependencies": {
     "babel": "^5.1.10",
     "babel-eslint": "^3.0.1",
+    "codecov.io": "^0.1.2",
     "doctoc": "^0.13.0",
     "docume": "^0.1.4",
     "eslint": "^0.20.0",
+    "istanbul": "^0.3.14",
     "mocha": "^2.2.4",
+    "run-scripts": "^0.2.2",
     "should": "^6.0.1",
     "should-promised": "^0.2.1"
   },

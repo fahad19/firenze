@@ -4,7 +4,7 @@ node_js:
   - '0.10'
   - 'iojs'
 
-script: "npm run test-travis"
+script: "npm run test && npm run coverage"
 
 notifications:
   email: false
