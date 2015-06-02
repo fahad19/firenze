@@ -14,7 +14,7 @@
     "docs": "npm run docume && npm run doctoc",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha $(find lib/test/cases -name '*.js')",
     "coveralls": "cat ./coverage/lcov-report/lcov.info | ./node_modules/.bin/coveralls",
-    "coverage": "run-scripts istanbul codecov"
+    "coverage": "run-scripts istanbul coveralls"
   },
   "repository": {
     "type": "git",
