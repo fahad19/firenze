@@ -12,7 +12,7 @@ $ npm install --save firenze
 
 firenze.js is a node.js object relational mapper targetting SQL databases.
 
-Key features include:
+*Key features:*
 
 * Written in ES6 (works in both node and io.js)
 * Adapter based structure to plug in any database
@@ -21,10 +21,16 @@ Key features include:
 
 The project is still in heavy development, and more features are expected to land in future releases.
 
+*Available adapters:*
+
+* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
+
+*Terminologies:*
+
 Terminologies for developing with firenze.js can be broken down into a handful of items:
 
 * Database
-  * Adapter
+* Adapter
 * Collection
 * Model
 
@@ -44,7 +50,6 @@ Each of them are discussed in the documentation below.
     - [getConnection()](#getconnection)
     - [close(cb = null)](#closecb--null)
 - [Adapter](#adapter)
-  - [Available adapters](#available-adapters)
   - [Usage](#usage-1)
   - [Methods](#methods-1)
     - [getConnection()](#getconnection-1)
@@ -259,12 +264,6 @@ Closes the connection
 # Adapter
 
 Adapter is responsible for making the actual database operations.
-
-## Available adapters
-
-You can find further documentation on querying on their own sites:
-
-* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
 
 ## Usage
 

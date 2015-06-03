@@ -6,12 +6,6 @@ import P from './Promise';
 //
 // Adapter is responsible for making the actual database operations.
 //
-// ## Available adapters
-//
-// You can find further documentation on querying on their own sites:
-//
-// * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
-//
 
 export default class Adapter {
 // ## Usage
