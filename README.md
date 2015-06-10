@@ -2,19 +2,25 @@
 
 [![Build Status](https://secure.travis-ci.org/fahad19/firenze.png?branch=master)](http://travis-ci.org/fahad19/firenze) [![Coverage Status](https://coveralls.io/repos/fahad19/firenze/badge.svg?branch=master)](https://coveralls.io/r/fahad19/firenze?branch=master) [![npm](https://img.shields.io/npm/v/firenze.svg)](https://www.npmjs.com/package/firenze)
 
-Install it with npm:
+Install it with [npm](https://npmjs.com):
 
 ```
 $ npm install --save firenze
 ```
 
+Or [Bower](http://bower.io):
+
+```
+$ bower install --save firenze
+```
+
 ---
 
-firenze.js is a node.js object relational mapper targetting SQL databases.
+firenze.js is a adapter-based object relational mapper targetting node.js, io.js and the browser.
 
 **Key features:**
 
-* Written in ES6 (works in both node and io.js)
+* Written in ES6 (works in both node/io.js/browser)
 * Adapter based structure to plug in any database
 * Promise based workflow
 * Strong validation support
@@ -40,6 +46,10 @@ Each of them are discussed in the documentation below.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 # Contents
 
+- [Install](#install)
+  - [Node.js](#nodejs)
+  - [io.js](#iojs)
+  - [Browser](#browser)
 - [Quickstart](#quickstart)
 - [Database](#database)
   - [Usage](#usage)
@@ -132,7 +142,64 @@ Each of them are discussed in the documentation below.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
+# Install
+
+firenze.js can be used in both node.js/io.js, as well as the browser.
+
+## Node.js
+
+```
+$ npm install --save firenze
+```
+
+Now you can require it as follows:
+
+```js
+var firenze = require('firenze');
+```
+
+## io.js
+
+Same as Node.js since `npm` is the common package manager.
+
+## Browser
+
+You can download firenze.js using [Bower](http://bower.io).
+
+```js
+$ bower install --save firenze
+```
+
+The package comes with multiple dist files, and you are free to choose whatever workflow suits you best.
+
+If you want to include just one file alone with all the dependencies:
+
+```html
+<script src="bower_components/firenze/dist/firenze.full.min.js"></script>
+
+<script>
+// the library is now available in `firenze` variable
+</script>
+```
+
+If you wish to include only the core library, and load its dependencies manually:
+
+```html
+<script src="bower_components/lodash/lodash.min.js"></script>
+<script src="bower_components/async/lib/async.js"></script>
+<script src="bower_components/bluebird/js/browser/bluebird.min.js"></script>
+<script src="bower_components/validator-js/validator.min.js"></script>
+
+<script src="bower_components/firenze/dist/firenze.min.js"></script>
+
+<script>
+// use `firenze` variable to access the library
+</script>
+```
+
 # Quickstart
+
+The example is targetting Node.js environment.
 
 Install the module (along with an adapter) first:
 
