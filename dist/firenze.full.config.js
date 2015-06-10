@@ -4,9 +4,7 @@ module.exports = {
   entry: __dirname + '/../lib',
   output: {
     path: __dirname,
-    filename: filename
-  },
-  output: {
+    filename: filename,
     libraryTarget: 'this',
     library: 'firenze'
   },
