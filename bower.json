@@ -1,0 +1,30 @@
+{
+  "name": "firenze",
+  "main": "dist/firenze.full.min.js",
+  "version": "0.1.1",
+  "homepage": "https://github.com/fahad19/firenze",
+  "authors": [
+    "Fahad Ibnay Heylaal"
+  ],
+  "description": "JavaScript ORM for Node.js and the browser",
+  "keywords": [
+    "orm",
+    "models",
+    "data",
+    "database"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "async": "^0.9.0",
+    "bluebird": "^2.9.25",
+    "lodash": "^3.7.0",
+    "validator-js": "^3.39.0"
+  }
+}
