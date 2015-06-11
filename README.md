@@ -160,7 +160,13 @@ var firenze = require('firenze');
 
 ## io.js
 
-Same as Node.js since `npm` is the common package manager.
+Installation is same as Node.js since `npm` is the common package manager.
+
+To import:
+
+```js
+import firenze from 'firenze';
+```
 
 ## Browser
 
