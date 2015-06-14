@@ -431,11 +431,6 @@ export default class Model {
       return C;
     }
 
-    C = new C(options);
-    if (isInstance(C)) {
-      return C;
-    }
-
     return new C(options);
   }
 
