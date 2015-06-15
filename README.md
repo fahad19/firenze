@@ -1,5 +1,7 @@
 # firenze.js
 
+[![Join the chat at https://gitter.im/fahad19/firenze](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/fahad19/firenze?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://secure.travis-ci.org/fahad19/firenze.png?branch=master)](http://travis-ci.org/fahad19/firenze) [![Coverage Status](https://coveralls.io/repos/fahad19/firenze/badge.svg?branch=master)](https://coveralls.io/r/fahad19/firenze?branch=master) [![npm](https://img.shields.io/npm/v/firenze.svg)](https://www.npmjs.com/package/firenze)
 
 Install it with [npm](https://npmjs.com):
