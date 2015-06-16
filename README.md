@@ -18,7 +18,7 @@ $ bower install --save firenze
 
 firenze.js is a adapter-based object relational mapper targetting node.js, io.js and the browser.
 
-**Key features:**
+### Key features
 
 * Written in ES6 (works in both node/io.js/browser)
 * Adapter based structure to plug in any database
@@ -27,11 +27,12 @@ firenze.js is a adapter-based object relational mapper targetting node.js, io.js
 
 The project is still in heavy development, and more features are expected to land in future releases.
 
-**Available adapters:**
+### Available adapters
 
+* [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
 * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
 
-**Terminologies:**
+### Terminologies
 
 Terminologies for developing with firenze.js can be broken down into a handful of items:
 
