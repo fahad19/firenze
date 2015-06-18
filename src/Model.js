@@ -2,7 +2,6 @@
 
 import _ from 'lodash';
 import P from './Promise';
-import dotProp from 'dot-prop';
 import validator from 'validator';
 import async from 'async';
 import getParams from 'get-params';
@@ -445,7 +444,7 @@ export default class Model {
 //
   get(field) {
     let obj = this.toObject();
-    return dotProp.get(obj, field);
+    return _.get(obj, field);
   }
 
 // ### set(field, value)
@@ -457,7 +456,7 @@ export default class Model {
       return _.merge(this.attributes, field);
     }
 
-    this.attributes[field] = value;
+    return _.set(this.attributes, field, value);
   }
 
 // ### toObject()
