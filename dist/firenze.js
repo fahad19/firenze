@@ -57,11 +57,11 @@ this["firenze"] =
 
 	var _Database2 = _interopRequireDefault(_Database);
 
-	var _Adapter = __webpack_require__(13);
+	var _Adapter = __webpack_require__(12);
 
 	var _Adapter2 = _interopRequireDefault(_Adapter);
 
-	var _Collection = __webpack_require__(12);
+	var _Collection = __webpack_require__(11);
 
 	var _Collection2 = _interopRequireDefault(_Collection);
 
@@ -69,11 +69,11 @@ this["firenze"] =
 
 	var _Model2 = _interopRequireDefault(_Model);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(5);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
-	var _commonCollectionFactory = __webpack_require__(11);
+	var _commonCollectionFactory = __webpack_require__(10);
 
 	var _commonCollectionFactory2 = _interopRequireDefault(_commonCollectionFactory);
 
@@ -118,7 +118,7 @@ this["firenze"] =
 
 	var _commonModelFactory2 = _interopRequireDefault(_commonModelFactory);
 
-	var _commonCollectionFactory = __webpack_require__(11);
+	var _commonCollectionFactory = __webpack_require__(10);
 
 	var _commonCollectionFactory2 = _interopRequireDefault(_commonCollectionFactory);
 
@@ -223,7 +223,7 @@ this["firenze"] =
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	(function() { module.exports = this["_"]; }());
 
@@ -296,23 +296,19 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(5);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
-	var _dotProp = __webpack_require__(8);
-
-	var _dotProp2 = _interopRequireDefault(_dotProp);
-
-	var _validator = __webpack_require__(5);
+	var _validator = __webpack_require__(7);
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _async = __webpack_require__(9);
+	var _async = __webpack_require__(8);
 
 	var _async2 = _interopRequireDefault(_async);
 
-	var _getParams = __webpack_require__(10);
+	var _getParams = __webpack_require__(9);
 
 	var _getParams2 = _interopRequireDefault(_getParams);
 
@@ -766,7 +762,7 @@ this["firenze"] =
 	    //
 	    value: function get(field) {
 	      var obj = this.toObject();
-	      return _dotProp2['default'].get(obj, field);
+	      return _lodash2['default'].get(obj, field);
 	    }
 	  }, {
 	    key: 'set',
@@ -780,7 +776,7 @@ this["firenze"] =
 	        return _lodash2['default'].merge(this.attributes, field);
 	      }
 
-	      this.attributes[field] = value;
+	      return _lodash2['default'].set(this.attributes, field, value);
 	    }
 	  }, {
 	    key: 'toObject',
@@ -1329,12 +1325,6 @@ this["firenze"] =
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	(function() { module.exports = this["validator"]; }());
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 
 	Object.defineProperty(exports, '__esModule', {
@@ -1343,7 +1333,7 @@ this["firenze"] =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _bluebird = __webpack_require__(7);
+	var _bluebird = __webpack_require__(6);
 
 	var _bluebird2 = _interopRequireDefault(_bluebird);
 
@@ -1351,67 +1341,26 @@ this["firenze"] =
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/* 6 */
+/***/ function(module, exports) {
 
 	(function() { module.exports = this["P"]; }());
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
+/* 7 */
+/***/ function(module, exports) {
 
-	'use strict';
-
-	function isObjOrFn(x) {
-		return (typeof x === 'object' || typeof x === 'function') && x !== null;
-	}
-
-	module.exports.get = function (obj, path) {
-		if (!isObjOrFn(obj) || typeof path !== 'string') {
-			return obj;
-		}
-
-		var pathArr = path.split('.');
-		pathArr.some(function (path, index) {
-			obj = obj[path];
-
-			if (obj === undefined) {
-				return true;
-			}
-		});
-
-		return obj;
-	};
-
-	module.exports.set = function (obj, path, value) {
-		if (!isObjOrFn(obj) || typeof path !== 'string') {
-			return;
-		}
-
-		var pathArr = path.split('.');
-		pathArr.forEach(function (path, index) {
-			if (!isObjOrFn(obj[path])) {
-				obj[path] = {};
-			}
-
-			if (index === pathArr.length - 1) {
-				obj[path] = value;
-			}
-
-			obj = obj[path];
-		});
-	};
-
+	(function() { module.exports = this["validator"]; }());
 
 /***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/* 8 */
+/***/ function(module, exports) {
 
 	(function() { module.exports = this["async"]; }());
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/* 9 */
+/***/ function(module, exports) {
 
 	/* global window */
 	var GetParams = function (func) {
@@ -1452,7 +1401,7 @@ this["firenze"] =
 
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1469,7 +1418,7 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Collection2 = __webpack_require__(12);
+	var _Collection2 = __webpack_require__(11);
 
 	var _Collection3 = _interopRequireDefault(_Collection2);
 
@@ -1502,7 +1451,7 @@ this["firenze"] =
 	};
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1523,7 +1472,7 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(5);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
@@ -1840,6 +1789,70 @@ this["firenze"] =
 	      });
 	    }
 	  }, {
+	    key: 'findBy',
+
+	    // ### findBy(field, value, options = {})
+	    //
+	    // Shortcut method for finding a single record.
+	    //
+	    // Same as:
+	    //
+	    // ```js
+	    // collection.find('first', {
+	    //   conditions: {
+	    //     field: value
+	    //   }
+	    // });
+	    // ```
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findBy(field, value) {
+	      var options = arguments[2] === undefined ? {} : arguments[2];
+
+	      return this.find('first', _lodash2['default'].merge({
+	        conditions: _defineProperty({}, field, value)
+	      }, options));
+	    }
+	  }, {
+	    key: 'findById',
+
+	    // ### findById(value, options = {})
+	    //
+	    // Shortcut method for finding record by ID.
+	    //
+	    // Same as:
+	    //
+	    // ```js
+	    // collection.find('first', {
+	    //   conditions: {
+	    //     id: value // `id` key comes from `model.primaryKey
+	    //   }
+	    // });
+	    // ```
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findById(value) {
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      return this.findBy(this.primaryKey, value, options);
+	    }
+	  }, {
+	    key: 'findByKey',
+
+	    // ### findByKey(value, options = {})
+	    //
+	    // Alias for `collection.findById()`.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findByKey(value) {
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      return this.findById(value, options);
+	    }
+	  }, {
 	    key: 'save',
 
 	    // ### save(model, options = {})
@@ -1929,7 +1942,7 @@ this["firenze"] =
 	module.exports = exports['default'];
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1948,11 +1961,11 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _async = __webpack_require__(9);
+	var _async = __webpack_require__(8);
 
 	var _async2 = _interopRequireDefault(_async);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(5);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
