@@ -94,6 +94,9 @@ Each of them are discussed in the documentation below.
     - [findFirst(options = {})](#findfirstoptions--)
     - [findCount(options = {})](#findcountoptions--)
     - [findList(options = {})](#findlistoptions--)
+    - [findBy(field, value, options = {})](#findbyfield-value-options--)
+    - [findById(value, options = {})](#findbyidvalue-options--)
+    - [findByKey(value, options = {})](#findbykeyvalue-options--)
     - [save(model, options = {})](#savemodel-options--)
     - [delete(model)](#deletemodel)
 - [Models](#models)
@@ -552,6 +555,44 @@ Same as `collection.find('count', options)`.
 Returns a promise with key/value pair of matched results.
 
 Same as `collection.find('list', options)`.
+
+### findBy(field, value, options = {})
+
+Shortcut method for finding a single record.
+
+Same as:
+
+```js
+collection.find('first', {
+  conditions: {
+    field: value
+  }
+});
+```
+
+Returns a promise.
+
+### findById(value, options = {})
+
+Shortcut method for finding record by ID.
+
+Same as:
+
+```js
+collection.find('first', {
+  conditions: {
+    id: value // `id` key comes from `model.primaryKey
+  }
+});
+```
+
+Returns a promise.
+
+### findByKey(value, options = {})
+
+Alias for `collection.findById()`.
+
+Returns a promise.
 
 ### save(model, options = {})
 

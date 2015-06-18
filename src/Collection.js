@@ -283,6 +283,60 @@ export default class Collection {
     });
   }
 
+// ### findBy(field, value, options = {})
+//
+// Shortcut method for finding a single record.
+//
+// Same as:
+//
+// ```js
+// collection.find('first', {
+//   conditions: {
+//     field: value
+//   }
+// });
+// ```
+//
+// Returns a promise.
+//
+  findBy(field, value, options = {}) {
+    return this.find('first', _.merge({
+      conditions: {
+        [field]: value
+      }
+    }, options));
+  }
+
+// ### findById(value, options = {})
+//
+// Shortcut method for finding record by ID.
+//
+// Same as:
+//
+// ```js
+// collection.find('first', {
+//   conditions: {
+//     id: value // `id` key comes from `model.primaryKey
+//   }
+// });
+// ```
+//
+// Returns a promise.
+//
+  findById(value, options = {}) {
+    return this.findBy(this.primaryKey, value, options);
+  }
+
+// ### findByKey(value, options = {})
+//
+// Alias for `collection.findById()`.
+//
+// Returns a promise.
+//
+  findByKey(value, options = {}) {
+    return this.findById(value, options);
+  }
+
 // ### save(model, options = {})
 //
 // Save the given model. This method is not usually called directly, but rather via `Model.save()`.

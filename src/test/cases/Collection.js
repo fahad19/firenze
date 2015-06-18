@@ -93,4 +93,26 @@ describe('Collection', function () {
       throw error;
     });
   });
+
+  it('should find single result by primaryKey', function (done) {
+    var posts = new this.Posts();
+    var promise = posts.findById(1);
+
+    promise.then(function (post) {
+      post.get('title').should.equal('Hello World');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
+
+  it('should find single result by field', function (done) {
+    var posts = new this.Posts();
+    posts.findBy('title', 'Hello World').then(function (post) {
+      post.get('title').should.equal('Hello World');
+      done();
+    }).catch(function (error) {
+      throw error;
+    });
+  });
 });
