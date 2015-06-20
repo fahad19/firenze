@@ -724,8 +724,8 @@ Example:
   ruleName: function (field, value) {
     return true;
   },
-  asyncRule: function (value, field, validated) {
-    return validated(true);
+  asyncRule: function (value, field, done) {
+    return done(true);
   },
   ruleWithOptions: function (value, field, arg1, arg2) {
     return true;
