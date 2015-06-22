@@ -32,6 +32,7 @@ The project is still in heavy development, and more features are expected to lan
 * [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
 * [localStorage](https://github.com/fahad19/firenze-adapter-localstorage)
 * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
+* [SQLite](https://github.com/alexweber/firenze-adapter-sqlite)
 
 #### Terminologies
 
