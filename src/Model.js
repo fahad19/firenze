@@ -658,7 +658,7 @@ export default class Model {
             });
         },
         (proceed, cb) => {
-          this
+          return this
             .collection()
             .delete(this)
             .then((res) => {
@@ -669,11 +669,7 @@ export default class Model {
             });
         },
         (result, cb) => {
-          if (!callbacks) {
-            return cb(null, result);
-          }
-
-          this
+          return this
             .afterDelete()
             .then(() => {
               return cb(null, result);

@@ -585,7 +585,7 @@ describe('Model', function () {
 
   it('should fire afterDelete callback', function (done) {
     var post = new this.Post({
-      id: 1
+      id: 2
     });
     post.fetch().then(function (model) {
       model
