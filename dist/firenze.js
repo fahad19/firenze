@@ -449,8 +449,8 @@ this["firenze"] =
 	    //   ruleName: function (field, value) {
 	    //     return true;
 	    //   },
-	    //   asyncRule: function (value, field, validated) {
-	    //     return validated(true);
+	    //   asyncRule: function (value, field, done) {
+	    //     return done(true);
 	    //   },
 	    //   ruleWithOptions: function (value, field, arg1, arg2) {
 	    //     return true;
@@ -983,17 +983,13 @@ this["firenze"] =
 	            return cb(error);
 	          });
 	        }, function (proceed, cb) {
-	          _this2.collection()['delete'](_this2).then(function (res) {
+	          return _this2.collection()['delete'](_this2).then(function (res) {
 	            return cb(null, res);
 	          })['catch'](function (error) {
 	            return cb(error);
 	          });
 	        }, function (result, cb) {
-	          if (!callbacks) {
-	            return cb(null, result);
-	          }
-
-	          _this2.afterDelete().then(function () {
+	          return _this2.afterDelete().then(function () {
 	            return cb(null, result);
 	          })['catch'](function (error) {
 	            return cb(error);
