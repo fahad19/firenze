@@ -20,8 +20,9 @@ firenze.js is a adapter-based object relational mapper targetting node.js, io.js
 
 #### Key features
 
-* Written in ES6 (works in both node/io.js/browser)
-* Adapter based structure to plug in any database
+* Written in ES6
+* Works in both node/io.js and the browser
+* Adapter based structure to plug in any database/store
 * Promise based workflow
 * Strong validation support
 
@@ -29,7 +30,7 @@ The project is still in heavy development, and more features are expected to lan
 
 #### Available adapters
 
-* [localStorage](https://github.com/fahad19/firenze-adapter-localstorage)
+* [localStorage](https://github.com/fahad19/firenze-adapter-localstorage) (for browser only)
 * [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
 * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
 * [Redis](https://github.com/fahad19/firenze-adapter-redis)
