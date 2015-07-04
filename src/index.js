@@ -7,6 +7,7 @@ import P from './Promise';
 
 import collectionFactory from './common/collectionFactory';
 import modelFactory from './common/modelFactory';
+import behaviorFactory from './common/behaviorFactory';
 
 export default {
   Database: Database,
@@ -18,5 +19,6 @@ export default {
   Promise: P,
 
   createCollectionClass: collectionFactory(),
-  createModelClass: modelFactory()
+  createModelClass: modelFactory(),
+  createBehaviorClass: behaviorFactory()
 };

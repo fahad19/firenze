@@ -33,31 +33,63 @@ import P from './Promise';
 // });
 // ```
 //
+// ## Creating classes
+//
+// ```js
+// var f = require('firenze');
+//
+// var TimestampBehavior = f.createBehaviorClass({
+//   beforeSave: function () {
+//     this.model.set('created', new Date());
+//     return new f.Promise(true);
+//   }
+// });
+// ```
+//
+// If you are using ES6, the syntax is much simpler:
+//
+// ```js
+// import f from 'firenze';
+//
+// class TimestampBehavior extends f.Behavior {
+//   beforeSave() {
+//     this.model.set('created', new Date());
+//     return new f.Promise(true);
+//   }
+// }
+// ```
+//
 
 export default class Behavior {
-  constructor(model, options = {}) {
+  constructor(extend = {}) {
 // ## Properties
 //
 // ### model
 //
 // The current instance of model
 //
-    this.model = model;
+    this.model = null;
 
 // ### options
 //
 // Behavior configuration
 //
-    this.options = options;
+    this.options = {};
+
+    _.merge(this, extend);
 
 // ### name
 //
-// Give your behavior a unique name, which would allow you to later enable/disable them.
+// Optionally give your behavior a unique name, which would allow you to later enable/disable them.
 //
     this.name = 'CustomBehavior';
   }
 
-// ## Methods
+// ## Callback methods
+//
+// Behavior allows your to hook into your model's lifecycle callbacks.
+//
+// The following callbacks are supported:
 //
 // ### initialize()
 //
