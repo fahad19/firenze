@@ -2,6 +2,7 @@ import Database from './Database';
 import Adapter from './Adapter';
 import Collection from './Collection';
 import Model from './Model';
+import Behavior from './Behavior';
 import P from './Promise';
 
 import collectionFactory from './common/collectionFactory';
@@ -12,6 +13,7 @@ export default {
   Adapter: Adapter,
   Collection: Collection,
   Model: Model,
+  Behavior: Behavior,
 
   Promise: P,
 
