@@ -41,9 +41,10 @@ The project is still in heavy development, and more features are expected to lan
 Terminologies for developing with firenze.js can be broken down into a handful of items:
 
 * Database
-* Adapter
+  * Adapter
 * Collection
 * Model
+  * Behavior
 
 Each of them are discussed in the documentation below.
 
@@ -112,6 +113,8 @@ Each of them are discussed in the documentation below.
       - [displayField](#displayfield)
       - [id](#id)
       - [validationRules](#validationrules)
+      - [behaviors](#behaviors)
+      - [loadedBehaviors](#loadedbehaviors)
       - [alias](#alias)
   - [Usage](#usage-3)
   - [Validations](#validations)
@@ -138,13 +141,31 @@ Each of them are discussed in the documentation below.
     - [delete(options = {})](#deleteoptions--)
     - [validate()](#validate)
     - [validateField(field, value = null)](#validatefieldfield-value--null)
+    - [loadBehaviors()](#loadbehaviors)
+    - [callBehavedMethod(methodName)](#callbehavedmethodmethodname)
   - [Callbacks](#callbacks)
+    - [initialize()](#initialize)
     - [beforeSave()](#beforesave)
     - [afterSave()](#aftersave)
     - [beforeValidate()](#beforevalidate)
     - [afterValidate()](#aftervalidate)
     - [beforeDelete()](#beforedelete)
     - [afterDelete()](#afterdelete)
+- [Behavior](#behavior)
+  - [Usage](#usage-4)
+  - [Creating classes](#creating-classes-2)
+  - [Properties](#properties-2)
+    - [model](#model)
+    - [options](#options)
+    - [name](#name)
+  - [Callback methods](#callback-methods)
+    - [initialize()](#initialize-1)
+    - [beforeSave()](#beforesave-1)
+    - [afterSave()](#aftersave-1)
+    - [beforeValidate()](#beforevalidate-1)
+    - [afterValidate()](#aftervalidate-1)
+    - [beforeDelete()](#beforedelete-1)
+    - [afterDelete()](#afterdelete-1)
 - [Testing](#testing)
 - [License](#license)
 
@@ -736,6 +757,23 @@ Example:
 }
 ```
 
+#### behaviors
+
+Array of behavior classes, in the order as you want them applied.
+
+Example:
+
+```js
+[
+  TimestampBehavior,
+  AnotherCustomBehavior
+]
+```
+
+#### loadedBehaviors
+
+Array of already loaded behaviors for this model
+
 #### alias
 
 Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
@@ -1067,6 +1105,14 @@ Validates a single field
 
 Returns a promise with true if validated, otherwise error message
 
+### loadBehaviors()
+
+Called during construction, and loads behaviors as defined in `behaviors` property.
+
+### callBehavedMethod(methodName)
+
+Used internally to call a callback method along with all the methods defined by loaded Behaviors too.
+
 ## Callbacks
 
 Models also support callbacks that you can define when creating classes.
@@ -1086,6 +1132,12 @@ var Post = f.createModelClass({
   }
 });
 ```
+
+### initialize()
+
+Called right after construction.
+
+For synchronous operations only, since it does not return any Promise.
 
 ### beforeSave()
 
@@ -1119,8 +1171,125 @@ Should return a Promise.
 
 <!--/docume:src/Model.js-->
 
-<!--docume:node_modules/firenze-adapter-mysql/src/index.js-->
-<!--/docume:node_modules/firenze-adapter-mysql/src/index.js-->
+<!--docume:src/Behavior.js-->
+# Behavior
+
+Behaviors allow you to hook into your Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Models.
+
+## Usage
+
+```js
+var Post = db.createModelClass({
+  behaviors: [
+    TimestampBehavior,
+    AnotherBehavior
+  ]
+});
+```
+
+With custom configuration:
+
+```js
+var Post = db.createModelClass({
+  behaviors: [
+    {
+      behavior: TimestampBehavior,
+      options: {
+        timezone: 'UTC'
+      }
+    },
+    AnotherBehavior
+  ]
+});
+```
+
+## Creating classes
+
+```js
+var f = require('firenze');
+
+var TimestampBehavior = f.createBehaviorClass({
+  beforeSave: function () {
+    this.model.set('created', new Date());
+    return new f.Promise(true);
+  }
+});
+```
+
+If you are using ES6, the syntax is much simpler:
+
+```js
+import f from 'firenze';
+
+class TimestampBehavior extends f.Behavior {
+  beforeSave() {
+    this.model.set('created', new Date());
+    return new f.Promise(true);
+  }
+}
+```
+
+## Properties
+
+### model
+
+The current instance of model
+
+### options
+
+Behavior configuration
+
+### name
+
+Optionally give your behavior a unique name, which would allow you to later enable/disable them.
+
+## Callback methods
+
+Behavior allows your to hook into your model's lifecycle callbacks.
+
+The following callbacks are supported:
+
+### initialize()
+
+Called right after model's construction, synchronous operations only.
+
+### beforeSave()
+
+Called before saving the model.
+
+Returns a promise.
+
+### afterSave()
+
+Called after saving the model.
+
+Returns a promise.
+
+### beforeValidate()
+
+Called before validating a model.
+
+Returns a promise.
+
+### afterValidate()
+
+Called after validating a model.
+
+Returns a promise.
+
+### beforeDelete()
+
+Called before deleting a model.
+
+Returns a promise.
+
+### afterDelete()
+
+Called after deleting a model.
+
+Returns a promise.
+
+<!--/docume:src/Behavior.js-->
 
 # Testing
 
