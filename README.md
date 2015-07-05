@@ -26,6 +26,7 @@ firenze.js is a adapter-based object relational mapper targetting node.js, io.js
 * Highly extensible with Behavior pattern
 * Promise based workflow
 * Strong validation support
+* Small footprint of ~30kB minified file
 
 The project is still in heavy development, and more features are expected to land in future releases.
 
