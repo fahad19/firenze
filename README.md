@@ -167,6 +167,9 @@ Each of them are discussed in the documentation below.
     - [beforeDelete()](#beforedelete-1)
     - [afterDelete()](#afterdelete-1)
 - [Testing](#testing)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [Releases](#releases)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -1193,7 +1196,7 @@ With custom configuration:
 var Post = db.createModelClass({
   behaviors: [
     {
-      class: TimestampBehavior,
+      'class': TimestampBehavior,
       options: {
         timezone: 'UTC'
       }
