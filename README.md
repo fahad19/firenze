@@ -1302,6 +1302,7 @@ $ npm test
 
 * [`v0.1.5`](https://github.com/fahad19/firenze/compare/v0.1.4...v0.1.5):
   * Added support for behaviors.
+  * Added `model.initialize()` as a lifecycle callback.
   * Fix in MemoryAdapter for running tests.
 
 # Contributing
