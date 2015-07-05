@@ -79,7 +79,7 @@ describe('Model', function () {
       body: 'blah...'
     });
     var postObj = post.toObject();
-    postObj.should.eql({
+    postObj.should.have.properties({
       id: 2,
       title: 'Hello World',
       body: 'blah...'
@@ -105,7 +105,7 @@ describe('Model', function () {
       title: 'Post here'
     });
     var postObj = post.toObject();
-    postObj.should.eql({
+    postObj.should.have.properties({
       id: 2,
       title: 'Post here'
     });

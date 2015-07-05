@@ -9,5 +9,6 @@ describe('lib', function () {
     lib.should.have.property('Adapter');
     lib.should.have.property('Collection');
     lib.should.have.property('Model');
+    lib.should.have.property('Behavior');
   });
 });

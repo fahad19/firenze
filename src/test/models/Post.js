@@ -2,6 +2,8 @@
 /* eslint-disable new-cap */
 var P = require('../../Promise');
 
+var TimestampBehavior = require('../behaviors/Timestamp');
+
 module.exports = function (db) {
   return db.createModelClass({
     alias: 'Post',
@@ -28,6 +30,10 @@ module.exports = function (db) {
         type: 'string'
       }
     },
+
+    behaviors: [
+      TimestampBehavior
+    ],
 
     collectionClass: function () {
       return require('../collections/Posts')(db);

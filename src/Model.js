@@ -57,7 +57,6 @@ export default class Model {
 // ```
 //
   constructor(attributes = {}, extend = {}) {
-
 // ### Properties
 //
 // #### collectionClass
@@ -149,6 +148,27 @@ export default class Model {
 //
     this.validationRules = {};
 
+// #### behaviors
+//
+// Array of behavior classes, in the order as you want them applied.
+//
+// Example:
+//
+// ```js
+// [
+//   TimestampBehavior,
+//   AnotherCustomBehavior
+// ]
+// ```
+//
+    this.behaviors = [];
+
+// #### loadedBehaviors
+//
+// Array of already loaded behaviors for this model
+//
+    this.loadedBehaviors = [];
+
     _.merge(this, extend);
 
 // #### alias
@@ -163,6 +183,9 @@ export default class Model {
     if (id) {
       this.id = id;
     }
+
+    this.loadBehaviors();
+    this.callBehavedMethod('initialize');
   }
 
 // ## Usage
@@ -547,7 +570,7 @@ export default class Model {
           }
 
           return this
-            .beforeSave()
+            .callBehavedMethod('beforeSave')
             .then((proceed) => {
               if (proceed === true) {
                 return cb(null, proceed);
@@ -593,7 +616,7 @@ export default class Model {
           }
 
           return this
-            .afterSave()
+            .callBehavedMethod('afterSave')
             .then(() => {
               return cb(null, this);
             });
@@ -649,7 +672,7 @@ export default class Model {
           }
 
           return this
-            .beforeDelete()
+            .callBehavedMethod('beforeDelete')
             .then((proceed) => {
               return cb(null, proceed);
             })
@@ -670,7 +693,7 @@ export default class Model {
         },
         (result, cb) => {
           return this
-            .afterDelete()
+            .callBehavedMethod('afterDelete')
             .then(() => {
               return cb(null, result);
             })
@@ -711,7 +734,7 @@ export default class Model {
           }
 
           return this
-            .beforeValidate()
+            .callBehavedMethod('beforeValidate')
             .then((proceed) => {
               return cb(null, proceed);
             })
@@ -739,7 +762,7 @@ export default class Model {
           }
 
           return this
-            .afterValidate()
+            .callBehavedMethod('afterValidate')
             .then(() => {
               return cb(null, res);
             })
@@ -909,6 +932,67 @@ export default class Model {
     });
   }
 
+// ### loadBehaviors()
+//
+// Called during construction, and loads behaviors as defined in `behaviors` property.
+//
+  loadBehaviors() {
+    this.behaviors.forEach((behaviorItem) => {
+      let behaviorClass = behaviorItem;
+      let behaviorOptions = {};
+
+      if (_.isObject(behaviorItem) && _.isObject(behaviorItem.options)) {
+        behaviorClass = behaviorItem.class;
+        behaviorOptions = behaviorItem.options;
+      }
+
+      let behavior = new behaviorClass({
+        model: this,
+        options: behaviorOptions
+      });
+      this.loadedBehaviors.push(behavior);
+    });
+  }
+
+// ### callBehavedMethod(methodName)
+//
+// Used internally to call a callback method along with all the methods defined by loaded Behaviors too.
+//
+  callBehavedMethod(methodName) {
+    if (methodName.indexOf('after') === -1 && methodName.indexOf('before') === -1) {
+      // sync
+      this.loadedBehaviors.forEach((behavior) => {
+        behavior[methodName]();
+      });
+      return;
+    }
+
+    // async
+    return new P((resolve, reject) => {
+      return async.eachSeries(this.loadedBehaviors, (behavior, callback) => {
+        behavior[methodName]()
+          .then((res) => {
+            return callback(null, res);
+          })
+          .catch((error) => {
+            return callback(error);
+          });
+      }, (error) => {
+        if (error) {
+          return reject(error);
+        }
+
+        return this[methodName]()
+          .then((res) => {
+            return resolve(res);
+          })
+          .catch((error) => {
+            return reject(error);
+          })
+      });
+    });
+  }
+
 // ## Callbacks
 //
 // Models also support callbacks that you can define when creating classes.
@@ -929,6 +1013,16 @@ export default class Model {
 // });
 // ```
 //
+
+// ### initialize()
+//
+// Called right after construction.
+//
+// For synchronous operations only, since it does not return any Promise.
+//
+  initialize() {
+    return true;
+  }
 
 // ### beforeSave()
 //
