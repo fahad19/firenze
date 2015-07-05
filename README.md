@@ -1193,7 +1193,7 @@ With custom configuration:
 var Post = db.createModelClass({
   behaviors: [
     {
-      behavior: TimestampBehavior,
+      class: TimestampBehavior,
       options: {
         timezone: 'UTC'
       }
