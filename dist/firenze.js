@@ -69,6 +69,10 @@ this["firenze"] =
 
 	var _Model2 = _interopRequireDefault(_Model);
 
+	var _Behavior = __webpack_require__(13);
+
+	var _Behavior2 = _interopRequireDefault(_Behavior);
+
 	var _Promise = __webpack_require__(5);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
@@ -81,16 +85,22 @@ this["firenze"] =
 
 	var _commonModelFactory2 = _interopRequireDefault(_commonModelFactory);
 
+	var _commonBehaviorFactory = __webpack_require__(14);
+
+	var _commonBehaviorFactory2 = _interopRequireDefault(_commonBehaviorFactory);
+
 	exports['default'] = {
 	  Database: _Database2['default'],
 	  Adapter: _Adapter2['default'],
 	  Collection: _Collection2['default'],
 	  Model: _Model2['default'],
+	  Behavior: _Behavior2['default'],
 
 	  Promise: _Promise2['default'],
 
 	  createCollectionClass: (0, _commonCollectionFactory2['default'])(),
-	  createModelClass: (0, _commonModelFactory2['default'])()
+	  createModelClass: (0, _commonModelFactory2['default'])(),
+	  createBehaviorClass: (0, _commonBehaviorFactory2['default'])()
 	};
 	module.exports = exports['default'];
 
@@ -259,8 +269,8 @@ this["firenze"] =
 
 	        _classCallCheck(this, GeneratedModel);
 
-	        _get(Object.getPrototypeOf(GeneratedModel.prototype), 'constructor', this).call(this, attributes, _extend);
-	        _lodash2['default'].merge(this, extend);
+	        _get(Object.getPrototypeOf(GeneratedModel.prototype), 'constructor', this).call(this, attributes, extend);
+	        _lodash2['default'].merge(this, _extend);
 	      }
 
 	      _inherits(GeneratedModel, _Model);
@@ -460,6 +470,27 @@ this["firenze"] =
 	    //
 	    this.validationRules = {};
 
+	    // #### behaviors
+	    //
+	    // Array of behavior classes, in the order as you want them applied.
+	    //
+	    // Example:
+	    //
+	    // ```js
+	    // [
+	    //   TimestampBehavior,
+	    //   AnotherCustomBehavior
+	    // ]
+	    // ```
+	    //
+	    this.behaviors = [];
+
+	    // #### loadedBehaviors
+	    //
+	    // Array of already loaded behaviors for this model
+	    //
+	    this.loadedBehaviors = [];
+
 	    _lodash2['default'].merge(this, extend);
 
 	    // #### alias
@@ -474,6 +505,9 @@ this["firenze"] =
 	    if (id) {
 	      this.id = id;
 	    }
+
+	    this.loadBehaviors();
+	    this.callBehavedMethod('initialize');
 	  }
 
 	  _createClass(Model, [{
@@ -881,7 +915,7 @@ this["firenze"] =
 	            return cb(null, true);
 	          }
 
-	          return _this.beforeSave().then(function (proceed) {
+	          return _this.callBehavedMethod('beforeSave').then(function (proceed) {
 	            if (proceed === true) {
 	              return cb(null, proceed);
 	            }
@@ -915,7 +949,7 @@ this["firenze"] =
 	            return cb(null, _this);
 	          }
 
-	          return _this.afterSave().then(function () {
+	          return _this.callBehavedMethod('afterSave').then(function () {
 	            return cb(null, _this);
 	          });
 	        }], function (err, result) {
@@ -977,7 +1011,7 @@ this["firenze"] =
 	            return cb(null, true);
 	          }
 
-	          return _this2.beforeDelete().then(function (proceed) {
+	          return _this2.callBehavedMethod('beforeDelete').then(function (proceed) {
 	            return cb(null, proceed);
 	          })['catch'](function (error) {
 	            return cb(error);
@@ -989,7 +1023,7 @@ this["firenze"] =
 	            return cb(error);
 	          });
 	        }, function (result, cb) {
-	          return _this2.afterDelete().then(function () {
+	          return _this2.callBehavedMethod('afterDelete').then(function () {
 	            return cb(null, result);
 	          })['catch'](function (error) {
 	            return cb(error);
@@ -1032,7 +1066,7 @@ this["firenze"] =
 	            return cb(null, true);
 	          }
 
-	          return _this3.beforeValidate().then(function (proceed) {
+	          return _this3.callBehavedMethod('beforeValidate').then(function (proceed) {
 	            return cb(null, proceed);
 	          })['catch'](function (error) {
 	            return cb(error);
@@ -1052,7 +1086,7 @@ this["firenze"] =
 	            return cb(null, res);
 	          }
 
-	          return _this3.afterValidate().then(function () {
+	          return _this3.callBehavedMethod('afterValidate').then(function () {
 	            return cb(null, res);
 	          })['catch'](function (error) {
 	            return cb(error);
@@ -1223,7 +1257,72 @@ this["firenze"] =
 	      });
 	    }
 	  }, {
-	    key: 'beforeSave',
+	    key: 'loadBehaviors',
+
+	    // ### loadBehaviors()
+	    //
+	    // Called during construction, and loads behaviors as defined in `behaviors` property.
+	    //
+	    value: function loadBehaviors() {
+	      var _this6 = this;
+
+	      this.behaviors.forEach(function (behaviorItem) {
+	        var behaviorClass = behaviorItem;
+	        var behaviorOptions = {};
+
+	        if (_lodash2['default'].isObject(behaviorItem) && _lodash2['default'].isObject(behaviorItem.options)) {
+	          behaviorClass = behaviorItem['class'];
+	          behaviorOptions = behaviorItem.options;
+	        }
+
+	        var behavior = new behaviorClass({
+	          model: _this6,
+	          options: behaviorOptions
+	        });
+	        _this6.loadedBehaviors.push(behavior);
+	      });
+	    }
+	  }, {
+	    key: 'callBehavedMethod',
+
+	    // ### callBehavedMethod(methodName)
+	    //
+	    // Used internally to call a callback method along with all the methods defined by loaded Behaviors too.
+	    //
+	    value: function callBehavedMethod(methodName) {
+	      var _this7 = this;
+
+	      if (methodName.indexOf('after') === -1 && methodName.indexOf('before') === -1) {
+	        // sync
+	        this.loadedBehaviors.forEach(function (behavior) {
+	          behavior[methodName]();
+	        });
+	        return;
+	      }
+
+	      // async
+	      return new _Promise2['default'](function (resolve, reject) {
+	        return _async2['default'].eachSeries(_this7.loadedBehaviors, function (behavior, callback) {
+	          behavior[methodName]().then(function (res) {
+	            return callback(null, res);
+	          })['catch'](function (error) {
+	            return callback(error);
+	          });
+	        }, function (error) {
+	          if (error) {
+	            return reject(error);
+	          }
+
+	          return _this7[methodName]().then(function (res) {
+	            return resolve(res);
+	          })['catch'](function (error) {
+	            return reject(error);
+	          });
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'initialize',
 
 	    // ## Callbacks
 	    //
@@ -1245,6 +1344,18 @@ this["firenze"] =
 	    // });
 	    // ```
 	    //
+
+	    // ### initialize()
+	    //
+	    // Called right after construction.
+	    //
+	    // For synchronous operations only, since it does not return any Promise.
+	    //
+	    value: function initialize() {
+	      return true;
+	    }
+	  }, {
+	    key: 'beforeSave',
 
 	    // ### beforeSave()
 	    //
@@ -2219,6 +2330,270 @@ this["firenze"] =
 	exports['default'] = Adapter;
 	module.exports = exports['default'];
 	//eslint-disable-line
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	var _lodash = __webpack_require__(2);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _async = __webpack_require__(8);
+
+	var _async2 = _interopRequireDefault(_async);
+
+	var _Promise = __webpack_require__(5);
+
+	var _Promise2 = _interopRequireDefault(_Promise);
+
+	// # Behavior
+	//
+	// Behaviors allow you to hook into your Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Models.
+	//
+	// ## Usage
+	//
+	// ```js
+	// var Post = db.createModelClass({
+	//   behaviors: [
+	//     TimestampBehavior,
+	//     AnotherBehavior
+	//   ]
+	// });
+	// ```
+	//
+	// With custom configuration:
+	//
+	// ```js
+	// var Post = db.createModelClass({
+	//   behaviors: [
+	//     {
+	//       class: TimestampBehavior,
+	//       options: {
+	//         timezone: 'UTC'
+	//       }
+	//     },
+	//     AnotherBehavior
+	//   ]
+	// });
+	// ```
+	//
+	// ## Creating classes
+	//
+	// ```js
+	// var f = require('firenze');
+	//
+	// var TimestampBehavior = f.createBehaviorClass({
+	//   beforeSave: function () {
+	//     this.model.set('created', new Date());
+	//     return new f.Promise(true);
+	//   }
+	// });
+	// ```
+	//
+	// If you are using ES6, the syntax is much simpler:
+	//
+	// ```js
+	// import f from 'firenze';
+	//
+	// class TimestampBehavior extends f.Behavior {
+	//   beforeSave() {
+	//     this.model.set('created', new Date());
+	//     return new f.Promise(true);
+	//   }
+	// }
+	// ```
+	//
+
+	var Behavior = (function () {
+	  function Behavior() {
+	    var extend = arguments[0] === undefined ? {} : arguments[0];
+
+	    _classCallCheck(this, Behavior);
+
+	    // ## Properties
+	    //
+	    // ### model
+	    //
+	    // The current instance of model
+	    //
+	    this.model = null;
+
+	    // ### options
+	    //
+	    // Behavior configuration
+	    //
+	    this.options = {};
+
+	    _lodash2['default'].merge(this, extend);
+
+	    // ### name
+	    //
+	    // Optionally give your behavior a unique name, which would allow you to later enable/disable them.
+	    //
+	    this.name = 'CustomBehavior';
+	  }
+
+	  _createClass(Behavior, [{
+	    key: 'initialize',
+
+	    // ## Callback methods
+	    //
+	    // Behavior allows your to hook into your model's lifecycle callbacks.
+	    //
+	    // The following callbacks are supported:
+	    //
+	    // ### initialize()
+	    //
+	    // Called right after model's construction, synchronous operations only.
+	    //
+	    value: function initialize() {}
+	  }, {
+	    key: 'beforeSave',
+
+	    // ### beforeSave()
+	    //
+	    // Called before saving the model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function beforeSave() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }, {
+	    key: 'afterSave',
+
+	    // ### afterSave()
+	    //
+	    // Called after saving the model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function afterSave() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }, {
+	    key: 'beforeValidate',
+
+	    // ### beforeValidate()
+	    //
+	    // Called before validating a model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function beforeValidate() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }, {
+	    key: 'afterValidate',
+
+	    // ### afterValidate()
+	    //
+	    // Called after validating a model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function afterValidate() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }, {
+	    key: 'beforeDelete',
+
+	    // ### beforeDelete()
+	    //
+	    // Called before deleting a model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function beforeDelete() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }, {
+	    key: 'afterDelete',
+
+	    // ### afterDelete()
+	    //
+	    // Called after deleting a model.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function afterDelete() {
+	      return new _Promise2['default'](function (resolve) {
+	        return resolve();
+	      });
+	    }
+	  }]);
+
+	  return Behavior;
+	})();
+
+	exports['default'] = Behavior;
+	module.exports = exports['default'];
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var _lodash = __webpack_require__(2);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _Behavior2 = __webpack_require__(13);
+
+	var _Behavior3 = _interopRequireDefault(_Behavior2);
+
+	module.exports = function () {
+	  return function (extend) {
+	    var GeneratedBehavior = (function (_Behavior) {
+	      function GeneratedBehavior() {
+	        var _extend = arguments[0] === undefined ? {} : arguments[0];
+
+	        _classCallCheck(this, GeneratedBehavior);
+
+	        _get(Object.getPrototypeOf(GeneratedBehavior.prototype), 'constructor', this).call(this, _extend);
+	        _lodash2['default'].merge(this, extend);
+	      }
+
+	      _inherits(GeneratedBehavior, _Behavior);
+
+	      return GeneratedBehavior;
+	    })(_Behavior3['default']);
+
+	    return GeneratedBehavior;
+	  };
+	};
 
 /***/ }
 /******/ ]);
