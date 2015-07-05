@@ -1304,7 +1304,7 @@ $ npm test
 
 # Changelog
 
-* `v0.1.5`:
+* [`v0.1.5`](https://github.com/fahad19/firenze/compare/v0.1.4...v0.1.5):
   * Added support for behaviors.
   * Fix in MemoryAdapter for running tests.
 
