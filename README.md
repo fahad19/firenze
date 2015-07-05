@@ -1299,6 +1299,32 @@ Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be
 $ npm test
 ```
 
+# Changelog
+
+* `v0.1.5`:
+  * Added support for behaviors.
+  * Fix in MemoryAdapter for running tests.
+
+# Contributing
+
+* Fork each individual bug/fix/feature, please create a separate Issue/Pull Request.
+* Make sure tests and inline documentation are written, and has good coverage.
+* Run `npm run docs` and commit the updated README.
+* Do not update the `dist` files.
+* Be nice.
+
+# Releases
+
+To publish a new release:
+
+* Update `package.json` and `bower.json` with version number.
+* Run:
+  * `npm run docs`
+  * `npm run dist`
+* Commit the changes.
+* Run `npm publish .`
+* Tag the repository with `vX.X.X`
+
 # License
 
 MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
