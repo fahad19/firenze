@@ -87,7 +87,7 @@ export default class Memory extends Adapter {
   }
 
   populateTable(model, rows) {
-    this.data[model.collection().table] = rows;
+    this.data[model.collection().table] = _.clone(rows);
     return new P.resolve(true);
   }
 
