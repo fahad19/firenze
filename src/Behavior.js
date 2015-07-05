@@ -23,7 +23,7 @@ import P from './Promise';
 // var Post = db.createModelClass({
 //   behaviors: [
 //     {
-//       behavior: TimestampBehavior,
+//       class: TimestampBehavior,
 //       options: {
 //         timezone: 'UTC'
 //       }

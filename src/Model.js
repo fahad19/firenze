@@ -57,7 +57,6 @@ export default class Model {
 // ```
 //
   constructor(attributes = {}, extend = {}) {
-
 // ### Properties
 //
 // #### collectionClass
@@ -943,7 +942,7 @@ export default class Model {
       let behaviorOptions = {};
 
       if (_.isObject(behaviorItem) && _.isObject(behaviorItem.options)) {
-        behaviorClass = behaviorItem.behavior;
+        behaviorClass = behaviorItem.class;
         behaviorOptions = behaviorItem.options;
       }
 

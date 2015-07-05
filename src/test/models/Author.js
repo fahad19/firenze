@@ -1,6 +1,8 @@
 /* eslint-disable new-cap */
 var P = require('../../Promise');
 
+var TimestampBehavior = require('../behaviors/Timestamp');
+
 module.exports = function (db) {
   return db.createModelClass({
     alias: 'Author',
@@ -18,6 +20,13 @@ module.exports = function (db) {
         type: 'text'
       }
     },
+
+    behaviors: [
+      {
+        class: TimestampBehavior,
+        options: {}
+      }
+    ],
 
     collectionClass: function () {
       return require('../collections/Authors')(db);
