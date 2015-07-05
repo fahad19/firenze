@@ -76,7 +76,8 @@ export default class Behavior {
 //
     this.options = {};
 
-    _.merge(this, extend);  }
+    _.merge(this, extend);
+  }
 
 // ## Callback methods
 //
