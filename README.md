@@ -157,7 +157,6 @@ Each of them are discussed in the documentation below.
   - [Properties](#properties-2)
     - [model](#model)
     - [options](#options)
-    - [name](#name)
   - [Callback methods](#callback-methods)
     - [initialize()](#initialize-1)
     - [beforeSave()](#beforesave-1)
@@ -1241,10 +1240,6 @@ The current instance of model
 ### options
 
 Behavior configuration
-
-### name
-
-Optionally give your behavior a unique name, which would allow you to later enable/disable them.
 
 ## Callback methods
 

@@ -76,14 +76,7 @@ export default class Behavior {
 //
     this.options = {};
 
-    _.merge(this, extend);
-
-// ### name
-//
-// Optionally give your behavior a unique name, which would allow you to later enable/disable them.
-//
-    this.name = 'CustomBehavior';
-  }
+    _.merge(this, extend);  }
 
 // ## Callback methods
 //
