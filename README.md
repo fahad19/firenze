@@ -1324,6 +1324,7 @@ To publish a new release:
 * Commit the changes.
 * Run `npm publish .`
 * Tag the repository with `vX.X.X`
+* Update GitHub Pages.
 
 # License
 
