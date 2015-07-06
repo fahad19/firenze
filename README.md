@@ -38,6 +38,10 @@ The project is still in heavy development, and more features are expected to lan
 * [Redis](https://github.com/fahad19/firenze-adapter-redis)
 * [SQLite](https://github.com/alexweber/firenze-adapter-sqlite)
 
+#### Available behaviors
+
+* [Slug](https://github.com/fahad19/firenze-behavior-slug)
+
 #### Terminologies
 
 Terminologies for developing with firenze.js can be broken down into a handful of items:
