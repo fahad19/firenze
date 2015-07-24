@@ -7,7 +7,7 @@ var config = require('../config');
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
     var db = new lib.Database(config);
-    db.close(done);
+    db.close().then(done);
   });
 
   it('should generate Collection class', function (done) {
@@ -16,7 +16,7 @@ describe('Database', function () {
 
     var posts = new Posts();
     posts.table.should.be.exactly('posts');
-    db.close(done);
+    db.close().then(done);
   });
 
   it('should generate Model class', function (done) {
@@ -25,6 +25,6 @@ describe('Database', function () {
 
     var post = new Post();
     post.alias.should.be.exactly('Post');
-    db.close(done);
+    db.close().then(done);
   });
 });

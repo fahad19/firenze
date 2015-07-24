@@ -33,7 +33,7 @@ describe('Model', function () {
   });
 
   after(function (done) {
-    this.db.close(done);
+    this.db.close().then(done);
   });
 
   it('should have an instance', function () {

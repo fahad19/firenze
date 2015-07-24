@@ -33,7 +33,7 @@ describe('Behavior', function () {
   });
 
   after(function (done) {
-    this.db.close(done);
+    this.db.close().then(done);
   });
 
   it('should load in model', function () {

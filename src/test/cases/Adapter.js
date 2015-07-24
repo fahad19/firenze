@@ -12,7 +12,7 @@ describe('Adapter', function () {
   });
 
   after(function (done) {
-    this.db.close(done);
+    this.db.close().then(done);
   });
 
   it('should load fixtures for a single Model', function (done) {

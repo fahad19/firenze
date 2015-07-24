@@ -2,6 +2,7 @@ import _ from 'lodash';
 
 import modelFactory from './common/modelFactory';
 import collectionFactory from './common/collectionFactory';
+import P from './Promise';
 
 // # Database
 //
@@ -78,7 +79,13 @@ export default class Database {
 //
 // Closes the connection
 //
-  close(cb = null) {
-    return this.getAdapter().closeConnection(cb);
+// Returns a promise
+//
+  close() {
+    return new P((resolve) => {
+      return this.getAdapter().closeConnection(() => {
+        return resolve();
+      });
+    });
   }
 }

@@ -367,6 +367,8 @@ Returns connection of the Adapter
 
 Closes the connection
 
+Returns a promise
+
 <!--/docume:src/Database.js-->
 
 <!--docume:src/Adapter.js-->
