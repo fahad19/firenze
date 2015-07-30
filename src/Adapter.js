@@ -190,7 +190,7 @@ export default class Adapter {
 
 // ### loadAllFixtures(arr)
 //
-// Runs fixtures for multiple models
+// Runs fixtures for multiple collections
 //
 // arr = [{collection: post, rows: rows}]
 //

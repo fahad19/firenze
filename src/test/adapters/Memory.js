@@ -69,33 +69,30 @@ export default class Memory extends Adapter {
     return this.data;
   }
 
-  closeConnection(cb = null) {
-    if (!cb) {
-      cb = function () { };
-    }
-    return cb();
-  }
-
-  dropTable(model) {
-    this.data = _.omit(this.data, model.collection().table);
+  closeConnection() {
     return new P.resolve(true);
   }
 
-  createTable(model) {
-    this.data[model.collection().table] = [];
+  dropTable(collection) {
+    this.data = _.omit(this.data, collection.table);
     return new P.resolve(true);
   }
 
-  populateTable(model, rows) {
-    this.data[model.collection().table] = _.clone(rows);
+  createTable(collection) {
+    this.data[collection.table] = [];
+    return new P.resolve(true);
+  }
+
+  populateTable(collection, rows) {
+    this.data[collection.table] = _.clone(rows);
     return new P.resolve(true);
   }
 
   query(collection, options = {}) {
     let opt = _.merge(options, {
       table: collection.table,
-      alias: collection.model().alias,
-      primaryKey: collection.model().primaryKey
+      alias: collection.alias,
+      primaryKey: collection.primaryKey
     });
 
     let promise = new P((resolve, reject) => {
