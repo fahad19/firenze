@@ -83,7 +83,7 @@ Each of them are discussed in the documentation below.
     - [dropTable(model)](#droptablemodel)
     - [createTable(model)](#createtablemodel)
     - [populateTable(model, rows)](#populatetablemodel-rows)
-    - [loadFixture(model, rows)](#loadfixturemodel-rows)
+    - [loadFixture(collection, rows)](#loadfixturecollection-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
@@ -161,16 +161,16 @@ Each of them are discussed in the documentation below.
   - [Usage](#usage-4)
   - [Creating classes](#creating-classes-2)
   - [Properties](#properties-2)
-    - [model](#model)
+    - [collection](#collection-1)
     - [options](#options)
   - [Callback methods](#callback-methods)
-    - [initialize()](#initialize)
-    - [beforeSave()](#beforesave-1)
-    - [afterSave()](#aftersave-1)
-    - [beforeValidate()](#beforevalidate-1)
-    - [afterValidate()](#aftervalidate-1)
-    - [beforeDelete()](#beforedelete-1)
-    - [afterDelete()](#afterdelete-1)
+    - [modelInitialize()](#modelinitialize-1)
+    - [beforeSave(model)](#beforesavemodel)
+    - [afterSave(model)](#aftersavemodel)
+    - [beforeValidate(model)](#beforevalidatemodel)
+    - [afterValidate(model)](#aftervalidatemodel)
+    - [beforeDelete(model)](#beforedeletemodel)
+    - [afterDelete(model)](#afterdeletemodel)
 - [Testing](#testing)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -415,7 +415,9 @@ Returns the current connection
 
 ### closeConnection(cb = null)
 
-Closes the current connection, and calls the callback function `cb()` if passed.
+Closes the current connection.
+
+Returns a promise.
 
 ### query()
 
@@ -449,15 +451,15 @@ Create table based on model's schema
 
 Insert rows into model's table
 
-### loadFixture(model, rows)
+### loadFixture(collection, rows)
 
-Creates table, and loads data for given model
+Creates table, and loads data for given collection
 
 ### loadAllFixtures(arr)
 
 Runs fixtures for multiple models
 
-arr = [{model: post, rows: rows}]
+arr = [{collection: post, rows: rows}]
 
 <!--/docume:src/Adapter.js-->
 
@@ -1205,12 +1207,12 @@ Returns a promise
 <!--docume:src/Behavior.js-->
 # Behavior
 
-Behaviors allow you to hook into your Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Models.
+Behaviors allow you to hook into your Collections and Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Collections/Models.
 
 ## Usage
 
 ```js
-var Post = db.createModelClass({
+var Posts = db.createCollectionClass({
   behaviors: [
     TimestampBehavior,
     AnotherBehavior
@@ -1221,7 +1223,7 @@ var Post = db.createModelClass({
 With custom configuration:
 
 ```js
-var Post = db.createModelClass({
+var Posts = db.createCollectionClass({
   behaviors: [
     {
       'class': TimestampBehavior,
@@ -1240,8 +1242,8 @@ var Post = db.createModelClass({
 var f = require('firenze');
 
 var TimestampBehavior = f.createBehaviorClass({
-  beforeSave: function () {
-    this.model.set('created', new Date());
+  beforeSave: function (model) {
+    model.set('created', new Date());
     return new f.Promise(true);
   }
 });
@@ -1250,21 +1252,21 @@ var TimestampBehavior = f.createBehaviorClass({
 If you are using ES6, the syntax is much simpler:
 
 ```js
-import f from 'firenze';
+import {Behavior, Promise} from 'firenze';
 
-class TimestampBehavior extends f.Behavior {
-  beforeSave() {
-    this.model.set('created', new Date());
-    return new f.Promise(true);
+class TimestampBehavior extends Behavior {
+  beforeSave(model) {
+    model.set('created', new Date());
+    return new Promise(true);
   }
 }
 ```
 
 ## Properties
 
-### model
+### collection
 
-The current instance of model
+The current instance of collection
 
 ### options
 
@@ -1276,41 +1278,41 @@ Behavior allows your to hook into your model's lifecycle callbacks.
 
 The following callbacks are supported:
 
-### initialize()
+### modelInitialize()
 
 Called right after model's construction, synchronous operations only.
 
-### beforeSave()
+### beforeSave(model)
 
 Called before saving the model.
 
 Returns a promise.
 
-### afterSave()
+### afterSave(model)
 
 Called after saving the model.
 
 Returns a promise.
 
-### beforeValidate()
+### beforeValidate(model)
 
 Called before validating a model.
 
 Returns a promise.
 
-### afterValidate()
+### afterValidate(model)
 
 Called after validating a model.
 
 Returns a promise.
 
-### beforeDelete()
+### beforeDelete(model)
 
 Called before deleting a model.
 
 Returns a promise.
 
-### afterDelete()
+### afterDelete(model)
 
 Called after deleting a model.
 

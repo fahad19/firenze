@@ -4,12 +4,12 @@ import P from './Promise';
 
 // # Behavior
 //
-// Behaviors allow you to hook into your Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Models.
+// Behaviors allow you to hook into your Collections and Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Collections/Models.
 //
 // ## Usage
 //
 // ```js
-// var Post = db.createModelClass({
+// var Posts = db.createCollectionClass({
 //   behaviors: [
 //     TimestampBehavior,
 //     AnotherBehavior
@@ -20,7 +20,7 @@ import P from './Promise';
 // With custom configuration:
 //
 // ```js
-// var Post = db.createModelClass({
+// var Posts = db.createCollectionClass({
 //   behaviors: [
 //     {
 //       'class': TimestampBehavior,
@@ -39,8 +39,8 @@ import P from './Promise';
 // var f = require('firenze');
 //
 // var TimestampBehavior = f.createBehaviorClass({
-//   beforeSave: function () {
-//     this.model.set('created', new Date());
+//   beforeSave: function (model) {
+//     model.set('created', new Date());
 //     return new f.Promise(true);
 //   }
 // });
@@ -49,12 +49,12 @@ import P from './Promise';
 // If you are using ES6, the syntax is much simpler:
 //
 // ```js
-// import f from 'firenze';
+// import {Behavior, Promise} from 'firenze';
 //
-// class TimestampBehavior extends f.Behavior {
-//   beforeSave() {
-//     this.model.set('created', new Date());
-//     return new f.Promise(true);
+// class TimestampBehavior extends Behavior {
+//   beforeSave(model) {
+//     model.set('created', new Date());
+//     return new Promise(true);
 //   }
 // }
 // ```
@@ -64,11 +64,11 @@ export default class Behavior {
   constructor(extend = {}) {
 // ## Properties
 //
-// ### model
+// ### collection
 //
-// The current instance of model
+// The current instance of collection
 //
-    this.model = null;
+    this.collection = null;
 
 // ### options
 //
@@ -85,81 +85,81 @@ export default class Behavior {
 //
 // The following callbacks are supported:
 //
-// ### initialize()
+// ### modelInitialize()
 //
 // Called right after model's construction, synchronous operations only.
 //
-  initialize() {
+  modelInitialize() {
 
   }
 
-// ### beforeSave()
+// ### beforeSave(model)
 //
 // Called before saving the model.
 //
 // Returns a promise.
 //
-  beforeSave() {
+  beforeSave(model) {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### afterSave()
+// ### afterSave(model)
 //
 // Called after saving the model.
 //
 // Returns a promise.
 //
-  afterSave() {
+  afterSave(model) {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### beforeValidate()
+// ### beforeValidate(model)
 //
 // Called before validating a model.
 //
 // Returns a promise.
 //
-  beforeValidate() {
+  beforeValidate(model) {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### afterValidate()
+// ### afterValidate(model)
 //
 // Called after validating a model.
 //
 // Returns a promise.
 //
-  afterValidate() {
+  afterValidate(model) {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### beforeDelete()
+// ### beforeDelete(model)
 //
 // Called before deleting a model.
 //
 // Returns a promise.
 //
-  beforeDelete() {
+  beforeDelete(model) {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### afterDelete()
+// ### afterDelete(model)
 //
 // Called after deleting a model.
 //
 // Returns a promise.
 //
-  afterDelete() {
+  afterDelete(model) {
     return new P(function (resolve) {
       return resolve();
     });

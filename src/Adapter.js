@@ -54,15 +54,13 @@ export default class Adapter {
 
 // ### closeConnection(cb = null)
 //
-// Closes the current connection, and calls the callback function `cb()` if passed.
+// Closes the current connection.
 //
-  closeConnection(cb = null) {
+// Returns a promise.
+//
+  closeConnection() {
     return new P(function (resolve) {
       return resolve();
-    }).then(function () {
-      if (_.isFunction(cb)) {
-        return cb();
-      }
     });
   }
 
@@ -146,15 +144,15 @@ export default class Adapter {
     });
   }
 
-// ### loadFixture(model, rows)
+// ### loadFixture(collection, rows)
 //
-// Creates table, and loads data for given model
+// Creates table, and loads data for given collection
 //
-  loadFixture(model, rows) { //eslint-disable-line
+  loadFixture(collection, rows) { //eslint-disable-line
     return new P((resolve, reject) => {
       async.series([
         (callback) => {
-          this.dropTable(model)
+          this.dropTable(collection)
             .then(function (response) {
               callback(null, response);
             })
@@ -163,7 +161,7 @@ export default class Adapter {
             });
         },
         (callback) => {
-          this.createTable(model)
+          this.createTable(collection)
             .then(function (response) {
               callback(null, response);
             })
@@ -172,7 +170,7 @@ export default class Adapter {
             });
         },
         (callback) => {
-          this.populateTable(model, rows)
+          this.populateTable(collection, rows)
             .then(function (response) {
               callback(null, response);
             })
@@ -194,12 +192,12 @@ export default class Adapter {
 //
 // Runs fixtures for multiple models
 //
-// arr = [{model: post, rows: rows}]
+// arr = [{collection: post, rows: rows}]
 //
   loadAllFixtures(arr) { //eslint-disable-line
     return new P((resolve, reject) => {
       async.map(arr, (fixture, callback) => {
-        this.loadFixture(fixture.model, fixture.rows).then(function (results) {
+        this.loadFixture(fixture.collection, fixture.rows).then(function (results) {
           callback(null, results);
         }).catch(function (error) {
           callback(error);
