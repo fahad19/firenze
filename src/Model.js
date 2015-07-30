@@ -73,6 +73,8 @@ export default class Model {
     if (id) {
       this.id = id;
     }
+
+    this.collection.callBehavedMethod(this, 'modelInitialize');
   }
 
 // ## Usage

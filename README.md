@@ -90,8 +90,24 @@ Each of them are discussed in the documentation below.
     - [Properties](#properties)
       - [modelClass](#modelclass)
       - [table](#table)
+      - [schema](#schema)
+      - [primaryKey](#primarykey)
+      - [displayField](#displayfield)
+      - [validationRules](#validationrules)
+      - [behaviors](#behaviors)
+      - [loadedBehaviors](#loadedbehaviors)
       - [finders](#finders)
+      - [alias](#alias)
   - [Usage](#usage-2)
+  - [Validations](#validations)
+    - [Single rule](#single-rule)
+    - [Multiple rules](#multiple-rules)
+    - [Rule with options](#rule-with-options)
+    - [Rule as a function](#rule-as-a-function)
+    - [Asynchronouse rule](#asynchronouse-rule)
+    - [Available rules](#available-rules)
+    - [Custom rules](#custom-rules)
+    - [Required fields](#required-fields)
   - [Methods](#methods-2)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
@@ -106,33 +122,28 @@ Each of them are discussed in the documentation below.
     - [findBy(field, value, options = {})](#findbyfield-value-options--)
     - [findById(value, options = {})](#findbyidvalue-options--)
     - [findByKey(value, options = {})](#findbykeyvalue-options--)
+    - [validate()](#validate)
+    - [validateField(model, field, value = null)](#validatefieldmodel-field-value--null)
     - [save(model, options = {})](#savemodel-options--)
     - [delete(model)](#deletemodel)
+    - [loadBehaviors()](#loadbehaviors)
+    - [callBehavedMethod(methodName)](#callbehavedmethodmethodname)
+  - [Callbacks](#callbacks)
+    - [modelInitialize()](#modelinitialize)
+    - [beforeSave()](#beforesave)
+    - [afterSave()](#aftersave)
+    - [beforeValidate()](#beforevalidate)
+    - [afterValidate()](#aftervalidate)
+    - [beforeDelete()](#beforedelete)
+    - [afterDelete()](#afterdelete)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
     - [Properties](#properties-1)
-      - [collectionClass](#collectionclass)
-      - [schema](#schema)
       - [attributes](#attributes)
-      - [primaryKey](#primarykey)
-      - [displayField](#displayfield)
+      - [collection](#collection)
       - [id](#id)
-      - [validationRules](#validationrules)
-      - [behaviors](#behaviors)
-      - [loadedBehaviors](#loadedbehaviors)
-      - [alias](#alias)
   - [Usage](#usage-3)
-  - [Validations](#validations)
-    - [Single rule](#single-rule)
-    - [Multiple rules](#multiple-rules)
-    - [Rule with options](#rule-with-options)
-    - [Rule as a function](#rule-as-a-function)
-    - [Asynchronouse rule](#asynchronouse-rule)
-    - [Available rules](#available-rules)
-    - [Custom rules](#custom-rules)
-    - [Required fields](#required-fields)
   - [Methods](#methods-3)
-    - [collection(options = {})](#collectionoptions--)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
     - [toObject()](#toobject)
@@ -144,18 +155,8 @@ Each of them are discussed in the documentation below.
     - [saveField(field, value)](#savefieldfield-value)
     - [clear()](#clear)
     - [delete(options = {})](#deleteoptions--)
-    - [validate()](#validate)
+    - [validate()](#validate-1)
     - [validateField(field, value = null)](#validatefieldfield-value--null)
-    - [loadBehaviors()](#loadbehaviors)
-    - [callBehavedMethod(methodName)](#callbehavedmethodmethodname)
-  - [Callbacks](#callbacks)
-    - [initialize()](#initialize)
-    - [beforeSave()](#beforesave)
-    - [afterSave()](#aftersave)
-    - [beforeValidate()](#beforevalidate)
-    - [afterValidate()](#aftervalidate)
-    - [beforeDelete()](#beforedelete)
-    - [afterDelete()](#afterdelete)
 - [Behavior](#behavior)
   - [Usage](#usage-4)
   - [Creating classes](#creating-classes-2)
@@ -163,7 +164,7 @@ Each of them are discussed in the documentation below.
     - [model](#model)
     - [options](#options)
   - [Callback methods](#callback-methods)
-    - [initialize()](#initialize-1)
+    - [initialize()](#initialize)
     - [beforeSave()](#beforesave-1)
     - [afterSave()](#aftersave-1)
     - [beforeValidate()](#beforevalidate-1)
@@ -467,15 +468,14 @@ A collection represents a table. If you have a `posts` table, most likely you wo
 
 ## Creating classes
 
-You can create a Collection class from your Database instance. And it requires minimum two properies, `table`, and `modelClass`:
+You can create a Collection class from your Database instance. And it requires minimum one property: `table`:
 
 ```js
 var Posts = db.createCollectionClass({
   table: 'posts',
 
-  modelClass: function () {
-    return Post;
-  }
+  // optional
+  modelClass: Post
 });
 ```
 
@@ -487,16 +487,16 @@ You can also create a Collection class like this:
 var Posts = f.createCollectionClass({
   db: db, // instance of your Database
 
-  table: 'posts',
-
-  // ...
+  table: 'posts'
 });
 ```
 
 If you are using ES6:
 
 ```js
-class Posts extends f.Collection {
+import {Collection} from 'firenze';
+
+class Posts extends Collection {
   constructor(extend = {}) {
     super(extend);
     this.setDatabase(db);
@@ -508,196 +508,17 @@ class Posts extends f.Collection {
 
 #### modelClass
 
-Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+Every collection requires a Model for representing its records. This property directly references to the Model class.
+
+Be defalult, it is set to the base Model class, which you can always override.
 
 #### table
 
 The name of the table that this Collection represents. Always as a string.
 
-#### finders
-
-List of mapped finder methods that you want available in `.find(mappedName, options)`
-
-By default these are set:
-
-```js
-{
-  all: 'findAll',
-  first: 'findFirst',
-  count: 'findCount',
-  list: 'findList'
-}
-```
-
-This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
-
-## Usage
-
-Before using the Collection, you need to create an instance of it:
-
-```js
-var posts = new Posts();
-```
-
-## Methods
-
-### model(attributes = {}, extend = {})
-
-Get an instance of this Collection's model
-
-### getDatabase()
-
-Get in instance of the current Database
-
-### getAdapter()
-
-Get adapter of the Collections' database
-
-### setDatabase(db)
-
-Change database instance of this Collection to `db`
-
-### query(options = {})
-
-Get query object for this Collection
-
-### find(type, options = {})
-
-Explained above in `finders` section
-
-### findAll(options = {})
-
-Returns a promise with matched results.
-
-Same as `collection.find('all', options)`.
-
-### findFirst(options = {})
-
-Returns a promise with matched model if any.
-
-Same as `collection.find('first', options)`.
-
-### findCount(options = {})
-
-Returns a promise with count of matched results.
-
-Same as `collection.find('count', options)`.
-
-### findList(options = {})
-
-Returns a promise with key/value pair of matched results.
-
-Same as `collection.find('list', options)`.
-
-### findBy(field, value, options = {})
-
-Shortcut method for finding a single record.
-
-Same as:
-
-```js
-collection.find('first', {
-  conditions: {
-    field: value
-  }
-});
-```
-
-Returns a promise.
-
-### findById(value, options = {})
-
-Shortcut method for finding record by ID.
-
-Same as:
-
-```js
-collection.find('first', {
-  conditions: {
-    id: value // `id` key comes from `model.primaryKey
-  }
-});
-```
-
-Returns a promise.
-
-### findByKey(value, options = {})
-
-Alias for `collection.findById()`.
-
-Returns a promise.
-
-### save(model, options = {})
-
-Save the given model. This method is not usually called directly, but rather via `Model.save()`.
-
-Returns a promise with model instance.
-
-### delete(model)
-
-Deletes the given model. Usually called via `Model.delete()`.
-
-Returns a promise.
-
-<!--/docume:src/Collection.js-->
-
-<!--docume:src/Model.js-->
-# Models
-
-A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
-
-## Creating classes
-
-You can create a Model class from your Database instance. And it can be created as follows:
-
-```js
-var Post = db.createModelClas({
-  alias: 'Post',
-
-  displayField: 'title',
-
-  schema: {
-    id: {
-      type: 'increments'
-    },
-    title: {
-      type: 'string'
-    }
-  },
-
-  collectionClass: Posts
-});
-```
-
-There is a short method for creating a Model class via `db.Model()`.
-
-You can also create a Model class like this:
-
-```js
-var Post = f.createModelClass({
-  // ...
-});
-```
-
-If you are using ES6:
-
-```js
-class Post extends f.Model {
-  constructor(attributes = {}, extend = {}) {
-    super(attributes, extend);
-  }
-}
-```
-
-### Properties
-
-#### collectionClass
-
-Just like how Collection has a modelClass, models also need to have a collectionClass. It can be a direct reference to the class, or it can be a function that returns the class.
-
 #### schema
 
-Models do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
+Collections do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
 
 The keys of this object are the column names, and the value defines what type of column they are. For example:
 
@@ -732,10 +553,6 @@ For example:
 
 Validations will be discussed further later in its own section.
 
-#### attributes
-
-Your model's data
-
 #### primaryKey
 
 The name of the ID field, defaults to `id`.
@@ -744,11 +561,9 @@ The name of the ID field, defaults to `id`.
 
 This is the field that represents your record's display value. Usually `title` or `name` in most cases.
 
-#### id
-
-For convenience, stores the ID of the model in this property
-
 #### validationRules
+
+Define rules logic which can be used for various fields.
 
 Example:
 
@@ -783,25 +598,33 @@ Example:
 
 Array of already loaded behaviors for this model
 
+#### finders
+
+List of mapped finder methods that you want available in `.find(mappedName, options)`
+
+By default these are set:
+
+```js
+{
+  all: 'findAll',
+  first: 'findFirst',
+  count: 'findCount',
+  list: 'findList'
+}
+```
+
+This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
+
 #### alias
 
 Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
 
 ## Usage
 
-Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
+Before using the Collection, you need to create an instance of it:
 
 ```js
-var post = new Post();
-```
-
-You can also create an instance of a Model with some data:
-
-```js
-var post = new Post({
-  title: 'Hello World',
-  body: 'blah...'
-});
+var posts = new Posts();
 ```
 
 ## Validations
@@ -811,7 +634,7 @@ Validation rules for fields can be set when defining the schema:
 ### Single rule
 
 ```js
-db.createModelClass({
+db.createCollectionClass({
   schema: {
     email: {
       type: 'string',
@@ -944,7 +767,7 @@ By default, all the validation rules from [Validator.js](https://github.com/chri
 Example usage of the above mentioned rules:
 
 ```js
-db.createModelClass({
+db.createCollectionClass({
   schema: {
     title: {
       // direct rule
@@ -966,10 +789,10 @@ But of course, you can always override them or add new custom rules.
 
 ### Custom rules
 
-Validation rules can be defined when creating a Model class:
+Validation rules can be defined when creating a Collection class:
 
 ```js
-var Post = db.createModelClass({
+var Posts = db.createCollectionClass({
   schema: {
     name: {
       type: 'string',
@@ -1013,7 +836,7 @@ By default, validation rules are only checked against fields that are set.
 But if you wish to make sure that certain fields are required, meaning they should always be present, you can mark them as required in your schema:
 
 ```js
-var Post = db.createModelClass({
+var Posts = db.createCollectionClass({
   schema: {
     name: {
       type: 'string',
@@ -1029,76 +852,95 @@ var Post = db.createModelClass({
 
 ## Methods
 
-### collection(options = {})
+### model(attributes = {}, extend = {})
 
-Get the model's Collection's instance
+Get an instance of this Collection's model
 
-### get(field)
+### getDatabase()
 
-Get the field of current model
+Get an instance of the current Database
 
-### set(field, value)
+### getAdapter()
 
-Set an attribute with given value for the field
+Get adapter of the Collection's database
 
-### toObject()
+### setDatabase(db)
 
-Returns a plain object of the model
+Change database instance of this Collection to `db`
 
-### toJSON()
+### query(options = {})
 
-Alias of `.toObject()`.
+Get query object for this Collection
 
-### fetch(options = {})
+### find(type, options = {})
 
-Fetches the model again from the Database, and returns it with a promise.
+Explained above in `finders` section
 
-A quick example:
+### findAll(options = {})
+
+Returns a promise with matched results.
+
+Same as `collection.find('all', options)`.
+
+### findFirst(options = {})
+
+Returns a promise with matched model if any.
+
+Same as `collection.find('first', options)`.
+
+### findCount(options = {})
+
+Returns a promise with count of matched results.
+
+Same as `collection.find('count', options)`.
+
+### findList(options = {})
+
+Returns a promise with key/value pair of matched results.
+
+Same as `collection.find('list', options)`.
+
+### findBy(field, value, options = {})
+
+Shortcut method for finding a single record.
+
+Same as:
 
 ```js
-var post = new Post({id: 1});
-post.fetch().then(function (model) {
-  var title = model.get('title');
+collection.find('first', {
+  conditions: {
+    field: value
+  }
 });
 ```
 
-### getId()
+Returns a promise.
 
-Get the ID of model
+### findById(value, options = {})
 
-### isNew()
+Shortcut method for finding record by ID.
 
-Is the current model new? As in saved in Database, or yet to be saved?
+Same as:
 
-### save(options = {})
-
-Save the current model, and returns a promise.
-
-Options:
-
-* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-
-### saveField(field, value)
-
-Save a particular field with value.
+```js
+collection.find('first', {
+  conditions: {
+    id: value // `id` key comes from `model.primaryKey
+  }
+});
+```
 
 Returns a promise.
 
-### clear()
+### findByKey(value, options = {})
 
-Clear the current instance of model of any data
+Alias for `collection.findById()`.
 
-### delete(options = {})
-
-Delete the current model, and return a promise.
-
-Options:
-
-* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+Returns a promise.
 
 ### validate()
 
-Validates all fields of the current Model
+Validates all fields of the given Model
 
 Returns a promise with `true` if all validated, otherwise an object of error messages keyed by field names.
 
@@ -1108,11 +950,31 @@ Options:
 
 * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 
-### validateField(field, value = null)
+### validateField(model, field, value = null)
 
 Validates a single field
 
 Returns a promise with true if validated, otherwise error message
+
+### save(model, options = {})
+
+Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+
+Returns a promise with model instance.
+
+Options:
+
+* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+
+### delete(model)
+
+Deletes the given model. Usually called via `Model.delete()`.
+
+Returns a promise.
+
+Options:
+
+* `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 
 ### loadBehaviors()
 
@@ -1124,13 +986,13 @@ Used internally to call a callback method along with all the methods defined by 
 
 ## Callbacks
 
-Models also support callbacks that you can define when creating classes.
+Collections support callbacks that you can define when creating classes.
 
 For example:
 
 ```js
 var Promise = f.Promise;
-var Post = f.createModelClass({
+var Posts = f.createCollectionClass({
   alias: 'Post',
 
   beforeSave: function () {
@@ -1142,9 +1004,9 @@ var Post = f.createModelClass({
 });
 ```
 
-### initialize()
+### modelInitialize()
 
-Called right after construction.
+Called right after Collection's Model construction.
 
 For synchronous operations only, since it does not return any Promise.
 
@@ -1177,6 +1039,166 @@ To stop from deleting, return a Promise with an error.
 ### afterDelete()
 
 Should return a Promise.
+
+<!--/docume:src/Collection.js-->
+
+<!--docume:src/Model.js-->
+# Models
+
+A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
+
+## Creating classes
+
+You can create a Model class from your Database instance. And it can be created as follows:
+
+```js
+var Post = db.createModelClas({
+  someCustomMethod: function () {
+    return true;
+  }
+});
+```
+
+There is a short method for creating a Model class via `db.Model()`.
+
+You can also create a Model class like this:
+
+```js
+var Post = f.createModelClass({
+  // ...
+});
+```
+
+If you are using ES6:
+
+```js
+import {Model} from 'firenze';
+
+class Post extends Model {
+  constructor(attributes = {}, extend = {}) {
+    super(attributes, extend);
+  }
+}
+```
+
+### Properties
+
+#### attributes
+
+Your model's data
+
+#### collection
+
+Reference to the instantiated Collection
+
+#### id
+
+For convenience, stores the ID of the model in this property
+
+## Usage
+
+Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
+
+```js
+var post = new Post();
+```
+
+You can also create an instance of a Model with some data:
+
+```js
+var post = new Post({
+  title: 'Hello World',
+  body: 'blah...'
+});
+```
+
+Ideally, you would be create a new Model instance via Collection:
+
+```js
+var posts = new Posts();
+var post = posts.model({
+  title: 'Hello World'
+});
+```
+
+## Methods
+
+### get(field)
+
+Get the field of current model
+
+### set(field, value)
+
+Set an attribute with given value for the field
+
+### toObject()
+
+Returns a plain object of the model
+
+### toJSON()
+
+Alias of `.toObject()`.
+
+### fetch(options = {})
+
+Fetches the model again from the Database, and returns it with a promise.
+
+A quick example:
+
+```js
+var post = posts.model({id: 1});
+post.fetch().then(function (model) {
+  var title = model.get('title');
+});
+```
+
+Returns a promise.
+
+### getId()
+
+Get the ID of model
+
+### isNew()
+
+Is the current model new? As in saved in Database, or yet to be saved?
+
+### save(options = {})
+
+Save the current model, and returns a promise.
+
+Calls `Collection.save()`.
+
+Returns a promise.
+
+### saveField(field, value)
+
+Save a particular field with value.
+
+Returns a promise.
+
+### clear()
+
+Clear the current instance of model of any data
+
+### delete(options = {})
+
+Delete the current model, and return a promise.
+
+Calls `Collection.delete()`
+
+### validate()
+
+Validates all fields of the current Model
+
+Calls `Collection.validate()`
+
+### validateField(field, value = null)
+
+Validates a single field
+
+Calls `Collection.validateField()`
+
+Returns a promise
 
 <!--/docume:src/Model.js-->
 
