@@ -266,21 +266,20 @@ var db = new Database({
   password: ''
 });
 
+// define a Model, which represents a record
+var Post = f.createModelClass({
+  getLowercasedTitle: function () {
+    return this.get('title').toLowerCase();
+  }
+});
+
 // define a Collection, which represents a table
 var Posts = db.createCollectionClass({ // or db.Collection()
   table: 'posts',
 
-  modelClass: function () {
-    return Post;
-  }
-  // or modelClass: Post
-});
-
-// define a Model, which represents a record
-var Post = db.createModelClass({ // or db.Model()
   alias: 'Post',
 
-  collectionClass: Posts, // or a function that returns Posts
+  modelClass: Post, // overriding Model class is optional
 
   schema: {
     id: {
@@ -293,6 +292,7 @@ var Post = db.createModelClass({ // or db.Model()
       type: 'text'
     }
   }
+
 });
 
 // finding
@@ -306,6 +306,9 @@ posts.find('first', {
 }).then(function (post) {
   // post in an instance of Model, with fetched data
   var title = post.get('title');
+
+  // custom Model method
+  var lowerCasedTitle = post.getLowercasedTitle();
 
   // or convert to plain object
   var postObject = post.toObject();
