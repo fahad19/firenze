@@ -7,32 +7,32 @@ var config = require('../config');
 describe('Adapter', function () {
   before(function () {
     this.db = new lib.Database(config);
-    this.Post = require('../models/Post')(this.db);
-    this.Author = require('../models/Author')(this.db);
+    this.Posts = require('../collections/Posts')(this.db);
+    this.Authors = require('../collections/Authors')(this.db);
   });
 
   after(function (done) {
     this.db.close().then(done);
   });
 
-  it('should load fixtures for a single Model', function (done) {
-    var post = new this.Post();
+  it('should load fixtures for a single Collection', function (done) {
+    var posts = new this.Posts();
     var data = require('../fixtures/posts');
-    this.db.getAdapter().loadFixture(post, data).then(function () {
+    this.db.getAdapter().loadFixture(posts, data).then(function () {
       done();
     }).catch(function (error) {
       throw error;
     });
   });
 
-  it('should load fixtures for multiple models', function (done) {
+  it('should load fixtures for multiple collections', function (done) {
     this.db.getAdapter().loadAllFixtures([
       {
-        model: new this.Post(),
+        collection: new this.Posts(),
         rows: require('../fixtures/posts')
       },
       {
-        model: new this.Author(),
+        collection: new this.Authors(),
         rows: require('../fixtures/authors')
       }
     ]).then(function () {

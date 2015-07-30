@@ -83,7 +83,7 @@ export default class Database {
 //
   close() {
     return new P((resolve) => {
-      return this.getAdapter().closeConnection(() => {
+      return this.getAdapter().closeConnection().then(() => {
         return resolve();
       });
     });

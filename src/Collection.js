@@ -189,7 +189,7 @@ export default class Collection {
 // Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
 //
     if (!this.alias) {
-      this.alias = this.collection.table;
+      this.alias = this.table;
     }
 
     this.loadBehaviors();
