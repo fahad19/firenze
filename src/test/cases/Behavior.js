@@ -10,19 +10,19 @@ describe('Behavior', function () {
   before(function (done) {
     this.db = new lib.Database(config);
 
-    this.Post = require('../models/Post')(this.db);
+    this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
 
-    this.Author = require('../models/Author')(this.db);
+    this.Authors = require('../collections/Posts')(this.db);
     this.authorsData = require('../fixtures/authors');
 
     this.db.getAdapter().loadAllFixtures([
       {
-        model: new this.Post(),
+        collection: new this.Posts(),
         rows: this.postsData
       },
       {
-        model: new this.Author(),
+        collection: new this.Authors(),
         rows: this.authorsData
       }
     ]).then(function () {
@@ -36,17 +36,14 @@ describe('Behavior', function () {
     this.db.close().then(done);
   });
 
-  it('should load in model', function () {
-    var post = new this.Post({
-      title: 'New Post',
-      body: 'text...'
-    });
-
-    post.loadedBehaviors.length.should.eql(1);
+  it('should load in collection', function () {
+    var posts = new this.Posts();
+    posts.loadedBehaviors.length.should.eql(1);
   });
 
   it('should fire sync callback in model', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       title: 'New Post',
       body: 'text...'
     });
@@ -55,7 +52,8 @@ describe('Behavior', function () {
   });
 
   it('should fire async callback in model', function (done) {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       title: 'New Post',
       body: 'text...'
     });

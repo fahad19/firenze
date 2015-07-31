@@ -3,7 +3,6 @@
 import _ from 'lodash';
 import P from './Promise';
 import validator from 'validator';
-import async from 'async';
 import getParams from 'get-params';
 
 // # Models

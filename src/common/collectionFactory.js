@@ -5,13 +5,13 @@ module.exports = function (db = null) {
   return function (extend) {
     class GeneratedCollection extends Collection {
       constructor(_extend = {}) {
-        super(_extend);
+        super(extend);
 
         if (!this.getDatabase() && db) {
           this.setDatabase(db);
         }
 
-        _.merge(this, extend);
+        _.merge(this, _extend);
       }
     }
 

@@ -5,8 +5,8 @@ module.exports = function () {
   return function (extend) {
     class GeneratedModel extends Model {
       constructor(attributes = {}, _extend = {}) {
-        super(attributes, extend);
-        _.merge(this, _extend);
+        super(attributes, _extend);
+        _.merge(this, extend);
       }
     }
 

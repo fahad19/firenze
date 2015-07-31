@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import async from 'async';
 import P from './Promise';
 import Model from './Model';
 
@@ -913,7 +914,7 @@ export default class Collection {
               });
           }
 
-          return this.validate().then((validated) => {
+          return this.validate(model).then((validated) => {
             if (validated === true) {
               return this
                 ._save(model, options)
@@ -932,13 +933,13 @@ export default class Collection {
         },
         (result, cb) => {
           if (!callbacks) {
-            return cb(null, this);
+            return cb(null, model);
           }
 
           return this
             .callBehavedMethod(model, 'afterSave')
             .then(() => {
-              return cb(null, this);
+              return cb(null, model);
             });
         }
       ], function (err, result) {
@@ -1109,7 +1110,7 @@ export default class Collection {
     if (methodName.indexOf('after') === -1 && methodName.indexOf('before') === -1) {
       // sync
       this.loadedBehaviors.forEach((behavior) => {
-        behavior[methodName]();
+        behavior[methodName](context);
       });
 
       return;
@@ -1118,7 +1119,7 @@ export default class Collection {
     // async
     return new P((resolve, reject) => {
       return async.eachSeries(this.loadedBehaviors, (behavior, callback) => {
-        behavior[methodName]()
+        behavior[methodName](context)
           .then((res) => {
             return callback(null, res);
           })
