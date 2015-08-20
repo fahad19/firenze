@@ -18,21 +18,4 @@ describe('Database', function () {
     posts.table.should.be.exactly('posts');
     db.close().then(done);
   });
-
-  it('should generate Model class', function (done) {
-    var db = new lib.Database(config);
-
-    var Posts = require('../collections/Posts')(db);
-    var posts = new Posts();
-
-    var Post = db.createModelClass({
-      collection: posts
-    });
-
-    var post = new Post({
-      id: 1
-    });
-    post.get('id').should.eql(1);
-    db.close().then(done);
-  });
 });

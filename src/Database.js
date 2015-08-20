@@ -1,6 +1,5 @@
 import _ from 'lodash';
 
-import modelFactory from './common/modelFactory';
 import collectionFactory from './common/collectionFactory';
 import P from './Promise';
 
@@ -51,12 +50,6 @@ export default class Database {
 // Also aliased as `.Collection(extend)`.
 //
     this.createCollectionClass = this.Collection = collectionFactory(this);
-
-// ### createModelClass(extend)
-//
-// Also aliased as `.Model(extend)`
-//
-    this.createModelClass = this.Model = modelFactory();
   }
 
 // ### getAdapter()
