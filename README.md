@@ -66,7 +66,6 @@ Each of them are discussed in the documentation below.
   - [Usage](#usage)
   - [Methods](#methods)
     - [createCollectionClass(extend)](#createcollectionclassextend)
-    - [createModelClass(extend)](#createmodelclassextend)
     - [getAdapter()](#getadapter)
     - [getConnection()](#getconnection)
     - [close(cb = null)](#closecb--null)
@@ -355,10 +354,6 @@ var db = new Database({
 
 Also aliased as `.Collection(extend)`.
 
-### createModelClass(extend)
-
-Also aliased as `.Model(extend)`
-
 ### getAdapter()
 
 Returns adapter
@@ -460,7 +455,7 @@ Creates table, and loads data for given collection
 
 ### loadAllFixtures(arr)
 
-Runs fixtures for multiple models
+Runs fixtures for multiple collections
 
 arr = [{collection: post, rows: rows}]
 
@@ -1054,19 +1049,7 @@ A model represents a record of a table. If you have a `posts` table, most likely
 
 ## Creating classes
 
-You can create a Model class from your Database instance. And it can be created as follows:
-
-```js
-var Post = db.createModelClas({
-  someCustomMethod: function () {
-    return true;
-  }
-});
-```
-
-There is a short method for creating a Model class via `db.Model()`.
-
-You can also create a Model class like this:
+You can create a Model class as follows:
 
 ```js
 var Post = f.createModelClass({
