@@ -1325,6 +1325,8 @@ $ npm test
   * Model classes cannot be created via Database instance any more
   * Behavior method signatures have changed (accepts context as first argument now).
   * Behavior `initialize` method has been renamed as `modelInitialize`.
+  * Adapter's `closeConnection` method returns a Promise now.
+  * Fixture loader , e.g. `Adapter.loadFixture()`, now accepts collection as argument instead of Model.
 
 # Contributing
 
