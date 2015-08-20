@@ -14,19 +14,7 @@ export default class Model {
 
 // ## Creating classes
 //
-// You can create a Model class from your Database instance. And it can be created as follows:
-//
-// ```js
-// var Post = db.createModelClas({
-//   someCustomMethod: function () {
-//     return true;
-//   }
-// });
-// ```
-//
-// There is a short method for creating a Model class via `db.Model()`.
-//
-// You can also create a Model class like this:
+// You can create a Model class as follows:
 //
 // ```js
 // var Post = f.createModelClass({
