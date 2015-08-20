@@ -259,6 +259,6 @@ export default class Model {
 // Returns a promise
 //
   validateField(field, value = null) {
-    this.collection.validateField(this, field, value);
+    return this.collection.validateField(this, field, value);
   }
 }

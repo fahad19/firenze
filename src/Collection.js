@@ -1,5 +1,7 @@
 import _ from 'lodash';
 import async from 'async';
+import validator from 'validator';
+import getParams from 'get-params';
 import P from './Promise';
 import Model from './Model';
 

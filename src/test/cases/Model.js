@@ -10,19 +10,19 @@ describe('Model', function () {
   before(function (done) {
     this.db = new lib.Database(config);
 
-    this.Post = require('../models/Post')(this.db);
+    this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
 
-    this.Author = require('../models/Author')(this.db);
+    this.Authors = require('../collections/Authors')(this.db);
     this.authorsData = require('../fixtures/authors');
 
     this.db.getAdapter().loadAllFixtures([
       {
-        model: new this.Post(),
+        collection: new this.Posts(),
         rows: this.postsData
       },
       {
-        model: new this.Author(),
+        collection: new this.Authors(),
         rows: this.authorsData
       }
     ]).then(function () {
@@ -37,20 +37,21 @@ describe('Model', function () {
   });
 
   it('should have an instance', function () {
-    var post = new this.Post();
-    post.should.have.property('alias').which.is.exactly('Post');
+    var posts = new this.Posts();
+    var post = posts.model();
+    post.should.have.property('get');
   });
 
   it('should have a collection', function () {
-    var post = new this.Post();
+    var posts = new this.Posts();
+    var post = posts.model();
     post.should.have.property('collection');
-
-    var posts = post.collection();
-    posts.should.have.property('table').which.is.exactly('posts');
+    post.collection.should.have.property('table').which.is.exactly('posts');
   });
 
   it('should fetch itself', function (done) {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 2
     });
     post.fetch().then(function (model) {
@@ -62,14 +63,16 @@ describe('Model', function () {
   });
 
   it('should get its attributes', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 2
     });
     post.get('id').should.eql(2);
   });
 
   it('should set its attributes', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 2
     });
     post.set('title', 'Hello World');
@@ -87,12 +90,13 @@ describe('Model', function () {
   });
 
   it('should check if it is new', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       title: 'Post here'
     });
     post.isNew().should.be.true; //eslint-disable-line
 
-    var anotherPost = new this.Post({
+    var anotherPost = posts.model({
       id: 1,
       title: 'Yo'
     });
@@ -100,7 +104,8 @@ describe('Model', function () {
   });
 
   it('should get plain object', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 2,
       title: 'Post here'
     });
@@ -112,7 +117,8 @@ describe('Model', function () {
   });
 
   it('should create a new record', function (done) {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       title: 'New Post',
       body: 'text...'
     });
@@ -125,7 +131,8 @@ describe('Model', function () {
   });
 
   it('should update existing record', function (done) {
-    var post = new this.Post({id: 1});
+    var posts = new this.Posts();
+    var post = posts.model({id: 1});
     post.fetch().then(function (model) {
       model.set('title', 'Hello Universe');
       model.save().then(function (m) {
@@ -136,7 +143,8 @@ describe('Model', function () {
   });
 
   it('should update particular field', function (done) {
-    var post = new this.Post({id: 1});
+    var posts = new this.Posts();
+    var post = posts.model({id: 1});
     post.fetch().then(function (model) {
       model.saveField('title', 'Hello Universe').then(function (m) {
         m.get('title').should.eql('Hello Universe');
@@ -146,7 +154,8 @@ describe('Model', function () {
   });
 
   it('should clear', function () {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 1,
       title: 'Hi'
     });
@@ -157,7 +166,8 @@ describe('Model', function () {
   });
 
   it('should delete a record', function (done) {
-    var post = new this.Post({id: 2});
+    var posts = new this.Posts();
+    var post = posts.model({id: 2});
     post.delete().then(function (affectedRows) {
       affectedRows.should.eql(1);
       done();
@@ -165,9 +175,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -176,6 +184,9 @@ describe('Model', function () {
           }
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -194,9 +205,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with multiple rules', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: [
@@ -223,6 +232,9 @@ describe('Model', function () {
         }
       }
     });
+    var post = posts.model({
+      title: 'Hello World'
+    });
 
     post
       .validateField('title')
@@ -247,9 +259,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with validator options', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: [
@@ -266,6 +276,9 @@ describe('Model', function () {
           ]
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -284,9 +297,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with custom rule function', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -297,6 +308,9 @@ describe('Model', function () {
           }
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -315,9 +329,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with custom pre-defined rule function', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -331,6 +343,9 @@ describe('Model', function () {
           return value === 'Voldemort';
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -349,9 +364,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with async rule function', function () {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -368,6 +381,9 @@ describe('Model', function () {
           }, 100);
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -386,10 +402,7 @@ describe('Model', function () {
   });
 
   it('should try to validate model with all fields', function () {
-    var post = new this.Post({
-      title: 'Hello World',
-      body: 'Blah... 123'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -404,6 +417,10 @@ describe('Model', function () {
           }
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World',
+      body: 'Blah... 123'
     });
 
     post
@@ -417,10 +434,7 @@ describe('Model', function () {
   });
 
   it('should validate model with all fields successfully', function () {
-    var post = new this.Post({
-      title: 'hello',
-      body: 'blah'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -436,6 +450,10 @@ describe('Model', function () {
         }
       }
     });
+    var post = posts.model({
+      title: 'hello',
+      body: 'blah'
+    });
 
     post
       .validate()
@@ -446,7 +464,7 @@ describe('Model', function () {
   });
 
   it('should validate required fields', function () {
-    var post = new this.Post({}, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -457,6 +475,7 @@ describe('Model', function () {
         }
       }
     });
+    var post = posts.model({});
 
     post
       .validate()
@@ -468,9 +487,7 @@ describe('Model', function () {
   });
 
   it('should not save if validation fails', function (done) {
-    var post = new this.Post({
-      title: 'Hello World'
-    }, {
+    var posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -479,6 +496,9 @@ describe('Model', function () {
           }
         }
       }
+    });
+    var post = posts.model({
+      title: 'Hello World'
     });
 
     post
@@ -496,15 +516,16 @@ describe('Model', function () {
   });
 
   it('should fire beforeSave callback', function (done) {
-    var post = new this.Post({
-      title: 'I am new'
-    }, {
-      beforeSave: function () {
+    var posts = new this.Posts({
+      beforeSave: function (model) {
         return new P((resolve) => {
-          this.set('title', 'I am new again');
+          model.set('title', 'I am new again');
           return resolve(true);
         });
       }
+    });
+    var post = posts.model({
+      title: 'I am new'
     });
 
     post.save().then(function (model) {
@@ -514,15 +535,16 @@ describe('Model', function () {
   });
 
   it('should fire afterSave callback', function (done) {
-    var post = new this.Post({
-      title: 'I am new'
-    }, {
-      afterSave: function () {
+    var posts = new this.Posts({
+      afterSave: function (model) {
         return new P((resolve) => {
-          this.set('title', 'I am modified in afterSave');
+          model.set('title', 'I am modified in afterSave');
           return resolve(true);
         });
       }
+    });
+    var post = posts.model({
+      title: 'I am new'
     });
 
     post.save().then(function (model) {
@@ -532,15 +554,16 @@ describe('Model', function () {
   });
 
   it('should fire beforeValidate callback', function (done) {
-    var post = new this.Post({
-      title: 'I am new'
-    }, {
-      beforeValidate: function () {
+    var posts = new this.Posts({
+      beforeValidate: function (model) {
         return new P((resolve) => {
-          this.set('title', 'I am modified in beforeValidate');
+          model.set('title', 'I am modified in beforeValidate');
           return resolve(true);
         });
       }
+    });
+    var post = posts.model({
+      title: 'I am new'
     });
 
     post.save().then(function (model) {
@@ -550,15 +573,16 @@ describe('Model', function () {
   });
 
   it('should fire afterValidate callback', function (done) {
-    var post = new this.Post({
-      title: 'I am new'
-    }, {
-      afterValidate: function () {
+    var posts = new this.Posts({
+      afterValidate: function (model) {
         return new P((resolve) => {
-          this.set('title', 'I am modified in afterValidate');
+          model.set('title', 'I am modified in afterValidate');
           return resolve(true);
         });
       }
+    });
+    var post = posts.model({
+      title: 'I am new'
     });
 
     post.save().then(function (model) {
@@ -568,7 +592,8 @@ describe('Model', function () {
   });
 
   it('should fire beforeDelete callback', function (done) {
-    var author = new this.Author({
+    var authors = new this.Authors();
+    var author = authors.model({
       id: 1
     });
     author.fetch().then(function (model) {
@@ -584,7 +609,8 @@ describe('Model', function () {
   });
 
   it('should fire afterDelete callback', function (done) {
-    var post = new this.Post({
+    var posts = new this.Posts();
+    var post = posts.model({
       id: 2
     });
     post.fetch().then(function (model) {
@@ -596,5 +622,4 @@ describe('Model', function () {
         });
     });
   });
-
 });
