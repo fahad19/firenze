@@ -2,8 +2,6 @@
 
 import _ from 'lodash';
 import P from './Promise';
-import validator from 'validator';
-import getParams from 'get-params';
 
 // # Models
 //

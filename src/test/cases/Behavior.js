@@ -4,7 +4,6 @@
 var should = require('should-promised'); //eslint-disable-line
 var lib = require('../../index');
 var config = require('../config');
-var P = require('../../Promise');
 
 describe('Behavior', function () {
   before(function (done) {

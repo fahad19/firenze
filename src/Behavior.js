@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import async from 'async';
 import P from './Promise';
 
 // # Behavior
@@ -89,7 +88,7 @@ export default class Behavior {
 //
 // Called right after model's construction, synchronous operations only.
 //
-  modelInitialize() {
+  modelInitialize(model) { //eslint-disable-line
 
   }
 
@@ -99,7 +98,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  beforeSave(model) {
+  beforeSave(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
@@ -111,7 +110,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  afterSave(model) {
+  afterSave(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
@@ -123,7 +122,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  beforeValidate(model) {
+  beforeValidate(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
@@ -135,7 +134,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  afterValidate(model) {
+  afterValidate(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
@@ -147,7 +146,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  beforeDelete(model) {
+  beforeDelete(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
@@ -159,7 +158,7 @@ export default class Behavior {
 //
 // Returns a promise.
 //
-  afterDelete(model) {
+  afterDelete(model) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });

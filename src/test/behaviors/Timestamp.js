@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 import f from '../../';
 
 let Behavior = f.Behavior;

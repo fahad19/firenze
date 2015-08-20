@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 var P = require('../../Promise');
 var TimestampBehavior = require('../behaviors/Timestamp');
 var Post = require('../models/Post');
@@ -16,7 +18,7 @@ module.exports = function (db) {
       id: {
         type: 'increments'
       },
-      author_id: {
+      author_id: { //eslint-disable-line
         type: 'integer'
       },
       title: {

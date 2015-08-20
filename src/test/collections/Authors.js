@@ -1,3 +1,5 @@
+/* eslint-disable new-cap */
+
 var P = require('../../Promise');
 var TimestampBehavior = require('../behaviors/Timestamp');
 var Author = require('../models/Author');
@@ -31,7 +33,7 @@ module.exports = function (db) {
       }
     ],
 
-    beforeDelete: function (model) {
+    beforeDelete: function () {
       return new P.reject(true);
     },
 

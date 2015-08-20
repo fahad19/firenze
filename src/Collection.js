@@ -1,3 +1,5 @@
+/* eslint-disable new-cap, no-shadow */
+
 import _ from 'lodash';
 import async from 'async';
 import validator from 'validator';
@@ -906,7 +908,7 @@ export default class Collection {
         },
         (proceed, cb) => {
           if (!_.isUndefined(options.validate) && options.validate === false) {
-            return this
+            return this //eslint-disable-line
               ._save(model, options)
               .then(function (model) {
                 return cb(null, model);
@@ -918,7 +920,7 @@ export default class Collection {
 
           return this.validate(model).then((validated) => {
             if (validated === true) {
-              return this
+              return this //eslint-disable-line
                 ._save(model, options)
                 .then(function (model) {
                   return cb(null, model);
@@ -1031,7 +1033,7 @@ export default class Collection {
             });
         },
         (proceed, cb) => {
-          return this
+          return this //eslint-disable-line
             ._delete(model, this)
             .then((res) => {
               return cb(null, res);
@@ -1115,7 +1117,7 @@ export default class Collection {
         behavior[methodName](context);
       });
 
-      return;
+      return true;
     }
 
     // async
@@ -1139,7 +1141,7 @@ export default class Collection {
           })
           .catch((error) => {
             return reject(error);
-          })
+          });
       });
     });
   }
@@ -1171,7 +1173,7 @@ export default class Collection {
 //
 // For synchronous operations only, since it does not return any Promise.
 //
-  modelInitialize(model) {
+  modelInitialize(model) { //eslint-disable-line
     return true;
   }
 
@@ -1181,7 +1183,7 @@ export default class Collection {
 //
 // To stop the save, return a Promise with an error.
 //
-  beforeSave(model) {
+  beforeSave(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
@@ -1189,7 +1191,7 @@ export default class Collection {
 //
 // Should return a Promise.
 //
-  afterSave(model) {
+  afterSave(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
@@ -1199,7 +1201,7 @@ export default class Collection {
 //
 // To stop the validation, return a Promise with an error.
 //
-  beforeValidate(model) {
+  beforeValidate(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
@@ -1207,7 +1209,7 @@ export default class Collection {
 //
 // Should return a Promise.
 //
-  afterValidate(model) {
+  afterValidate(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
@@ -1217,7 +1219,7 @@ export default class Collection {
 //
 // To stop from deleting, return a Promise with an error.
 //
-  beforeDelete(model) {
+  beforeDelete(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
@@ -1225,7 +1227,7 @@ export default class Collection {
 //
 // Should return a Promise.
 //
-  afterDelete(model) {
+  afterDelete(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 }
