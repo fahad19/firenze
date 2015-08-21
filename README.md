@@ -163,6 +163,7 @@ Each of them are discussed in the documentation below.
     - [collection](#collection-1)
     - [options](#options)
   - [Callback methods](#callback-methods)
+    - [collectionInitialize(collection)](#collectioninitializecollection)
     - [modelInitialize(model)](#modelinitializemodel-1)
     - [beforeSave(model)](#beforesavemodel-1)
     - [afterSave(model)](#aftersavemodel-1)
@@ -1248,6 +1249,11 @@ Behavior configuration
 Behavior allows your to hook into your model's lifecycle callbacks.
 
 The following callbacks are supported:
+
+### collectionInitialize(collection)
+
+Called right after collection's construction, synchronous operations only.
+
 
 ### modelInitialize(model)
 
