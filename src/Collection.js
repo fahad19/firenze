@@ -198,6 +198,7 @@ export default class Collection {
     }
 
     this.loadBehaviors();
+    this.callBehavedMethod(this, 'collectionInitialize');
   }
 
 // ## Usage

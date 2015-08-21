@@ -84,6 +84,15 @@ export default class Behavior {
 //
 // The following callbacks are supported:
 //
+// ### collectionInitialize(collection)
+//
+// Called right after collection's construction, synchronous operations only.
+//
+  collectionInitialize(model) { //eslint-disable-line
+
+  }
+
+//
 // ### modelInitialize(model)
 //
 // Called right after model's construction, synchronous operations only.
