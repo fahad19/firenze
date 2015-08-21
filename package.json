@@ -8,7 +8,7 @@
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src",
     "mocha": "mocha $(find lib/test/cases -name '*.js')",
-    "test": "run-scripts babel mocha",
+    "test": "run-scripts lint babel mocha",
     "doctoc": "doctoc README.md --github --title '# Contents'",
     "docume": "docume README.md",
     "docs": "npm run docume && npm run doctoc",

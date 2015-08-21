@@ -64,21 +64,6 @@ export default class Model {
 
 // ## Usage
 //
-// Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
-//
-// ```js
-// var post = new Post();
-// ```
-//
-// You can also create an instance of a Model with some data:
-//
-// ```js
-// var post = new Post({
-//   title: 'Hello World',
-//   body: 'blah...'
-// });
-// ```
-//
 // Ideally, you would be create a new Model instance via Collection:
 //
 // ```js

@@ -113,31 +113,31 @@ export default class Adapter {
     });
   }
 
-// ### dropTable(model)
+// ### dropTable(collection)
 //
 // Drop table if exists
 //
-  dropTable(model) { //eslint-disable-line
+  dropTable(collection) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### createTable(model)
+// ### createTable(collection)
 //
-// Create table based on model's schema
+// Create table based on collection's schema
 //
-  createTable(model) { //eslint-disable-line
+  createTable(collection) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### populateTable(model, rows)
+// ### populateTable(collection, rows)
 //
-// Insert rows into model's table
+// Insert rows into collection's table
 //
-  populateTable(model, rows) { //eslint-disable-line
+  populateTable(collection, rows) { //eslint-disable-line
     return new P(function (resolve) {
       return resolve();
     });

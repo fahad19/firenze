@@ -84,7 +84,7 @@ export default class Behavior {
 //
 // The following callbacks are supported:
 //
-// ### modelInitialize()
+// ### modelInitialize(model)
 //
 // Called right after model's construction, synchronous operations only.
 //

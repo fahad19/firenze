@@ -1157,7 +1157,7 @@ export default class Collection {
 // var Posts = f.createCollectionClass({
 //   alias: 'Post',
 //
-//   beforeSave: function () {
+//   beforeSave: function (model) {
 //     // do something before saving...
 //
 //     // end the callback with a promise
@@ -1167,7 +1167,7 @@ export default class Collection {
 // ```
 //
 
-// ### modelInitialize()
+// ### modelInitialize(model)
 //
 // Called right after Collection's Model construction.
 //
@@ -1177,7 +1177,7 @@ export default class Collection {
     return true;
   }
 
-// ### beforeSave()
+// ### beforeSave(model)
 //
 // Should return a Promise with `true` to continue.
 //
@@ -1187,7 +1187,7 @@ export default class Collection {
     return new P.resolve(true);
   }
 
-// ### afterSave()
+// ### afterSave(model)
 //
 // Should return a Promise.
 //
@@ -1195,7 +1195,7 @@ export default class Collection {
     return new P.resolve(true);
   }
 
-// ### beforeValidate()
+// ### beforeValidate(model)
 //
 // Should return a Promise with `true` to continue.
 //
@@ -1205,7 +1205,7 @@ export default class Collection {
     return new P.resolve(true);
   }
 
-// ### afterValidate()
+// ### afterValidate(model)
 //
 // Should return a Promise.
 //
@@ -1213,7 +1213,7 @@ export default class Collection {
     return new P.resolve(true);
   }
 
-// ### beforeDelete()
+// ### beforeDelete(model)
 //
 // Should return a Promise with `true` to continue.
 //
@@ -1223,7 +1223,7 @@ export default class Collection {
     return new P.resolve(true);
   }
 
-// ### afterDelete()
+// ### afterDelete(model)
 //
 // Should return a Promise.
 //

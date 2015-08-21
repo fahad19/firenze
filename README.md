@@ -79,9 +79,9 @@ Each of them are discussed in the documentation below.
     - [read(q)](#readq)
     - [update(q, obj)](#updateq-obj)
     - [delete(q)](#deleteq)
-    - [dropTable(model)](#droptablemodel)
-    - [createTable(model)](#createtablemodel)
-    - [populateTable(model, rows)](#populatetablemodel-rows)
+    - [dropTable(collection)](#droptablecollection)
+    - [createTable(collection)](#createtablecollection)
+    - [populateTable(collection, rows)](#populatetablecollection-rows)
     - [loadFixture(collection, rows)](#loadfixturecollection-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
 - [Collection](#collection)
@@ -128,13 +128,13 @@ Each of them are discussed in the documentation below.
     - [loadBehaviors()](#loadbehaviors)
     - [callBehavedMethod(methodName)](#callbehavedmethodmethodname)
   - [Callbacks](#callbacks)
-    - [modelInitialize()](#modelinitialize)
-    - [beforeSave()](#beforesave)
-    - [afterSave()](#aftersave)
-    - [beforeValidate()](#beforevalidate)
-    - [afterValidate()](#aftervalidate)
-    - [beforeDelete()](#beforedelete)
-    - [afterDelete()](#afterdelete)
+    - [modelInitialize(model)](#modelinitializemodel)
+    - [beforeSave(model)](#beforesavemodel)
+    - [afterSave(model)](#aftersavemodel)
+    - [beforeValidate(model)](#beforevalidatemodel)
+    - [afterValidate(model)](#aftervalidatemodel)
+    - [beforeDelete(model)](#beforedeletemodel)
+    - [afterDelete(model)](#afterdeletemodel)
 - [Models](#models)
   - [Creating classes](#creating-classes-1)
     - [Properties](#properties-1)
@@ -163,13 +163,13 @@ Each of them are discussed in the documentation below.
     - [collection](#collection-1)
     - [options](#options)
   - [Callback methods](#callback-methods)
-    - [modelInitialize()](#modelinitialize-1)
-    - [beforeSave(model)](#beforesavemodel)
-    - [afterSave(model)](#aftersavemodel)
-    - [beforeValidate(model)](#beforevalidatemodel)
-    - [afterValidate(model)](#aftervalidatemodel)
-    - [beforeDelete(model)](#beforedeletemodel)
-    - [afterDelete(model)](#afterdeletemodel)
+    - [modelInitialize(model)](#modelinitializemodel-1)
+    - [beforeSave(model)](#beforesavemodel-1)
+    - [afterSave(model)](#aftersavemodel-1)
+    - [beforeValidate(model)](#beforevalidatemodel-1)
+    - [afterValidate(model)](#aftervalidatemodel-1)
+    - [beforeDelete(model)](#beforedeletemodel-1)
+    - [afterDelete(model)](#afterdeletemodel-1)
 - [Testing](#testing)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -315,7 +315,7 @@ posts.find('first', {
 });
 
 // saving
-var post = new Post({
+var post = posts.model({
   title: 'Hello World',
   body: 'blah...'
 });
@@ -437,17 +437,17 @@ Updates the records matching againt query object with given data
 
 Deletes the records matching against query object
 
-### dropTable(model)
+### dropTable(collection)
 
 Drop table if exists
 
-### createTable(model)
+### createTable(collection)
 
-Create table based on model's schema
+Create table based on collection's schema
 
-### populateTable(model, rows)
+### populateTable(collection, rows)
 
-Insert rows into model's table
+Insert rows into collection's table
 
 ### loadFixture(collection, rows)
 
@@ -995,7 +995,7 @@ var Promise = f.Promise;
 var Posts = f.createCollectionClass({
   alias: 'Post',
 
-  beforeSave: function () {
+  beforeSave: function (model) {
     // do something before saving...
 
     // end the callback with a promise
@@ -1004,39 +1004,39 @@ var Posts = f.createCollectionClass({
 });
 ```
 
-### modelInitialize()
+### modelInitialize(model)
 
 Called right after Collection's Model construction.
 
 For synchronous operations only, since it does not return any Promise.
 
-### beforeSave()
+### beforeSave(model)
 
 Should return a Promise with `true` to continue.
 
 To stop the save, return a Promise with an error.
 
-### afterSave()
+### afterSave(model)
 
 Should return a Promise.
 
-### beforeValidate()
+### beforeValidate(model)
 
 Should return a Promise with `true` to continue.
 
 To stop the validation, return a Promise with an error.
 
-### afterValidate()
+### afterValidate(model)
 
 Should return a Promise.
 
-### beforeDelete()
+### beforeDelete(model)
 
 Should return a Promise with `true` to continue.
 
 To stop from deleting, return a Promise with an error.
 
-### afterDelete()
+### afterDelete(model)
 
 Should return a Promise.
 
@@ -1084,21 +1084,6 @@ Reference to the instantiated Collection
 For convenience, stores the ID of the model in this property
 
 ## Usage
-
-Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
-
-```js
-var post = new Post();
-```
-
-You can also create an instance of a Model with some data:
-
-```js
-var post = new Post({
-  title: 'Hello World',
-  body: 'blah...'
-});
-```
 
 Ideally, you would be create a new Model instance via Collection:
 
@@ -1264,7 +1249,7 @@ Behavior allows your to hook into your model's lifecycle callbacks.
 
 The following callbacks are supported:
 
-### modelInitialize()
+### modelInitialize(model)
 
 Called right after model's construction, synchronous operations only.
 
@@ -1316,10 +1301,6 @@ $ npm test
 
 # Changelog
 
-* [`v0.1.5`](https://github.com/fahad19/firenze/compare/v0.1.4...v0.1.5):
-  * Added support for behaviors.
-  * Added `model.initialize()` as a lifecycle callback.
-  * Fix in MemoryAdapter for running tests.
 * [`v0.2.0`](https://github.com/fahad19/firenze/compare/v0.1.5...v0.2.0):
   * Model classes are now optional, as configuration has moved to Collection level.
   * Model classes cannot be created via Database instance any more
@@ -1327,6 +1308,10 @@ $ npm test
   * Behavior `initialize` method has been renamed as `modelInitialize`.
   * Adapter's `closeConnection` method returns a Promise now.
   * Fixture loader , e.g. `Adapter.loadFixture()`, now accepts collection as argument instead of Model.
+* [`v0.1.5`](https://github.com/fahad19/firenze/compare/v0.1.4...v0.1.5):
+  * Added support for behaviors.
+  * Added `model.initialize()` as a lifecycle callback.
+  * Fix in MemoryAdapter for running tests.
 
 # Contributing
 
