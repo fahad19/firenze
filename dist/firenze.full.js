@@ -57,31 +57,31 @@ this["firenze"] =
 
 	var _Database2 = _interopRequireDefault(_Database);
 
-	var _Adapter = __webpack_require__(15);
+	var _Adapter = __webpack_require__(14);
 
 	var _Adapter2 = _interopRequireDefault(_Adapter);
 
-	var _Collection = __webpack_require__(14);
+	var _Collection = __webpack_require__(5);
 
 	var _Collection2 = _interopRequireDefault(_Collection);
 
-	var _Model = __webpack_require__(5);
+	var _Model = __webpack_require__(13);
 
 	var _Model2 = _interopRequireDefault(_Model);
 
-	var _Behavior = __webpack_require__(16);
+	var _Behavior = __webpack_require__(15);
 
 	var _Behavior2 = _interopRequireDefault(_Behavior);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(11);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
-	var _commonCollectionFactory = __webpack_require__(13);
+	var _commonCollectionFactory = __webpack_require__(4);
 
 	var _commonCollectionFactory2 = _interopRequireDefault(_commonCollectionFactory);
 
-	var _commonModelFactory = __webpack_require__(4);
+	var _commonModelFactory = __webpack_require__(16);
 
 	var _commonModelFactory2 = _interopRequireDefault(_commonModelFactory);
 
@@ -124,13 +124,13 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _commonModelFactory = __webpack_require__(4);
-
-	var _commonModelFactory2 = _interopRequireDefault(_commonModelFactory);
-
-	var _commonCollectionFactory = __webpack_require__(13);
+	var _commonCollectionFactory = __webpack_require__(4);
 
 	var _commonCollectionFactory2 = _interopRequireDefault(_commonCollectionFactory);
+
+	var _Promise = __webpack_require__(11);
+
+	var _Promise2 = _interopRequireDefault(_Promise);
 
 	// # Database
 	//
@@ -183,12 +183,6 @@ this["firenze"] =
 	    // Also aliased as `.Collection(extend)`.
 	    //
 	    this.createCollectionClass = this.Collection = (0, _commonCollectionFactory2['default'])(this);
-
-	    // ### createModelClass(extend)
-	    //
-	    // Also aliased as `.Model(extend)`
-	    //
-	    this.createModelClass = this.Model = (0, _commonModelFactory2['default'])();
 	  }
 
 	  _createClass(Database, [{
@@ -218,10 +212,16 @@ this["firenze"] =
 	    //
 	    // Closes the connection
 	    //
+	    // Returns a promise
+	    //
 	    value: function close() {
-	      var cb = arguments[0] === undefined ? null : arguments[0];
+	      var _this = this;
 
-	      return this.getAdapter().closeConnection(cb);
+	      return new _Promise2['default'](function (resolve) {
+	        return _this.getAdapter().closeConnection().then(function () {
+	          return resolve();
+	        });
+	      });
 	    }
 	  }]);
 
@@ -12507,30 +12507,35 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Model2 = __webpack_require__(5);
+	var _Collection2 = __webpack_require__(5);
 
-	var _Model3 = _interopRequireDefault(_Model2);
+	var _Collection3 = _interopRequireDefault(_Collection2);
 
 	module.exports = function () {
+	  var db = arguments[0] === undefined ? null : arguments[0];
+
 	  return function (extend) {
-	    var GeneratedModel = (function (_Model) {
-	      function GeneratedModel() {
-	        var attributes = arguments[0] === undefined ? {} : arguments[0];
+	    var GeneratedCollection = (function (_Collection) {
+	      function GeneratedCollection() {
+	        var _extend = arguments[0] === undefined ? {} : arguments[0];
 
-	        var _extend = arguments[1] === undefined ? {} : arguments[1];
+	        _classCallCheck(this, GeneratedCollection);
 
-	        _classCallCheck(this, GeneratedModel);
+	        _get(Object.getPrototypeOf(GeneratedCollection.prototype), 'constructor', this).call(this, extend);
 
-	        _get(Object.getPrototypeOf(GeneratedModel.prototype), 'constructor', this).call(this, attributes, extend);
+	        if (!this.getDatabase() && db) {
+	          this.setDatabase(db);
+	        }
+
 	        _lodash2['default'].merge(this, _extend);
 	      }
 
-	      _inherits(GeneratedModel, _Model);
+	      _inherits(GeneratedCollection, _Collection);
 
-	      return GeneratedModel;
-	    })(_Model3['default']);
+	      return GeneratedCollection;
+	    })(_Collection3['default']);
 
-	    return GeneratedModel;
+	    return GeneratedCollection;
 	  };
 	};
 
@@ -12538,7 +12543,7 @@ this["firenze"] =
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* eslint-disable new-cap */
+	/* eslint-disable new-cap, no-shadow */
 
 	'use strict';
 
@@ -12558,90 +12563,94 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Promise = __webpack_require__(6);
+	var _async = __webpack_require__(7);
 
-	var _Promise2 = _interopRequireDefault(_Promise);
+	var _async2 = _interopRequireDefault(_async);
 
 	var _validator = __webpack_require__(10);
 
 	var _validator2 = _interopRequireDefault(_validator);
 
-	var _async = __webpack_require__(11);
-
-	var _async2 = _interopRequireDefault(_async);
-
-	var _getParams = __webpack_require__(12);
+	var _getParams = __webpack_require__(6);
 
 	var _getParams2 = _interopRequireDefault(_getParams);
 
-	// # Models
+	var _Promise = __webpack_require__(11);
+
+	var _Promise2 = _interopRequireDefault(_Promise);
+
+	var _Model = __webpack_require__(13);
+
+	var _Model2 = _interopRequireDefault(_Model);
+
+	// # Collection
 	//
-	// A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
+	// A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
+	//
+	// ## Creating classes
+	//
+	// You can create a Collection class from your Database instance. And it requires minimum one property: `table`:
+	//
+	// ```js
+	// var Posts = db.createCollectionClass({
+	//   table: 'posts',
+	//
+	//   // optional
+	//   modelClass: Post
+	// });
+	// ```
+	//
+	// There is also a short method for creating Collection class via `db.Collection()`.
+	//
+	// You can also create a Collection class like this:
+	//
+	// ```js
+	// var Posts = f.createCollectionClass({
+	//   db: db, // instance of your Database
+	//
+	//   table: 'posts'
+	// });
+	// ```
+	//
+	// If you are using ES6:
+	//
+	// ```js
+	// import {Collection} from 'firenze';
+	//
+	// class Posts extends Collection {
+	//   constructor(extend = {}) {
+	//     super(extend);
+	//     this.setDatabase(db);
+	//   }
+	// }
+	// ```
 	//
 
-	var Model = (function () {
+	var Collection = (function () {
+	  function Collection() {
+	    var extend = arguments[0] === undefined ? {} : arguments[0];
 
-	  // ## Creating classes
-	  //
-	  // You can create a Model class from your Database instance. And it can be created as follows:
-	  //
-	  // ```js
-	  // var Post = db.createModelClas({
-	  //   alias: 'Post',
-	  //
-	  //   displayField: 'title',
-	  //
-	  //   schema: {
-	  //     id: {
-	  //       type: 'increments'
-	  //     },
-	  //     title: {
-	  //       type: 'string'
-	  //     }
-	  //   },
-	  //
-	  //   collectionClass: Posts
-	  // });
-	  // ```
-	  //
-	  // There is a short method for creating a Model class via `db.Model()`.
-	  //
-	  // You can also create a Model class like this:
-	  //
-	  // ```js
-	  // var Post = f.createModelClass({
-	  //   // ...
-	  // });
-	  // ```
-	  //
-	  // If you are using ES6:
-	  //
-	  // ```js
-	  // class Post extends f.Model {
-	  //   constructor(attributes = {}, extend = {}) {
-	  //     super(attributes, extend);
-	  //   }
-	  // }
-	  // ```
-	  //
-
-	  function Model() {
-	    var attributes = arguments[0] === undefined ? {} : arguments[0];
-	    var extend = arguments[1] === undefined ? {} : arguments[1];
-
-	    _classCallCheck(this, Model);
+	    _classCallCheck(this, Collection);
 
 	    // ### Properties
 	    //
-	    // #### collectionClass
+	    // #### modelClass
 	    //
-	    // Just like how Collection has a modelClass, models also need to have a collectionClass. It can be a direct reference to the class, or it can be a function that returns the class.
+	    // Every collection requires a Model for representing its records. This property directly references to the Model class.
 	    //
-	    this.collectionClass = null;
+	    // Be defalult, it is set to the base Model class, which you can always override.
+	    //
+	    this.modelClass = _Model2['default'];
+
+	    // #### table
+	    //
+	    // The name of the table that this Collection represents. Always as a string.
+	    //
+	    this.table = null;
 
 	    // #### schema
 	    //
-	    // Models do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
+	    // Collections do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
 	    //
 	    // The keys of this object are the column names, and the value defines what type of column they are. For example:
 	    //
@@ -12678,12 +12687,6 @@ this["firenze"] =
 	    //
 	    this.schema = {};
 
-	    // #### attributes
-	    //
-	    // Your model's data
-	    //
-	    this.attributes = attributes ? attributes : {};
-
 	    // #### primaryKey
 	    //
 	    // The name of the ID field, defaults to `id`.
@@ -12696,13 +12699,9 @@ this["firenze"] =
 	    //
 	    this.displayField = null;
 
-	    // #### id
-	    //
-	    // For convenience, stores the ID of the model in this property
-	    //
-	    this.id = null;
-
 	    // #### validationRules
+	    //
+	    // Define rules logic which can be used for various fields.
 	    //
 	    // Example:
 	    //
@@ -12743,6 +12742,30 @@ this["firenze"] =
 	    //
 	    this.loadedBehaviors = [];
 
+	    // #### finders
+	    //
+	    // List of mapped finder methods that you want available in `.find(mappedName, options)`
+	    //
+	    // By default these are set:
+	    //
+	    // ```js
+	    // {
+	    //   all: 'findAll',
+	    //   first: 'findFirst',
+	    //   count: 'findCount',
+	    //   list: 'findList'
+	    // }
+	    // ```
+	    //
+	    // This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
+	    //
+	    this.finders = {
+	      all: 'findAll',
+	      first: 'findFirst',
+	      count: 'findCount',
+	      list: 'findList'
+	    };
+
 	    _lodash2['default'].merge(this, extend);
 
 	    // #### alias
@@ -12750,36 +12773,22 @@ this["firenze"] =
 	    // Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
 	    //
 	    if (!this.alias) {
-	      this.alias = this.collection().table;
-	    }
-
-	    var id = this.get(this.primaryKey);
-	    if (id) {
-	      this.id = id;
+	      this.alias = this.table;
 	    }
 
 	    this.loadBehaviors();
-	    this.callBehavedMethod('initialize');
+	    this.callBehavedMethod(this, 'collectionInitialize');
 	  }
 
-	  _createClass(Model, [{
-	    key: 'collection',
+	  _createClass(Collection, [{
+	    key: 'model',
 
 	    // ## Usage
 	    //
-	    // Unless otherwise you are already provided with a model instance from a Collection, you need to create an instance of it:
+	    // Before using the Collection, you need to create an instance of it:
 	    //
 	    // ```js
-	    // var post = new Post();
-	    // ```
-	    //
-	    // You can also create an instance of a Model with some data:
-	    //
-	    // ```js
-	    // var post = new Post({
-	    //   title: 'Hello World',
-	    //   body: 'blah...'
-	    // });
+	    // var posts = new Posts();
 	    // ```
 	    //
 
@@ -12790,7 +12799,7 @@ this["firenze"] =
 	    // ### Single rule
 	    //
 	    // ```js
-	    // db.createModelClass({
+	    // db.createCollectionClass({
 	    //   schema: {
 	    //     email: {
 	    //       type: 'string',
@@ -12923,7 +12932,7 @@ this["firenze"] =
 	    // Example usage of the above mentioned rules:
 	    //
 	    // ```js
-	    // db.createModelClass({
+	    // db.createCollectionClass({
 	    //   schema: {
 	    //     title: {
 	    //       // direct rule
@@ -12945,10 +12954,10 @@ this["firenze"] =
 	    //
 	    // ### Custom rules
 	    //
-	    // Validation rules can be defined when creating a Model class:
+	    // Validation rules can be defined when creating a Collection class:
 	    //
 	    // ```js
-	    // var Post = db.createModelClass({
+	    // var Posts = db.createCollectionClass({
 	    //   schema: {
 	    //     name: {
 	    //       type: 'string',
@@ -12992,7 +13001,7 @@ this["firenze"] =
 	    // But if you wish to make sure that certain fields are required, meaning they should always be present, you can mark them as required in your schema:
 	    //
 	    // ```js
-	    // var Post = db.createModelClass({
+	    // var Posts = db.createCollectionClass({
 	    //   schema: {
 	    //     name: {
 	    //       type: 'string',
@@ -13009,292 +13018,268 @@ this["firenze"] =
 
 	    // ## Methods
 	    //
-	    // ### collection(options = {})
+	    // ### model(attributes = {}, extend = {})
 	    //
-	    // Get the model's Collection's instance
+	    // Get an instance of this Collection's model
 	    //
+	    value: function model() {
+	      var attributes = arguments[0] === undefined ? {} : arguments[0];
+	      var extend = arguments[1] === undefined ? {} : arguments[1];
 
-	    value: function collection() {
+	      _lodash2['default'].merge(extend, {
+	        collection: this
+	      });
+
+	      return new this.modelClass(attributes, extend);
+	    }
+	  }, {
+	    key: 'getDatabase',
+
+	    // ### getDatabase()
+	    //
+	    // Get an instance of the current Database
+	    //
+	    value: function getDatabase() {
+	      return this.db;
+	    }
+	  }, {
+	    key: 'getAdapter',
+
+	    // ### getAdapter()
+	    //
+	    // Get adapter of the Collection's database
+	    //
+	    value: function getAdapter() {
+	      return this.getDatabase().getAdapter();
+	    }
+	  }, {
+	    key: 'setDatabase',
+
+	    // ### setDatabase(db)
+	    //
+	    // Change database instance of this Collection to `db`
+	    //
+	    value: function setDatabase(db) {
+	      this.db = db;
+	    }
+	  }, {
+	    key: 'query',
+
+	    // ### query(options = {})
+	    //
+	    // Get query object for this Collection
+	    //
+	    value: function query() {
 	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      if (!this.collectionClass) {
-	        return new Error('Cannot find any collectionClass');
+	      return this.getAdapter().query(this, options);
+	    }
+	  }, {
+	    key: 'find',
+
+	    // ### find(type, options = {})
+	    //
+	    // Explained above in `finders` section
+	    //
+	    value: function find() {
+	      var type = arguments[0] === undefined ? null : arguments[0];
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      if (!type || !this.finders[type] || !_lodash2['default'].isFunction(this[this.finders[type]])) {
+	        throw new Error('Invalid find type');
 	      }
 
-	      var isInstance = function isInstance(i) {
-	        return !_lodash2['default'].isFunction(i) && _lodash2['default'].isString(i.table);
-	      };
-
-	      var C = this.collectionClass;
-
-	      C = new C(options);
-	      if (isInstance(C)) {
-	        return C;
-	      }
-
-	      C = new C(options);
-	      if (isInstance(C)) {
-	        return C;
-	      }
-
-	      return new C(options);
+	      return this[this.finders[type]](options);
 	    }
 	  }, {
-	    key: 'get',
+	    key: 'findAll',
 
-	    // ### get(field)
+	    // ### findAll(options = {})
 	    //
-	    // Get the field of current model
+	    // Returns a promise with matched results.
 	    //
-	    value: function get(field) {
-	      var obj = this.toObject();
-	      return _lodash2['default'].get(obj, field);
-	    }
-	  }, {
-	    key: 'set',
-
-	    // ### set(field, value)
+	    // Same as `collection.find('all', options)`.
 	    //
-	    // Set an attribute with given value for the field
-	    //
-	    value: function set(field, value) {
-	      if (_lodash2['default'].isObject(field)) {
-	        return _lodash2['default'].merge(this.attributes, field);
-	      }
-
-	      return _lodash2['default'].set(this.attributes, field, value);
-	    }
-	  }, {
-	    key: 'toObject',
-
-	    // ### toObject()
-	    //
-	    // Returns a plain object of the model
-	    //
-	    value: function toObject() {
-	      return this.attributes;
-	    }
-	  }, {
-	    key: 'toJSON',
-
-	    // ### toJSON()
-	    //
-	    // Alias of `.toObject()`.
-	    //
-	    value: function toJSON() {
-	      return this.toObject();
-	    }
-	  }, {
-	    key: 'fetch',
-
-	    // ### fetch(options = {})
-	    //
-	    // Fetches the model again from the Database, and returns it with a promise.
-	    //
-	    // A quick example:
-	    //
-	    // ```js
-	    // var post = new Post({id: 1});
-	    // post.fetch().then(function (model) {
-	    //   var title = model.get('title');
-	    // });
-	    // ```
-	    //
-	    value: function fetch() {
-	      var options = arguments[0] === undefined ? {} : arguments[0];
-
-	      var id = this.getId();
-	      if (!id) {
-	        throw new Error('No ID found');
-	      }
-
-	      var collection = this.collection();
-	      _lodash2['default'].merge(options, {
-	        conditions: _defineProperty({}, this.alias + '.' + this.primaryKey, id)
-	      });
-	      return new _Promise2['default'](function (resolve, reject) {
-	        return collection.find('first', options).then(function (model) {
-	          resolve(model);
-	        })['catch'](reject);
-	      });
-	    }
-	  }, {
-	    key: 'getId',
-
-	    // ### getId()
-	    //
-	    // Get the ID of model
-	    //
-	    value: function getId() {
-	      var id = this.id || this.get(this.primaryKey);
-	      if (!_lodash2['default'].isUndefined(id)) {
-	        return id;
-	      }
-
-	      return null;
-	    }
-	  }, {
-	    key: 'isNew',
-
-	    // ### isNew()
-	    //
-	    // Is the current model new? As in saved in Database, or yet to be saved?
-	    //
-	    value: function isNew() {
-	      return this.getId() ? false : true;
-	    }
-	  }, {
-	    key: 'save',
-
-	    // ### save(options = {})
-	    //
-	    // Save the current model, and returns a promise.
-	    //
-	    // Options:
-	    //
-	    // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-	    //
-	    value: function save() {
+	    value: function findAll() {
 	      var _this = this;
 
 	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      var callbacks = _lodash2['default'].isUndefined(options.callbacks) || options.callbacks ? true : false;
+	      var q = this.query(options);
 
 	      return new _Promise2['default'](function (resolve, reject) {
-	        return _async2['default'].waterfall([function (cb) {
-	          if (!callbacks) {
-	            return cb(null, true);
-	          }
-
-	          return _this.callBehavedMethod('beforeSave').then(function (proceed) {
-	            if (proceed === true) {
-	              return cb(null, proceed);
-	            }
-
-	            return cb(proceed);
+	        return _this.getAdapter().read(q).then(function (results) {
+	          var models = [];
+	          _lodash2['default'].each(results, function (v) {
+	            models.push(_this.model(v));
 	          });
-	        }, function (proceed, cb) {
-	          if (!_lodash2['default'].isUndefined(options.validate) && options.validate === false) {
-	            return _this.collection().save(_this, options).then(function (model) {
-	              return cb(null, model);
-	            })['catch'](function (error) {
-	              return cb(error);
-	            });
-	          }
-
-	          return _this.validate().then(function (validated) {
-	            if (validated === true) {
-	              return _this.collection().save(_this, options).then(function (model) {
-	                return cb(null, model);
-	              })['catch'](function (error) {
-	                return cb(error);
-	              });
-	            }
-
-	            return cb({
-	              validationErrors: validated
-	            });
-	          });
-	        }, function (result, cb) {
-	          if (!callbacks) {
-	            return cb(null, _this);
-	          }
-
-	          return _this.callBehavedMethod('afterSave').then(function () {
-	            return cb(null, _this);
-	          });
-	        }], function (err, result) {
-	          if (err) {
-	            return reject(err);
-	          }
-
-	          return resolve(result);
-	        });
+	          return resolve(models);
+	        })['catch'](reject);
 	      });
 	    }
 	  }, {
-	    key: 'saveField',
+	    key: 'findFirst',
 
-	    // ### saveField(field, value)
+	    // ### findFirst(options = {})
 	    //
-	    // Save a particular field with value.
+	    // Returns a promise with matched model if any.
 	    //
-	    // Returns a promise.
+	    // Same as `collection.find('first', options)`.
 	    //
-	    value: function saveField(field, value) {
-	      this.set(field, value);
-	      return this.save({
-	        fields: [field]
-	      });
-	    }
-	  }, {
-	    key: 'clear',
-
-	    // ### clear()
-	    //
-	    // Clear the current instance of model of any data
-	    //
-	    value: function clear() {
-	      this.id = null;
-	      this.attributes = {};
-	    }
-	  }, {
-	    key: 'delete',
-
-	    // ### delete(options = {})
-	    //
-	    // Delete the current model, and return a promise.
-	    //
-	    // Options:
-	    //
-	    // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-	    //
-	    value: function _delete() {
+	    value: function findFirst() {
 	      var _this2 = this;
 
 	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      var callbacks = _lodash2['default'].isUndefined(options.callbacks) || options.callbacks ? true : false;
+	      var q = this.query(_lodash2['default'].merge(options, {
+	        limit: 1
+	      }));
 
 	      return new _Promise2['default'](function (resolve, reject) {
-	        return _async2['default'].waterfall([function (cb) {
-	          if (!callbacks) {
-	            return cb(null, true);
+	        return _this2.getAdapter().read(q).then(function (results) {
+	          if (results.length === 0) {
+	            return resolve(null);
 	          }
 
-	          return _this2.callBehavedMethod('beforeDelete').then(function (proceed) {
-	            return cb(null, proceed);
-	          })['catch'](function (error) {
-	            return cb(error);
-	          });
-	        }, function (proceed, cb) {
-	          return _this2.collection()['delete'](_this2).then(function (res) {
-	            return cb(null, res);
-	          })['catch'](function (error) {
-	            return cb(error);
-	          });
-	        }, function (result, cb) {
-	          return _this2.callBehavedMethod('afterDelete').then(function () {
-	            return cb(null, result);
-	          })['catch'](function (error) {
-	            return cb(error);
-	          });
-	        }], function (err, result) {
-	          if (err) {
-	            return reject(err);
-	          }
-
-	          return resolve(result);
-	        });
+	          return resolve(_this2.model(results[0]));
+	        })['catch'](reject);
 	      });
+	    }
+	  }, {
+	    key: 'findCount',
+
+	    // ### findCount(options = {})
+	    //
+	    // Returns a promise with count of matched results.
+	    //
+	    // Same as `collection.find('count', options)`.
+	    //
+	    value: function findCount() {
+	      var _this3 = this;
+
+	      var options = arguments[0] === undefined ? {} : arguments[0];
+
+	      var q = this.query(_lodash2['default'].merge(options, {
+	        count: true
+	      }));
+
+	      return new _Promise2['default'](function (resolve, reject) {
+	        return _this3.getAdapter().read(q).then(function (results) {
+	          if (results.length === 0) {
+	            return resolve(null);
+	          }
+
+	          var firstKey = _lodash2['default'].first(_lodash2['default'].keys(results[0]));
+	          var count = results[0][firstKey];
+
+	          return resolve(count);
+	        })['catch'](reject);
+	      });
+	    }
+	  }, {
+	    key: 'findList',
+
+	    // ### findList(options = {})
+	    //
+	    // Returns a promise with key/value pair of matched results.
+	    //
+	    // Same as `collection.find('list', options)`.
+	    //
+	    value: function findList() {
+	      var _this4 = this;
+
+	      var options = arguments[0] === undefined ? {} : arguments[0];
+
+	      if (!_lodash2['default'].isArray(options.fields)) {
+	        options.fields = [this.primaryKey, this.displayField];
+	      }
+
+	      var q = this.query(options);
+
+	      return new _Promise2['default'](function (resolve, reject) {
+	        return q.then(function (results) {
+	          var list = {};
+
+	          _lodash2['default'].each(results, function (v) {
+	            var listK = v[_this4.primaryKey];
+	            var listV = v[_this4.displayField];
+	            list[listK] = listV;
+	          });
+
+	          return resolve(list);
+	        })['catch'](reject);
+	      });
+	    }
+	  }, {
+	    key: 'findBy',
+
+	    // ### findBy(field, value, options = {})
+	    //
+	    // Shortcut method for finding a single record.
+	    //
+	    // Same as:
+	    //
+	    // ```js
+	    // collection.find('first', {
+	    //   conditions: {
+	    //     field: value
+	    //   }
+	    // });
+	    // ```
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findBy(field, value) {
+	      var options = arguments[2] === undefined ? {} : arguments[2];
+
+	      return this.find('first', _lodash2['default'].merge({
+	        conditions: _defineProperty({}, field, value)
+	      }, options));
+	    }
+	  }, {
+	    key: 'findById',
+
+	    // ### findById(value, options = {})
+	    //
+	    // Shortcut method for finding record by ID.
+	    //
+	    // Same as:
+	    //
+	    // ```js
+	    // collection.find('first', {
+	    //   conditions: {
+	    //     id: value // `id` key comes from `model.primaryKey
+	    //   }
+	    // });
+	    // ```
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findById(value) {
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      return this.findBy(this.primaryKey, value, options);
+	    }
+	  }, {
+	    key: 'findByKey',
+
+	    // ### findByKey(value, options = {})
+	    //
+	    // Alias for `collection.findById()`.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function findByKey(value) {
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      return this.findById(value, options);
 	    }
 	  }, {
 	    key: 'validate',
 
 	    // ### validate()
 	    //
-	    // Validates all fields of the current Model
+	    // Validates all fields of the given Model
 	    //
 	    // Returns a promise with `true` if all validated, otherwise an object of error messages keyed by field names.
 	    //
@@ -13304,11 +13289,11 @@ this["firenze"] =
 	    //
 	    // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 	    //
-	    value: function validate() {
-	      var _this3 //eslint-disable-line
+	    value: function validate(model) {
+	      var _this5 //eslint-disable-line
 	      = this;
 
-	      var options = arguments[0] === undefined ? {} : arguments[0];
+	      var options = arguments[1] === undefined ? {} : arguments[1];
 
 	      var callbacks = _lodash2['default'].isUndefined(options.callbacks) || options.callbacks ? true : false;
 
@@ -13318,13 +13303,13 @@ this["firenze"] =
 	            return cb(null, true);
 	          }
 
-	          return _this3.callBehavedMethod('beforeValidate').then(function (proceed) {
+	          return _this5.callBehavedMethod(model, 'beforeValidate').then(function (proceed) {
 	            return cb(null, proceed);
 	          })['catch'](function (error) {
 	            return cb(error);
 	          });
 	        }, function (proceed, cb) {
-	          return _this3._validate().then(function (res) {
+	          return _this5._validate(model).then(function (res) {
 	            if (res === true) {
 	              return cb(null, true);
 	            }
@@ -13338,7 +13323,7 @@ this["firenze"] =
 	            return cb(null, res);
 	          }
 
-	          return _this3.callBehavedMethod('afterValidate').then(function () {
+	          return _this5.callBehavedMethod(model, 'afterValidate').then(function () {
 	            return cb(null, res);
 	          })['catch'](function (error) {
 	            return cb(error);
@@ -13358,12 +13343,12 @@ this["firenze"] =
 	    }
 	  }, {
 	    key: '_validate',
-	    value: function _validate() {
-	      var _this4 = this;
+	    value: function _validate(model) {
+	      var _this6 = this;
 
 	      //eslint-disable-line
 	      var fields = [];
-	      _lodash2['default'].each(this.toObject(), function (v, field) {
+	      _lodash2['default'].each(model.toObject(), function (v, field) {
 	        if (!_lodash2['default'].isObject(v)) {
 	          fields.push(field);
 	        }
@@ -13395,7 +13380,7 @@ this["firenze"] =
 
 	      return new _Promise2['default'](function (resolve, reject) {
 	        _async2['default'].mapSeries(fields, function (field, cb) {
-	          _this4.validateField(field).then(function (validated) {
+	          _this6.validateField(model, field).then(function (validated) {
 	            if (validated !== true) {
 	              list[field] = validated;
 	            }
@@ -13420,19 +13405,19 @@ this["firenze"] =
 	  }, {
 	    key: 'validateField',
 
-	    // ### validateField(field, value = null)
+	    // ### validateField(model, field, value = null)
 	    //
 	    // Validates a single field
 	    //
 	    // Returns a promise with true if validated, otherwise error message
 	    //
-	    value: function validateField(field) {
-	      var _this5 = this;
+	    value: function validateField(model, field) {
+	      var _this7 = this;
 
-	      var value = arguments[1] === undefined ? null : arguments[1];
+	      var value = arguments[2] === undefined ? null : arguments[2];
 
 	      if (!value) {
-	        value = this.get(field);
+	        value = model.get(field);
 	      }
 
 	      var fieldSchema = this.schema[field];
@@ -13466,9 +13451,9 @@ this["firenze"] =
 	            // rule is a direct function
 	            validatorFunc = rule;
 	            validatorOptions = [field, value];
-	          } else if (ruleName && _lodash2['default'].isFunction(_this5.validationRules[ruleName])) {
+	          } else if (ruleName && _lodash2['default'].isFunction(_this7.validationRules[ruleName])) {
 	            // rule is an pre-defined function
-	            validatorFunc = _this5.validationRules[ruleName];
+	            validatorFunc = _this7.validationRules[ruleName];
 	            validatorOptions = [field, value];
 	          } else if (_lodash2['default'].isFunction(_validator2['default'][ruleName])) {
 	            // validator.js
@@ -13491,7 +13476,7 @@ this["firenze"] =
 	            });
 	          } else {
 	            // sync
-	            var passed = validatorFunc.apply(_this5, validatorOptions);
+	            var passed = validatorFunc.apply(model, validatorOptions);
 
 	            if (!passed) {
 	              return cb(message);
@@ -13509,6 +13494,200 @@ this["firenze"] =
 	      });
 	    }
 	  }, {
+	    key: 'save',
+
+	    // ### save(model, options = {})
+	    //
+	    // Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+	    //
+	    // Returns a promise with model instance.
+	    //
+	    // Options:
+	    //
+	    // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+	    //
+	    value: function save(model) {
+	      var _this8 //eslint-disable-line
+	      //eslint-disable-line
+	      = this;
+
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      var callbacks = _lodash2['default'].isUndefined(options.callbacks) || options.callbacks ? true : false;
+
+	      return new _Promise2['default'](function (resolve, reject) {
+	        return _async2['default'].waterfall([function (cb) {
+	          if (!callbacks) {
+	            return cb(null, true);
+	          }
+
+	          return _this8.callBehavedMethod(model, 'beforeSave').then(function (proceed) {
+	            if (proceed === true) {
+	              return cb(null, proceed);
+	            }
+
+	            return cb(proceed);
+	          });
+	        }, function (proceed, cb) {
+	          if (!_lodash2['default'].isUndefined(options.validate) && options.validate === false) {
+	            return _this8._save(model, options).then(function (model) {
+	              return cb(null, model);
+	            })['catch'](function (error) {
+	              return cb(error);
+	            });
+	          }
+
+	          return _this8.validate(model).then(function (validated) {
+	            if (validated === true) {
+	              return _this8._save(model, options).then(function (model) {
+	                return cb(null, model);
+	              })['catch'](function (error) {
+	                return cb(error);
+	              });
+	            }
+
+	            return cb({
+	              validationErrors: validated
+	            });
+	          });
+	        }, function (result, cb) {
+	          if (!callbacks) {
+	            return cb(null, model);
+	          }
+
+	          return _this8.callBehavedMethod(model, 'afterSave').then(function () {
+	            return cb(null, model);
+	          });
+	        }], function (err, result) {
+	          if (err) {
+	            return reject(err);
+	          }
+
+	          return resolve(result);
+	        });
+	      });
+	    }
+	  }, {
+	    key: '_save',
+	    value: function _save(model) {
+	      var _this9 = this;
+
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      var obj = model.toObject();
+	      return new _Promise2['default'](function (resolve, reject) {
+	        var promise = null;
+	        var q = null;
+
+	        if (model.isNew()) {
+	          q = _this9.query({
+	            alias: false
+	          });
+	          promise = _this9.getAdapter().create(q, obj);
+	        } else {
+	          obj = _lodash2['default'].omit(obj, model.primaryKey);
+	          if (_lodash2['default'].isArray(options.fields)) {
+	            obj = _lodash2['default'].pick(obj, options.fields);
+	          }
+
+	          q = _this9.query({
+	            alias: false,
+	            conditions: _defineProperty({}, model.primaryKey, model.getId())
+	          });
+	          promise = _this9.getAdapter().update(q, obj);
+	        }
+
+	        promise.then(function (ids) {
+	          var id = null;
+	          if (_lodash2['default'].isArray(ids) && ids.length === 0 || !ids) {
+	            return resolve(id);
+	          } else if (_lodash2['default'].isArray(ids)) {
+	            id = ids[0];
+	          } else {
+	            id = ids;
+	          }
+
+	          return _this9.model({ id: id }).fetch().then(function (m) {
+	            resolve(m);
+	          })['catch'](function (error) {
+	            reject(error);
+	          });
+	        })['catch'](reject);
+	      });
+	    }
+	  }, {
+	    key: 'delete',
+
+	    // ### delete(model)
+	    //
+	    // Deletes the given model. Usually called via `Model.delete()`.
+	    //
+	    // Returns a promise.
+	    //
+	    // Options:
+	    //
+	    // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
+	    //
+	    value: function _delete(model) {
+	      var _this10 //eslint-disable-line
+	      = this;
+
+	      var options = arguments[1] === undefined ? {} : arguments[1];
+
+	      var callbacks = _lodash2['default'].isUndefined(options.callbacks) || options.callbacks ? true : false;
+
+	      return new _Promise2['default'](function (resolve, reject) {
+	        return _async2['default'].waterfall([function (cb) {
+	          if (!callbacks) {
+	            return cb(null, true);
+	          }
+
+	          return _this10.callBehavedMethod(model, 'beforeDelete').then(function (proceed) {
+	            return cb(null, proceed);
+	          })['catch'](function (error) {
+	            return cb(error);
+	          });
+	        }, function (proceed, cb) {
+	          return _this10._delete(model, _this10).then(function (res) {
+	            return cb(null, res);
+	          })['catch'](function (error) {
+	            return cb(error);
+	          });
+	        }, function (result, cb) {
+	          return _this10.callBehavedMethod(model, 'afterDelete').then(function () {
+	            return cb(null, result);
+	          })['catch'](function (error) {
+	            return cb(error);
+	          });
+	        }], function (err, result) {
+	          if (err) {
+	            return reject(err);
+	          }
+
+	          return resolve(result);
+	        });
+	      });
+	    }
+	  }, {
+	    key: '_delete',
+	    value: function _delete(model) {
+	      var _this11 = this;
+
+	      return new _Promise2['default'](function (resolve, reject) {
+	        if (model.isNew()) {
+	          var error = new Error('Cannot delete a model without ID');
+	          return reject(error);
+	        }
+
+	        var q = _this11.query({
+	          alias: false,
+	          conditions: _defineProperty({}, _this11.primaryKey, model.getId())
+	        });
+
+	        return _this11.getAdapter()['delete'](q).then(resolve)['catch'](reject);
+	      });
+	    }
+	  }, {
 	    key: 'loadBehaviors',
 
 	    // ### loadBehaviors()
@@ -13516,7 +13695,7 @@ this["firenze"] =
 	    // Called during construction, and loads behaviors as defined in `behaviors` property.
 	    //
 	    value: function loadBehaviors() {
-	      var _this6 = this;
+	      var _this12 = this;
 
 	      this.behaviors.forEach(function (behaviorItem) {
 	        var behaviorClass = behaviorItem;
@@ -13528,10 +13707,10 @@ this["firenze"] =
 	        }
 
 	        var behavior = new behaviorClass({
-	          model: _this6,
+	          collection: _this12,
 	          options: behaviorOptions
 	        });
-	        _this6.loadedBehaviors.push(behavior);
+	        _this12.loadedBehaviors.push(behavior);
 	      });
 	    }
 	  }, {
@@ -13541,21 +13720,22 @@ this["firenze"] =
 	    //
 	    // Used internally to call a callback method along with all the methods defined by loaded Behaviors too.
 	    //
-	    value: function callBehavedMethod(methodName) {
-	      var _this7 = this;
+	    value: function callBehavedMethod(context, methodName) {
+	      var _this13 = this;
 
 	      if (methodName.indexOf('after') === -1 && methodName.indexOf('before') === -1) {
 	        // sync
 	        this.loadedBehaviors.forEach(function (behavior) {
-	          behavior[methodName]();
+	          behavior[methodName](context);
 	        });
-	        return;
+
+	        return true;
 	      }
 
 	      // async
 	      return new _Promise2['default'](function (resolve, reject) {
-	        return _async2['default'].eachSeries(_this7.loadedBehaviors, function (behavior, callback) {
-	          behavior[methodName]().then(function (res) {
+	        return _async2['default'].eachSeries(_this13.loadedBehaviors, function (behavior, callback) {
+	          behavior[methodName](context).then(function (res) {
 	            return callback(null, res);
 	          })['catch'](function (error) {
 	            return callback(error);
@@ -13565,7 +13745,7 @@ this["firenze"] =
 	            return reject(error);
 	          }
 
-	          return _this7[methodName]().then(function (res) {
+	          return _this13[methodName](context).then(function (res) {
 	            return resolve(res);
 	          })['catch'](function (error) {
 	            return reject(error);
@@ -13574,20 +13754,20 @@ this["firenze"] =
 	      });
 	    }
 	  }, {
-	    key: 'initialize',
+	    key: 'modelInitialize',
 
 	    // ## Callbacks
 	    //
-	    // Models also support callbacks that you can define when creating classes.
+	    // Collections support callbacks that you can define when creating classes.
 	    //
 	    // For example:
 	    //
 	    // ```js
 	    // var Promise = f.Promise;
-	    // var Post = f.createModelClass({
+	    // var Posts = f.createCollectionClass({
 	    //   alias: 'Post',
 	    //
-	    //   beforeSave: function () {
+	    //   beforeSave: function (model) {
 	    //     // do something before saving...
 	    //
 	    //     // end the callback with a promise
@@ -13597,91 +13777,2190 @@ this["firenze"] =
 	    // ```
 	    //
 
-	    // ### initialize()
+	    // ### modelInitialize(model)
 	    //
-	    // Called right after construction.
+	    // Called right after Collection's Model construction.
 	    //
 	    // For synchronous operations only, since it does not return any Promise.
 	    //
-	    value: function initialize() {
+	    value: function modelInitialize(model) {
+	      //eslint-disable-line
 	      return true;
 	    }
 	  }, {
 	    key: 'beforeSave',
 
-	    // ### beforeSave()
+	    // ### beforeSave(model)
 	    //
 	    // Should return a Promise with `true` to continue.
 	    //
 	    // To stop the save, return a Promise with an error.
 	    //
-	    value: function beforeSave() {
+	    value: function beforeSave(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }, {
 	    key: 'afterSave',
 
-	    // ### afterSave()
+	    // ### afterSave(model)
 	    //
 	    // Should return a Promise.
 	    //
-	    value: function afterSave() {
+	    value: function afterSave(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }, {
 	    key: 'beforeValidate',
 
-	    // ### beforeValidate()
+	    // ### beforeValidate(model)
 	    //
 	    // Should return a Promise with `true` to continue.
 	    //
 	    // To stop the validation, return a Promise with an error.
 	    //
-	    value: function beforeValidate() {
+	    value: function beforeValidate(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }, {
 	    key: 'afterValidate',
 
-	    // ### afterValidate()
+	    // ### afterValidate(model)
 	    //
 	    // Should return a Promise.
 	    //
-	    value: function afterValidate() {
+	    value: function afterValidate(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }, {
 	    key: 'beforeDelete',
 
-	    // ### beforeDelete()
+	    // ### beforeDelete(model)
 	    //
 	    // Should return a Promise with `true` to continue.
 	    //
 	    // To stop from deleting, return a Promise with an error.
 	    //
-	    value: function beforeDelete() {
+	    value: function beforeDelete(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }, {
 	    key: 'afterDelete',
 
-	    // ### afterDelete()
+	    // ### afterDelete(model)
 	    //
 	    // Should return a Promise.
 	    //
-	    value: function afterDelete() {
+	    value: function afterDelete(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'].resolve(true);
 	    }
 	  }]);
 
-	  return Model;
+	  return Collection;
 	})();
 
-	exports['default'] = Model;
+	exports['default'] = Collection;
 	module.exports = exports['default'];
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	/* global window */
+	var GetParams = function (func) {
+		'use strict';
+
+		if (typeof func !== 'function') {
+			return [];
+		}
+
+		var patternComments = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+		var patternArguments = /([^\s,]+)/g;
+
+		var funcString = func
+			.toString()
+			.replace(patternComments, '');
+
+		var result = funcString
+			.slice(
+				funcString.indexOf('(') + 1,
+				funcString.indexOf(')')
+			)
+			.match(patternArguments);
+
+		if (result === null) {
+			return [];
+		}
+
+		return result;
+	};
+
+	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+		module.exports = GetParams;
+	}
+
+	if (typeof window !== 'undefined') {
+		window.GetParams = GetParams;
+	}
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, setImmediate) {/*!
+	 * async
+	 * https://github.com/caolan/async
+	 *
+	 * Copyright 2010-2014 Caolan McMahon
+	 * Released under the MIT license
+	 */
+	/*jshint onevar: false, indent:4 */
+	/*global setImmediate: false, setTimeout: false, console: false */
+	(function () {
+
+	    var async = {};
+
+	    // global on the server, window in the browser
+	    var root, previous_async;
+
+	    root = this;
+	    if (root != null) {
+	      previous_async = root.async;
+	    }
+
+	    async.noConflict = function () {
+	        root.async = previous_async;
+	        return async;
+	    };
+
+	    function only_once(fn) {
+	        var called = false;
+	        return function() {
+	            if (called) throw new Error("Callback was already called.");
+	            called = true;
+	            fn.apply(root, arguments);
+	        }
+	    }
+
+	    //// cross-browser compatiblity functions ////
+
+	    var _toString = Object.prototype.toString;
+
+	    var _isArray = Array.isArray || function (obj) {
+	        return _toString.call(obj) === '[object Array]';
+	    };
+
+	    var _each = function (arr, iterator) {
+	        for (var i = 0; i < arr.length; i += 1) {
+	            iterator(arr[i], i, arr);
+	        }
+	    };
+
+	    var _map = function (arr, iterator) {
+	        if (arr.map) {
+	            return arr.map(iterator);
+	        }
+	        var results = [];
+	        _each(arr, function (x, i, a) {
+	            results.push(iterator(x, i, a));
+	        });
+	        return results;
+	    };
+
+	    var _reduce = function (arr, iterator, memo) {
+	        if (arr.reduce) {
+	            return arr.reduce(iterator, memo);
+	        }
+	        _each(arr, function (x, i, a) {
+	            memo = iterator(memo, x, i, a);
+	        });
+	        return memo;
+	    };
+
+	    var _keys = function (obj) {
+	        if (Object.keys) {
+	            return Object.keys(obj);
+	        }
+	        var keys = [];
+	        for (var k in obj) {
+	            if (obj.hasOwnProperty(k)) {
+	                keys.push(k);
+	            }
+	        }
+	        return keys;
+	    };
+
+	    //// exported async module functions ////
+
+	    //// nextTick implementation with browser-compatible fallback ////
+	    if (typeof process === 'undefined' || !(process.nextTick)) {
+	        if (typeof setImmediate === 'function') {
+	            async.nextTick = function (fn) {
+	                // not a direct alias for IE10 compatibility
+	                setImmediate(fn);
+	            };
+	            async.setImmediate = async.nextTick;
+	        }
+	        else {
+	            async.nextTick = function (fn) {
+	                setTimeout(fn, 0);
+	            };
+	            async.setImmediate = async.nextTick;
+	        }
+	    }
+	    else {
+	        async.nextTick = process.nextTick;
+	        if (typeof setImmediate !== 'undefined') {
+	            async.setImmediate = function (fn) {
+	              // not a direct alias for IE10 compatibility
+	              setImmediate(fn);
+	            };
+	        }
+	        else {
+	            async.setImmediate = async.nextTick;
+	        }
+	    }
+
+	    async.each = function (arr, iterator, callback) {
+	        callback = callback || function () {};
+	        if (!arr.length) {
+	            return callback();
+	        }
+	        var completed = 0;
+	        _each(arr, function (x) {
+	            iterator(x, only_once(done) );
+	        });
+	        function done(err) {
+	          if (err) {
+	              callback(err);
+	              callback = function () {};
+	          }
+	          else {
+	              completed += 1;
+	              if (completed >= arr.length) {
+	                  callback();
+	              }
+	          }
+	        }
+	    };
+	    async.forEach = async.each;
+
+	    async.eachSeries = function (arr, iterator, callback) {
+	        callback = callback || function () {};
+	        if (!arr.length) {
+	            return callback();
+	        }
+	        var completed = 0;
+	        var iterate = function () {
+	            iterator(arr[completed], function (err) {
+	                if (err) {
+	                    callback(err);
+	                    callback = function () {};
+	                }
+	                else {
+	                    completed += 1;
+	                    if (completed >= arr.length) {
+	                        callback();
+	                    }
+	                    else {
+	                        iterate();
+	                    }
+	                }
+	            });
+	        };
+	        iterate();
+	    };
+	    async.forEachSeries = async.eachSeries;
+
+	    async.eachLimit = function (arr, limit, iterator, callback) {
+	        var fn = _eachLimit(limit);
+	        fn.apply(null, [arr, iterator, callback]);
+	    };
+	    async.forEachLimit = async.eachLimit;
+
+	    var _eachLimit = function (limit) {
+
+	        return function (arr, iterator, callback) {
+	            callback = callback || function () {};
+	            if (!arr.length || limit <= 0) {
+	                return callback();
+	            }
+	            var completed = 0;
+	            var started = 0;
+	            var running = 0;
+
+	            (function replenish () {
+	                if (completed >= arr.length) {
+	                    return callback();
+	                }
+
+	                while (running < limit && started < arr.length) {
+	                    started += 1;
+	                    running += 1;
+	                    iterator(arr[started - 1], function (err) {
+	                        if (err) {
+	                            callback(err);
+	                            callback = function () {};
+	                        }
+	                        else {
+	                            completed += 1;
+	                            running -= 1;
+	                            if (completed >= arr.length) {
+	                                callback();
+	                            }
+	                            else {
+	                                replenish();
+	                            }
+	                        }
+	                    });
+	                }
+	            })();
+	        };
+	    };
+
+
+	    var doParallel = function (fn) {
+	        return function () {
+	            var args = Array.prototype.slice.call(arguments);
+	            return fn.apply(null, [async.each].concat(args));
+	        };
+	    };
+	    var doParallelLimit = function(limit, fn) {
+	        return function () {
+	            var args = Array.prototype.slice.call(arguments);
+	            return fn.apply(null, [_eachLimit(limit)].concat(args));
+	        };
+	    };
+	    var doSeries = function (fn) {
+	        return function () {
+	            var args = Array.prototype.slice.call(arguments);
+	            return fn.apply(null, [async.eachSeries].concat(args));
+	        };
+	    };
+
+
+	    var _asyncMap = function (eachfn, arr, iterator, callback) {
+	        arr = _map(arr, function (x, i) {
+	            return {index: i, value: x};
+	        });
+	        if (!callback) {
+	            eachfn(arr, function (x, callback) {
+	                iterator(x.value, function (err) {
+	                    callback(err);
+	                });
+	            });
+	        } else {
+	            var results = [];
+	            eachfn(arr, function (x, callback) {
+	                iterator(x.value, function (err, v) {
+	                    results[x.index] = v;
+	                    callback(err);
+	                });
+	            }, function (err) {
+	                callback(err, results);
+	            });
+	        }
+	    };
+	    async.map = doParallel(_asyncMap);
+	    async.mapSeries = doSeries(_asyncMap);
+	    async.mapLimit = function (arr, limit, iterator, callback) {
+	        return _mapLimit(limit)(arr, iterator, callback);
+	    };
+
+	    var _mapLimit = function(limit) {
+	        return doParallelLimit(limit, _asyncMap);
+	    };
+
+	    // reduce only has a series version, as doing reduce in parallel won't
+	    // work in many situations.
+	    async.reduce = function (arr, memo, iterator, callback) {
+	        async.eachSeries(arr, function (x, callback) {
+	            iterator(memo, x, function (err, v) {
+	                memo = v;
+	                callback(err);
+	            });
+	        }, function (err) {
+	            callback(err, memo);
+	        });
+	    };
+	    // inject alias
+	    async.inject = async.reduce;
+	    // foldl alias
+	    async.foldl = async.reduce;
+
+	    async.reduceRight = function (arr, memo, iterator, callback) {
+	        var reversed = _map(arr, function (x) {
+	            return x;
+	        }).reverse();
+	        async.reduce(reversed, memo, iterator, callback);
+	    };
+	    // foldr alias
+	    async.foldr = async.reduceRight;
+
+	    var _filter = function (eachfn, arr, iterator, callback) {
+	        var results = [];
+	        arr = _map(arr, function (x, i) {
+	            return {index: i, value: x};
+	        });
+	        eachfn(arr, function (x, callback) {
+	            iterator(x.value, function (v) {
+	                if (v) {
+	                    results.push(x);
+	                }
+	                callback();
+	            });
+	        }, function (err) {
+	            callback(_map(results.sort(function (a, b) {
+	                return a.index - b.index;
+	            }), function (x) {
+	                return x.value;
+	            }));
+	        });
+	    };
+	    async.filter = doParallel(_filter);
+	    async.filterSeries = doSeries(_filter);
+	    // select alias
+	    async.select = async.filter;
+	    async.selectSeries = async.filterSeries;
+
+	    var _reject = function (eachfn, arr, iterator, callback) {
+	        var results = [];
+	        arr = _map(arr, function (x, i) {
+	            return {index: i, value: x};
+	        });
+	        eachfn(arr, function (x, callback) {
+	            iterator(x.value, function (v) {
+	                if (!v) {
+	                    results.push(x);
+	                }
+	                callback();
+	            });
+	        }, function (err) {
+	            callback(_map(results.sort(function (a, b) {
+	                return a.index - b.index;
+	            }), function (x) {
+	                return x.value;
+	            }));
+	        });
+	    };
+	    async.reject = doParallel(_reject);
+	    async.rejectSeries = doSeries(_reject);
+
+	    var _detect = function (eachfn, arr, iterator, main_callback) {
+	        eachfn(arr, function (x, callback) {
+	            iterator(x, function (result) {
+	                if (result) {
+	                    main_callback(x);
+	                    main_callback = function () {};
+	                }
+	                else {
+	                    callback();
+	                }
+	            });
+	        }, function (err) {
+	            main_callback();
+	        });
+	    };
+	    async.detect = doParallel(_detect);
+	    async.detectSeries = doSeries(_detect);
+
+	    async.some = function (arr, iterator, main_callback) {
+	        async.each(arr, function (x, callback) {
+	            iterator(x, function (v) {
+	                if (v) {
+	                    main_callback(true);
+	                    main_callback = function () {};
+	                }
+	                callback();
+	            });
+	        }, function (err) {
+	            main_callback(false);
+	        });
+	    };
+	    // any alias
+	    async.any = async.some;
+
+	    async.every = function (arr, iterator, main_callback) {
+	        async.each(arr, function (x, callback) {
+	            iterator(x, function (v) {
+	                if (!v) {
+	                    main_callback(false);
+	                    main_callback = function () {};
+	                }
+	                callback();
+	            });
+	        }, function (err) {
+	            main_callback(true);
+	        });
+	    };
+	    // all alias
+	    async.all = async.every;
+
+	    async.sortBy = function (arr, iterator, callback) {
+	        async.map(arr, function (x, callback) {
+	            iterator(x, function (err, criteria) {
+	                if (err) {
+	                    callback(err);
+	                }
+	                else {
+	                    callback(null, {value: x, criteria: criteria});
+	                }
+	            });
+	        }, function (err, results) {
+	            if (err) {
+	                return callback(err);
+	            }
+	            else {
+	                var fn = function (left, right) {
+	                    var a = left.criteria, b = right.criteria;
+	                    return a < b ? -1 : a > b ? 1 : 0;
+	                };
+	                callback(null, _map(results.sort(fn), function (x) {
+	                    return x.value;
+	                }));
+	            }
+	        });
+	    };
+
+	    async.auto = function (tasks, callback) {
+	        callback = callback || function () {};
+	        var keys = _keys(tasks);
+	        var remainingTasks = keys.length
+	        if (!remainingTasks) {
+	            return callback();
+	        }
+
+	        var results = {};
+
+	        var listeners = [];
+	        var addListener = function (fn) {
+	            listeners.unshift(fn);
+	        };
+	        var removeListener = function (fn) {
+	            for (var i = 0; i < listeners.length; i += 1) {
+	                if (listeners[i] === fn) {
+	                    listeners.splice(i, 1);
+	                    return;
+	                }
+	            }
+	        };
+	        var taskComplete = function () {
+	            remainingTasks--
+	            _each(listeners.slice(0), function (fn) {
+	                fn();
+	            });
+	        };
+
+	        addListener(function () {
+	            if (!remainingTasks) {
+	                var theCallback = callback;
+	                // prevent final callback from calling itself if it errors
+	                callback = function () {};
+
+	                theCallback(null, results);
+	            }
+	        });
+
+	        _each(keys, function (k) {
+	            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
+	            var taskCallback = function (err) {
+	                var args = Array.prototype.slice.call(arguments, 1);
+	                if (args.length <= 1) {
+	                    args = args[0];
+	                }
+	                if (err) {
+	                    var safeResults = {};
+	                    _each(_keys(results), function(rkey) {
+	                        safeResults[rkey] = results[rkey];
+	                    });
+	                    safeResults[k] = args;
+	                    callback(err, safeResults);
+	                    // stop subsequent errors hitting callback multiple times
+	                    callback = function () {};
+	                }
+	                else {
+	                    results[k] = args;
+	                    async.setImmediate(taskComplete);
+	                }
+	            };
+	            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
+	            var ready = function () {
+	                return _reduce(requires, function (a, x) {
+	                    return (a && results.hasOwnProperty(x));
+	                }, true) && !results.hasOwnProperty(k);
+	            };
+	            if (ready()) {
+	                task[task.length - 1](taskCallback, results);
+	            }
+	            else {
+	                var listener = function () {
+	                    if (ready()) {
+	                        removeListener(listener);
+	                        task[task.length - 1](taskCallback, results);
+	                    }
+	                };
+	                addListener(listener);
+	            }
+	        });
+	    };
+
+	    async.retry = function(times, task, callback) {
+	        var DEFAULT_TIMES = 5;
+	        var attempts = [];
+	        // Use defaults if times not passed
+	        if (typeof times === 'function') {
+	            callback = task;
+	            task = times;
+	            times = DEFAULT_TIMES;
+	        }
+	        // Make sure times is a number
+	        times = parseInt(times, 10) || DEFAULT_TIMES;
+	        var wrappedTask = function(wrappedCallback, wrappedResults) {
+	            var retryAttempt = function(task, finalAttempt) {
+	                return function(seriesCallback) {
+	                    task(function(err, result){
+	                        seriesCallback(!err || finalAttempt, {err: err, result: result});
+	                    }, wrappedResults);
+	                };
+	            };
+	            while (times) {
+	                attempts.push(retryAttempt(task, !(times-=1)));
+	            }
+	            async.series(attempts, function(done, data){
+	                data = data[data.length - 1];
+	                (wrappedCallback || callback)(data.err, data.result);
+	            });
+	        }
+	        // If a callback is passed, run this as a controll flow
+	        return callback ? wrappedTask() : wrappedTask
+	    };
+
+	    async.waterfall = function (tasks, callback) {
+	        callback = callback || function () {};
+	        if (!_isArray(tasks)) {
+	          var err = new Error('First argument to waterfall must be an array of functions');
+	          return callback(err);
+	        }
+	        if (!tasks.length) {
+	            return callback();
+	        }
+	        var wrapIterator = function (iterator) {
+	            return function (err) {
+	                if (err) {
+	                    callback.apply(null, arguments);
+	                    callback = function () {};
+	                }
+	                else {
+	                    var args = Array.prototype.slice.call(arguments, 1);
+	                    var next = iterator.next();
+	                    if (next) {
+	                        args.push(wrapIterator(next));
+	                    }
+	                    else {
+	                        args.push(callback);
+	                    }
+	                    async.setImmediate(function () {
+	                        iterator.apply(null, args);
+	                    });
+	                }
+	            };
+	        };
+	        wrapIterator(async.iterator(tasks))();
+	    };
+
+	    var _parallel = function(eachfn, tasks, callback) {
+	        callback = callback || function () {};
+	        if (_isArray(tasks)) {
+	            eachfn.map(tasks, function (fn, callback) {
+	                if (fn) {
+	                    fn(function (err) {
+	                        var args = Array.prototype.slice.call(arguments, 1);
+	                        if (args.length <= 1) {
+	                            args = args[0];
+	                        }
+	                        callback.call(null, err, args);
+	                    });
+	                }
+	            }, callback);
+	        }
+	        else {
+	            var results = {};
+	            eachfn.each(_keys(tasks), function (k, callback) {
+	                tasks[k](function (err) {
+	                    var args = Array.prototype.slice.call(arguments, 1);
+	                    if (args.length <= 1) {
+	                        args = args[0];
+	                    }
+	                    results[k] = args;
+	                    callback(err);
+	                });
+	            }, function (err) {
+	                callback(err, results);
+	            });
+	        }
+	    };
+
+	    async.parallel = function (tasks, callback) {
+	        _parallel({ map: async.map, each: async.each }, tasks, callback);
+	    };
+
+	    async.parallelLimit = function(tasks, limit, callback) {
+	        _parallel({ map: _mapLimit(limit), each: _eachLimit(limit) }, tasks, callback);
+	    };
+
+	    async.series = function (tasks, callback) {
+	        callback = callback || function () {};
+	        if (_isArray(tasks)) {
+	            async.mapSeries(tasks, function (fn, callback) {
+	                if (fn) {
+	                    fn(function (err) {
+	                        var args = Array.prototype.slice.call(arguments, 1);
+	                        if (args.length <= 1) {
+	                            args = args[0];
+	                        }
+	                        callback.call(null, err, args);
+	                    });
+	                }
+	            }, callback);
+	        }
+	        else {
+	            var results = {};
+	            async.eachSeries(_keys(tasks), function (k, callback) {
+	                tasks[k](function (err) {
+	                    var args = Array.prototype.slice.call(arguments, 1);
+	                    if (args.length <= 1) {
+	                        args = args[0];
+	                    }
+	                    results[k] = args;
+	                    callback(err);
+	                });
+	            }, function (err) {
+	                callback(err, results);
+	            });
+	        }
+	    };
+
+	    async.iterator = function (tasks) {
+	        var makeCallback = function (index) {
+	            var fn = function () {
+	                if (tasks.length) {
+	                    tasks[index].apply(null, arguments);
+	                }
+	                return fn.next();
+	            };
+	            fn.next = function () {
+	                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
+	            };
+	            return fn;
+	        };
+	        return makeCallback(0);
+	    };
+
+	    async.apply = function (fn) {
+	        var args = Array.prototype.slice.call(arguments, 1);
+	        return function () {
+	            return fn.apply(
+	                null, args.concat(Array.prototype.slice.call(arguments))
+	            );
+	        };
+	    };
+
+	    var _concat = function (eachfn, arr, fn, callback) {
+	        var r = [];
+	        eachfn(arr, function (x, cb) {
+	            fn(x, function (err, y) {
+	                r = r.concat(y || []);
+	                cb(err);
+	            });
+	        }, function (err) {
+	            callback(err, r);
+	        });
+	    };
+	    async.concat = doParallel(_concat);
+	    async.concatSeries = doSeries(_concat);
+
+	    async.whilst = function (test, iterator, callback) {
+	        if (test()) {
+	            iterator(function (err) {
+	                if (err) {
+	                    return callback(err);
+	                }
+	                async.whilst(test, iterator, callback);
+	            });
+	        }
+	        else {
+	            callback();
+	        }
+	    };
+
+	    async.doWhilst = function (iterator, test, callback) {
+	        iterator(function (err) {
+	            if (err) {
+	                return callback(err);
+	            }
+	            var args = Array.prototype.slice.call(arguments, 1);
+	            if (test.apply(null, args)) {
+	                async.doWhilst(iterator, test, callback);
+	            }
+	            else {
+	                callback();
+	            }
+	        });
+	    };
+
+	    async.until = function (test, iterator, callback) {
+	        if (!test()) {
+	            iterator(function (err) {
+	                if (err) {
+	                    return callback(err);
+	                }
+	                async.until(test, iterator, callback);
+	            });
+	        }
+	        else {
+	            callback();
+	        }
+	    };
+
+	    async.doUntil = function (iterator, test, callback) {
+	        iterator(function (err) {
+	            if (err) {
+	                return callback(err);
+	            }
+	            var args = Array.prototype.slice.call(arguments, 1);
+	            if (!test.apply(null, args)) {
+	                async.doUntil(iterator, test, callback);
+	            }
+	            else {
+	                callback();
+	            }
+	        });
+	    };
+
+	    async.queue = function (worker, concurrency) {
+	        if (concurrency === undefined) {
+	            concurrency = 1;
+	        }
+	        function _insert(q, data, pos, callback) {
+	          if (!q.started){
+	            q.started = true;
+	          }
+	          if (!_isArray(data)) {
+	              data = [data];
+	          }
+	          if(data.length == 0) {
+	             // call drain immediately if there are no tasks
+	             return async.setImmediate(function() {
+	                 if (q.drain) {
+	                     q.drain();
+	                 }
+	             });
+	          }
+	          _each(data, function(task) {
+	              var item = {
+	                  data: task,
+	                  callback: typeof callback === 'function' ? callback : null
+	              };
+
+	              if (pos) {
+	                q.tasks.unshift(item);
+	              } else {
+	                q.tasks.push(item);
+	              }
+
+	              if (q.saturated && q.tasks.length === q.concurrency) {
+	                  q.saturated();
+	              }
+	              async.setImmediate(q.process);
+	          });
+	        }
+
+	        var workers = 0;
+	        var q = {
+	            tasks: [],
+	            concurrency: concurrency,
+	            saturated: null,
+	            empty: null,
+	            drain: null,
+	            started: false,
+	            paused: false,
+	            push: function (data, callback) {
+	              _insert(q, data, false, callback);
+	            },
+	            kill: function () {
+	              q.drain = null;
+	              q.tasks = [];
+	            },
+	            unshift: function (data, callback) {
+	              _insert(q, data, true, callback);
+	            },
+	            process: function () {
+	                if (!q.paused && workers < q.concurrency && q.tasks.length) {
+	                    var task = q.tasks.shift();
+	                    if (q.empty && q.tasks.length === 0) {
+	                        q.empty();
+	                    }
+	                    workers += 1;
+	                    var next = function () {
+	                        workers -= 1;
+	                        if (task.callback) {
+	                            task.callback.apply(task, arguments);
+	                        }
+	                        if (q.drain && q.tasks.length + workers === 0) {
+	                            q.drain();
+	                        }
+	                        q.process();
+	                    };
+	                    var cb = only_once(next);
+	                    worker(task.data, cb);
+	                }
+	            },
+	            length: function () {
+	                return q.tasks.length;
+	            },
+	            running: function () {
+	                return workers;
+	            },
+	            idle: function() {
+	                return q.tasks.length + workers === 0;
+	            },
+	            pause: function () {
+	                if (q.paused === true) { return; }
+	                q.paused = true;
+	            },
+	            resume: function () {
+	                if (q.paused === false) { return; }
+	                q.paused = false;
+	                // Need to call q.process once per concurrent
+	                // worker to preserve full concurrency after pause
+	                for (var w = 1; w <= q.concurrency; w++) {
+	                    async.setImmediate(q.process);
+	                }
+	            }
+	        };
+	        return q;
+	    };
+
+	    async.priorityQueue = function (worker, concurrency) {
+
+	        function _compareTasks(a, b){
+	          return a.priority - b.priority;
+	        };
+
+	        function _binarySearch(sequence, item, compare) {
+	          var beg = -1,
+	              end = sequence.length - 1;
+	          while (beg < end) {
+	            var mid = beg + ((end - beg + 1) >>> 1);
+	            if (compare(item, sequence[mid]) >= 0) {
+	              beg = mid;
+	            } else {
+	              end = mid - 1;
+	            }
+	          }
+	          return beg;
+	        }
+
+	        function _insert(q, data, priority, callback) {
+	          if (!q.started){
+	            q.started = true;
+	          }
+	          if (!_isArray(data)) {
+	              data = [data];
+	          }
+	          if(data.length == 0) {
+	             // call drain immediately if there are no tasks
+	             return async.setImmediate(function() {
+	                 if (q.drain) {
+	                     q.drain();
+	                 }
+	             });
+	          }
+	          _each(data, function(task) {
+	              var item = {
+	                  data: task,
+	                  priority: priority,
+	                  callback: typeof callback === 'function' ? callback : null
+	              };
+
+	              q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
+
+	              if (q.saturated && q.tasks.length === q.concurrency) {
+	                  q.saturated();
+	              }
+	              async.setImmediate(q.process);
+	          });
+	        }
+
+	        // Start with a normal queue
+	        var q = async.queue(worker, concurrency);
+
+	        // Override push to accept second parameter representing priority
+	        q.push = function (data, priority, callback) {
+	          _insert(q, data, priority, callback);
+	        };
+
+	        // Remove unshift function
+	        delete q.unshift;
+
+	        return q;
+	    };
+
+	    async.cargo = function (worker, payload) {
+	        var working     = false,
+	            tasks       = [];
+
+	        var cargo = {
+	            tasks: tasks,
+	            payload: payload,
+	            saturated: null,
+	            empty: null,
+	            drain: null,
+	            drained: true,
+	            push: function (data, callback) {
+	                if (!_isArray(data)) {
+	                    data = [data];
+	                }
+	                _each(data, function(task) {
+	                    tasks.push({
+	                        data: task,
+	                        callback: typeof callback === 'function' ? callback : null
+	                    });
+	                    cargo.drained = false;
+	                    if (cargo.saturated && tasks.length === payload) {
+	                        cargo.saturated();
+	                    }
+	                });
+	                async.setImmediate(cargo.process);
+	            },
+	            process: function process() {
+	                if (working) return;
+	                if (tasks.length === 0) {
+	                    if(cargo.drain && !cargo.drained) cargo.drain();
+	                    cargo.drained = true;
+	                    return;
+	                }
+
+	                var ts = typeof payload === 'number'
+	                            ? tasks.splice(0, payload)
+	                            : tasks.splice(0, tasks.length);
+
+	                var ds = _map(ts, function (task) {
+	                    return task.data;
+	                });
+
+	                if(cargo.empty) cargo.empty();
+	                working = true;
+	                worker(ds, function () {
+	                    working = false;
+
+	                    var args = arguments;
+	                    _each(ts, function (data) {
+	                        if (data.callback) {
+	                            data.callback.apply(null, args);
+	                        }
+	                    });
+
+	                    process();
+	                });
+	            },
+	            length: function () {
+	                return tasks.length;
+	            },
+	            running: function () {
+	                return working;
+	            }
+	        };
+	        return cargo;
+	    };
+
+	    var _console_fn = function (name) {
+	        return function (fn) {
+	            var args = Array.prototype.slice.call(arguments, 1);
+	            fn.apply(null, args.concat([function (err) {
+	                var args = Array.prototype.slice.call(arguments, 1);
+	                if (typeof console !== 'undefined') {
+	                    if (err) {
+	                        if (console.error) {
+	                            console.error(err);
+	                        }
+	                    }
+	                    else if (console[name]) {
+	                        _each(args, function (x) {
+	                            console[name](x);
+	                        });
+	                    }
+	                }
+	            }]));
+	        };
+	    };
+	    async.log = _console_fn('log');
+	    async.dir = _console_fn('dir');
+	    /*async.info = _console_fn('info');
+	    async.warn = _console_fn('warn');
+	    async.error = _console_fn('error');*/
+
+	    async.memoize = function (fn, hasher) {
+	        var memo = {};
+	        var queues = {};
+	        hasher = hasher || function (x) {
+	            return x;
+	        };
+	        var memoized = function () {
+	            var args = Array.prototype.slice.call(arguments);
+	            var callback = args.pop();
+	            var key = hasher.apply(null, args);
+	            if (key in memo) {
+	                async.nextTick(function () {
+	                    callback.apply(null, memo[key]);
+	                });
+	            }
+	            else if (key in queues) {
+	                queues[key].push(callback);
+	            }
+	            else {
+	                queues[key] = [callback];
+	                fn.apply(null, args.concat([function () {
+	                    memo[key] = arguments;
+	                    var q = queues[key];
+	                    delete queues[key];
+	                    for (var i = 0, l = q.length; i < l; i++) {
+	                      q[i].apply(null, arguments);
+	                    }
+	                }]));
+	            }
+	        };
+	        memoized.memo = memo;
+	        memoized.unmemoized = fn;
+	        return memoized;
+	    };
+
+	    async.unmemoize = function (fn) {
+	      return function () {
+	        return (fn.unmemoized || fn).apply(null, arguments);
+	      };
+	    };
+
+	    async.times = function (count, iterator, callback) {
+	        var counter = [];
+	        for (var i = 0; i < count; i++) {
+	            counter.push(i);
+	        }
+	        return async.map(counter, iterator, callback);
+	    };
+
+	    async.timesSeries = function (count, iterator, callback) {
+	        var counter = [];
+	        for (var i = 0; i < count; i++) {
+	            counter.push(i);
+	        }
+	        return async.mapSeries(counter, iterator, callback);
+	    };
+
+	    async.seq = function (/* functions... */) {
+	        var fns = arguments;
+	        return function () {
+	            var that = this;
+	            var args = Array.prototype.slice.call(arguments);
+	            var callback = args.pop();
+	            async.reduce(fns, args, function (newargs, fn, cb) {
+	                fn.apply(that, newargs.concat([function () {
+	                    var err = arguments[0];
+	                    var nextargs = Array.prototype.slice.call(arguments, 1);
+	                    cb(err, nextargs);
+	                }]))
+	            },
+	            function (err, results) {
+	                callback.apply(that, [err].concat(results));
+	            });
+	        };
+	    };
+
+	    async.compose = function (/* functions... */) {
+	      return async.seq.apply(null, Array.prototype.reverse.call(arguments));
+	    };
+
+	    var _applyEach = function (eachfn, fns /*args...*/) {
+	        var go = function () {
+	            var that = this;
+	            var args = Array.prototype.slice.call(arguments);
+	            var callback = args.pop();
+	            return eachfn(fns, function (fn, cb) {
+	                fn.apply(that, args.concat([cb]));
+	            },
+	            callback);
+	        };
+	        if (arguments.length > 2) {
+	            var args = Array.prototype.slice.call(arguments, 2);
+	            return go.apply(this, args);
+	        }
+	        else {
+	            return go;
+	        }
+	    };
+	    async.applyEach = doParallel(_applyEach);
+	    async.applyEachSeries = doSeries(_applyEach);
+
+	    async.forever = function (fn, callback) {
+	        function next(err) {
+	            if (err) {
+	                if (callback) {
+	                    return callback(err);
+	                }
+	                throw err;
+	            }
+	            fn(next);
+	        }
+	        next();
+	    };
+
+	    // Node.js
+	    if (typeof module !== 'undefined' && module.exports) {
+	        module.exports = async;
+	    }
+	    // AMD / RequireJS
+	    else if (true) {
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
+	            return async;
+	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    }
+	    // included directly via <script> tag
+	    else {
+	        root.async = async;
+	    }
+
+	}());
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(9).setImmediate))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+
+	function cleanUpNextTick() {
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = setTimeout(cleanUpNextTick);
+	    draining = true;
+
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            currentQueue[queueIndex].run();
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    clearTimeout(timeout);
+	}
+
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        setTimeout(drainQueue, 0);
+	    }
+	};
+
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+
+	function noop() {}
+
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+
+	// TODO(shtylman)
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(8).nextTick;
+	var apply = Function.prototype.apply;
+	var slice = Array.prototype.slice;
+	var immediateIds = {};
+	var nextImmediateId = 0;
+
+	// DOM APIs, for completeness
+
+	exports.setTimeout = function() {
+	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
+	};
+	exports.setInterval = function() {
+	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
+	};
+	exports.clearTimeout =
+	exports.clearInterval = function(timeout) { timeout.close(); };
+
+	function Timeout(id, clearFn) {
+	  this._id = id;
+	  this._clearFn = clearFn;
+	}
+	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+	Timeout.prototype.close = function() {
+	  this._clearFn.call(window, this._id);
+	};
+
+	// Does not start the time, just sets up the members needed.
+	exports.enroll = function(item, msecs) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = msecs;
+	};
+
+	exports.unenroll = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+	  item._idleTimeout = -1;
+	};
+
+	exports._unrefActive = exports.active = function(item) {
+	  clearTimeout(item._idleTimeoutId);
+
+	  var msecs = item._idleTimeout;
+	  if (msecs >= 0) {
+	    item._idleTimeoutId = setTimeout(function onTimeout() {
+	      if (item._onTimeout)
+	        item._onTimeout();
+	    }, msecs);
+	  }
+	};
+
+	// That's not how node.js implements it but the exposed api is the same.
+	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
+	  var id = nextImmediateId++;
+	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
+
+	  immediateIds[id] = true;
+
+	  nextTick(function onNextTick() {
+	    if (immediateIds[id]) {
+	      // fn.call() is faster so we optimize for the common use-case
+	      // @see http://jsperf.com/call-apply-segu
+	      if (args) {
+	        fn.apply(null, args);
+	      } else {
+	        fn.call(null);
+	      }
+	      // Prevent ids from leaking
+	      exports.clearImmediate(id);
+	    }
+	  });
+
+	  return id;
+	};
+
+	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
+	  delete immediateIds[id];
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).setImmediate, __webpack_require__(9).clearImmediate))
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*!
+	 * Copyright (c) 2015 Chris O'Hara <cohara87@gmail.com>
+	 *
+	 * Permission is hereby granted, free of charge, to any person obtaining
+	 * a copy of this software and associated documentation files (the
+	 * "Software"), to deal in the Software without restriction, including
+	 * without limitation the rights to use, copy, modify, merge, publish,
+	 * distribute, sublicense, and/or sell copies of the Software, and to
+	 * permit persons to whom the Software is furnished to do so, subject to
+	 * the following conditions:
+	 *
+	 * The above copyright notice and this permission notice shall be
+	 * included in all copies or substantial portions of the Software.
+	 *
+	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	 * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	 * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+	 * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+	 * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+	 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+	 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+	 */
+
+	(function (name, definition) {
+	    if (true) {
+	        module.exports = definition();
+	    } else if (typeof define === 'function' && typeof define.amd === 'object') {
+	        define(definition);
+	    } else {
+	        this[name] = definition();
+	    }
+	})('validator', function (validator) {
+
+	    'use strict';
+
+	    validator = { version: '3.40.0' };
+
+	    var emailUser = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e])|(\\[\x01-\x09\x0b\x0c\x0d-\x7f])))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))$/i;
+
+	    var emailUserUtf8 = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))$/i;
+
+	    var displayName = /^(?:[a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~\.]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(?:[a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~\.]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\s)*<(.+)>$/i;
+
+	    var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
+
+	    var isin = /^[A-Z]{2}[0-9A-Z]{9}[0-9]$/;
+
+	    var isbn10Maybe = /^(?:[0-9]{9}X|[0-9]{10})$/
+	      , isbn13Maybe = /^(?:[0-9]{13})$/;
+
+	    var ipv4Maybe = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/
+	      , ipv6Block = /^[0-9A-F]{1,4}$/i;
+
+	    var uuid = {
+	        '3': /^[0-9A-F]{8}-[0-9A-F]{4}-3[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i
+	      , '4': /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+	      , '5': /^[0-9A-F]{8}-[0-9A-F]{4}-5[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
+	      , all: /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
+	    };
+
+	    var alpha = /^[A-Z]+$/i
+	      , alphanumeric = /^[0-9A-Z]+$/i
+	      , numeric = /^[-+]?[0-9]+$/
+	      , int = /^(?:[-+]?(?:0|[1-9][0-9]*))$/
+	      , float = /^(?:[-+]?(?:[0-9]+))?(?:\.[0-9]*)?(?:[eE][\+\-]?(?:[0-9]+))?$/
+	      , hexadecimal = /^[0-9A-F]+$/i
+	      , hexcolor = /^#?([0-9A-F]{3}|[0-9A-F]{6})$/i;
+
+	    var ascii = /^[\x00-\x7F]+$/
+	      , multibyte = /[^\x00-\x7F]/
+	      , fullWidth = /[^\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/
+	      , halfWidth = /[\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/;
+
+	    var surrogatePair = /[\uD800-\uDBFF][\uDC00-\uDFFF]/;
+
+	    var base64 = /^(?:[A-Z0-9+\/]{4})*(?:[A-Z0-9+\/]{2}==|[A-Z0-9+\/]{3}=|[A-Z0-9+\/]{4})$/i;
+
+	    var phones = {
+	      'zh-CN': /^(\+?0?86\-?)?1[345789]\d{9}$/,
+	      'en-ZA': /^(\+?27|0)\d{9}$/,
+	      'en-AU': /^(\+?61|0)4\d{8}$/,
+	      'en-HK': /^(\+?852\-?)?[569]\d{3}\-?\d{4}$/,
+	      'fr-FR': /^(\+?33|0)[67]\d{8}$/,
+	      'pt-PT': /^(\+351)?9[1236]\d{7}$/,
+	      'el-GR': /^(\+30)?((2\d{9})|(69\d{8}))$/,
+	      'en-GB': /^(\+?44|0)7\d{9}$/,
+	      'en-US': /^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$/,
+	      'en-ZM': /^(\+26)?09[567]\d{7}$/
+	    };
+
+	    validator.extend = function (name, fn) {
+	        validator[name] = function () {
+	            var args = Array.prototype.slice.call(arguments);
+	            args[0] = validator.toString(args[0]);
+	            return fn.apply(validator, args);
+	        };
+	    };
+
+	    //Right before exporting the validator object, pass each of the builtins
+	    //through extend() so that their first argument is coerced to a string
+	    validator.init = function () {
+	        for (var name in validator) {
+	            if (typeof validator[name] !== 'function' || name === 'toString' ||
+	                    name === 'toDate' || name === 'extend' || name === 'init') {
+	                continue;
+	            }
+	            validator.extend(name, validator[name]);
+	        }
+	    };
+
+	    validator.toString = function (input) {
+	        if (typeof input === 'object' && input !== null && input.toString) {
+	            input = input.toString();
+	        } else if (input === null || typeof input === 'undefined' || (isNaN(input) && !input.length)) {
+	            input = '';
+	        } else if (typeof input !== 'string') {
+	            input += '';
+	        }
+	        return input;
+	    };
+
+	    validator.toDate = function (date) {
+	        if (Object.prototype.toString.call(date) === '[object Date]') {
+	            return date;
+	        }
+	        date = Date.parse(date);
+	        return !isNaN(date) ? new Date(date) : null;
+	    };
+
+	    validator.toFloat = function (str) {
+	        return parseFloat(str);
+	    };
+
+	    validator.toInt = function (str, radix) {
+	        return parseInt(str, radix || 10);
+	    };
+
+	    validator.toBoolean = function (str, strict) {
+	        if (strict) {
+	            return str === '1' || str === 'true';
+	        }
+	        return str !== '0' && str !== 'false' && str !== '';
+	    };
+
+	    validator.equals = function (str, comparison) {
+	        return str === validator.toString(comparison);
+	    };
+
+	    validator.contains = function (str, elem) {
+	        return str.indexOf(validator.toString(elem)) >= 0;
+	    };
+
+	    validator.matches = function (str, pattern, modifiers) {
+	        if (Object.prototype.toString.call(pattern) !== '[object RegExp]') {
+	            pattern = new RegExp(pattern, modifiers);
+	        }
+	        return pattern.test(str);
+	    };
+
+	    var default_email_options = {
+	        allow_display_name: false,
+	        allow_utf8_local_part: true,
+	        require_tld: true
+	    };
+
+	    validator.isEmail = function (str, options) {
+	        options = merge(options, default_email_options);
+
+	        if (options.allow_display_name) {
+	            var display_email = str.match(displayName);
+	            if (display_email) {
+	                str = display_email[1];
+	            }
+	        } else if (/\s/.test(str)) {
+	            return false;
+	        }
+
+	        var parts = str.split('@')
+	          , domain = parts.pop()
+	          , user = parts.join('@');
+
+	        if (!validator.isFQDN(domain, {require_tld: options.require_tld})) {
+	            return false;
+	        }
+
+	        return options.allow_utf8_local_part ?
+	            emailUserUtf8.test(user) :
+	            emailUser.test(user);
+	    };
+
+	    var default_url_options = {
+	        protocols: [ 'http', 'https', 'ftp' ]
+	      , require_tld: true
+	      , require_protocol: false
+	      , allow_underscores: false
+	      , allow_trailing_dot: false
+	      , allow_protocol_relative_urls: false
+	    };
+
+	    validator.isURL = function (url, options) {
+	        if (!url || url.length >= 2083 || /\s/.test(url)) {
+	            return false;
+	        }
+	        if (url.indexOf('mailto:') === 0) {
+	            return false;
+	        }
+	        options = merge(options, default_url_options);
+	        var protocol, auth, host, hostname, port,
+	            port_str, split;
+	        split = url.split('://');
+	        if (split.length > 1) {
+	            protocol = split.shift();
+	            if (options.protocols.indexOf(protocol) === -1) {
+	                return false;
+	            }
+	        } else if (options.require_protocol) {
+	            return false;
+	        }  else if (options.allow_protocol_relative_urls && url.substr(0, 2) === '//') {
+	            split[0] = url.substr(2);
+	        }
+	        url = split.join('://');
+	        split = url.split('#');
+	        url = split.shift();
+
+	        split = url.split('?');
+	        url = split.shift();
+
+	        split = url.split('/');
+	        url = split.shift();
+	        split = url.split('@');
+	        if (split.length > 1) {
+	            auth = split.shift();
+	            if (auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
+	                return false;
+	            }
+	        }
+	        hostname = split.join('@');
+	        split = hostname.split(':');
+	        host = split.shift();
+	        if (split.length) {
+	            port_str = split.join(':');
+	            port = parseInt(port_str, 10);
+	            if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
+	                return false;
+	            }
+	        }
+	        if (!validator.isIP(host) && !validator.isFQDN(host, options) &&
+	                host !== 'localhost') {
+	            return false;
+	        }
+	        if (options.host_whitelist &&
+	                options.host_whitelist.indexOf(host) === -1) {
+	            return false;
+	        }
+	        if (options.host_blacklist &&
+	                options.host_blacklist.indexOf(host) !== -1) {
+	            return false;
+	        }
+	        return true;
+	    };
+
+	    validator.isIP = function (str, version) {
+	        version = validator.toString(version);
+	        if (!version) {
+	            return validator.isIP(str, 4) || validator.isIP(str, 6);
+	        } else if (version === '4') {
+	            if (!ipv4Maybe.test(str)) {
+	                return false;
+	            }
+	            var parts = str.split('.').sort(function (a, b) {
+	                return a - b;
+	            });
+	            return parts[3] <= 255;
+	        } else if (version === '6') {
+	            var blocks = str.split(':');
+	            var foundOmissionBlock = false; // marker to indicate ::
+
+	            if (blocks.length > 8)
+	                return false;
+
+	            // initial or final ::
+	            if (str === '::') {
+	                return true;
+	            } else if (str.substr(0, 2) === '::') {
+	                blocks.shift();
+	                blocks.shift();
+	                foundOmissionBlock = true;
+	            } else if (str.substr(str.length - 2) === '::') {
+	                blocks.pop();
+	                blocks.pop();
+	                foundOmissionBlock = true;
+	            }
+
+	            for (var i = 0; i < blocks.length; ++i) {
+	                // test for a :: which can not be at the string start/end
+	                // since those cases have been handled above
+	                if (blocks[i] === '' && i > 0 && i < blocks.length -1) {
+	                    if (foundOmissionBlock)
+	                        return false; // multiple :: in address
+	                    foundOmissionBlock = true;
+	                } else if (!ipv6Block.test(blocks[i])) {
+	                    return false;
+	                }
+	            }
+
+	            if (foundOmissionBlock) {
+	                return blocks.length >= 1;
+	            } else {
+	                return blocks.length === 8;
+	            }
+	        }
+	        return false;
+	    };
+
+	    var default_fqdn_options = {
+	        require_tld: true
+	      , allow_underscores: false
+	      , allow_trailing_dot: false
+	    };
+
+	    validator.isFQDN = function (str, options) {
+	        options = merge(options, default_fqdn_options);
+
+	        /* Remove the optional trailing dot before checking validity */
+	        if (options.allow_trailing_dot && str[str.length - 1] === '.') {
+	            str = str.substring(0, str.length - 1);
+	        }
+	        var parts = str.split('.');
+	        if (options.require_tld) {
+	            var tld = parts.pop();
+	            if (!parts.length || !/^([a-z\u00a1-\uffff]{2,}|xn[a-z0-9-]{2,})$/i.test(tld)) {
+	                return false;
+	            }
+	        }
+	        for (var part, i = 0; i < parts.length; i++) {
+	            part = parts[i];
+	            if (options.allow_underscores) {
+	                if (part.indexOf('__') >= 0) {
+	                    return false;
+	                }
+	                part = part.replace(/_/g, '');
+	            }
+	            if (!/^[a-z\u00a1-\uffff0-9-]+$/i.test(part)) {
+	                return false;
+	            }
+	            if (part[0] === '-' || part[part.length - 1] === '-' ||
+	                    part.indexOf('---') >= 0) {
+	                return false;
+	            }
+	        }
+	        return true;
+	    };
+
+	    validator.isBoolean = function(str) {
+	        return (['true', 'false', '1', '0'].indexOf(str) >= 0);
+	    };
+
+	    validator.isAlpha = function (str) {
+	        return alpha.test(str);
+	    };
+
+	    validator.isAlphanumeric = function (str) {
+	        return alphanumeric.test(str);
+	    };
+
+	    validator.isNumeric = function (str) {
+	        return numeric.test(str);
+	    };
+
+	    validator.isHexadecimal = function (str) {
+	        return hexadecimal.test(str);
+	    };
+
+	    validator.isHexColor = function (str) {
+	        return hexcolor.test(str);
+	    };
+
+	    validator.isLowercase = function (str) {
+	        return str === str.toLowerCase();
+	    };
+
+	    validator.isUppercase = function (str) {
+	        return str === str.toUpperCase();
+	    };
+
+	    validator.isInt = function (str, options) {
+	        options = options || {};
+	        return int.test(str) && (!options.hasOwnProperty('min') || str >= options.min) && (!options.hasOwnProperty('max') || str <= options.max);
+	    };
+
+	    validator.isFloat = function (str, options) {
+	        options = options || {};
+	        return str !== '' && float.test(str) && (!options.hasOwnProperty('min') || str >= options.min) && (!options.hasOwnProperty('max') || str <= options.max);
+	    };
+
+	    validator.isDivisibleBy = function (str, num) {
+	        return validator.toFloat(str) % validator.toInt(num) === 0;
+	    };
+
+	    validator.isNull = function (str) {
+	        return str.length === 0;
+	    };
+
+	    validator.isLength = function (str, min, max) {
+	        var surrogatePairs = str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || [];
+	        var len = str.length - surrogatePairs.length;
+	        return len >= min && (typeof max === 'undefined' || len <= max);
+	    };
+
+	    validator.isByteLength = function (str, min, max) {
+	        return str.length >= min && (typeof max === 'undefined' || str.length <= max);
+	    };
+
+	    validator.isUUID = function (str, version) {
+	        var pattern = uuid[version ? version : 'all'];
+	        return pattern && pattern.test(str);
+	    };
+
+	    validator.isDate = function (str) {
+	        return !isNaN(Date.parse(str));
+	    };
+
+	    validator.isAfter = function (str, date) {
+	        var comparison = validator.toDate(date || new Date())
+	          , original = validator.toDate(str);
+	        return !!(original && comparison && original > comparison);
+	    };
+
+	    validator.isBefore = function (str, date) {
+	        var comparison = validator.toDate(date || new Date())
+	          , original = validator.toDate(str);
+	        return original && comparison && original < comparison;
+	    };
+
+	    validator.isIn = function (str, options) {
+	        var i;
+	        if (Object.prototype.toString.call(options) === '[object Array]') {
+	            var array = [];
+	            for (i in options) {
+	                array[i] = validator.toString(options[i]);
+	            }
+	            return array.indexOf(str) >= 0;
+	        } else if (typeof options === 'object') {
+	            return options.hasOwnProperty(str);
+	        } else if (options && typeof options.indexOf === 'function') {
+	            return options.indexOf(str) >= 0;
+	        }
+	        return false;
+	    };
+
+	    validator.isCreditCard = function (str) {
+	        var sanitized = str.replace(/[^0-9]+/g, '');
+	        if (!creditCard.test(sanitized)) {
+	            return false;
+	        }
+	        var sum = 0, digit, tmpNum, shouldDouble;
+	        for (var i = sanitized.length - 1; i >= 0; i--) {
+	            digit = sanitized.substring(i, (i + 1));
+	            tmpNum = parseInt(digit, 10);
+	            if (shouldDouble) {
+	                tmpNum *= 2;
+	                if (tmpNum >= 10) {
+	                    sum += ((tmpNum % 10) + 1);
+	                } else {
+	                    sum += tmpNum;
+	                }
+	            } else {
+	                sum += tmpNum;
+	            }
+	            shouldDouble = !shouldDouble;
+	        }
+	        return !!((sum % 10) === 0 ? sanitized : false);
+	    };
+
+	    validator.isISIN = function (str) {
+	        if (!isin.test(str)) {
+	            return false;
+	        }
+
+	        var checksumStr = str.replace(/[A-Z]/g, function(character) {
+	            return parseInt(character, 36);
+	        });
+
+	        var sum = 0, digit, tmpNum, shouldDouble = true;
+	        for (var i = checksumStr.length - 2; i >= 0; i--) {
+	            digit = checksumStr.substring(i, (i + 1));
+	            tmpNum = parseInt(digit, 10);
+	            if (shouldDouble) {
+	                tmpNum *= 2;
+	                if (tmpNum >= 10) {
+	                    sum += tmpNum + 1;
+	                } else {
+	                    sum += tmpNum;
+	                }
+	            } else {
+	                sum += tmpNum;
+	            }
+	            shouldDouble = !shouldDouble;
+	        }
+
+	        return parseInt(str.substr(str.length - 1), 10) === (10000 - sum) % 10;
+	    };
+
+	    validator.isISBN = function (str, version) {
+	        version = validator.toString(version);
+	        if (!version) {
+	            return validator.isISBN(str, 10) || validator.isISBN(str, 13);
+	        }
+	        var sanitized = str.replace(/[\s-]+/g, '')
+	          , checksum = 0, i;
+	        if (version === '10') {
+	            if (!isbn10Maybe.test(sanitized)) {
+	                return false;
+	            }
+	            for (i = 0; i < 9; i++) {
+	                checksum += (i + 1) * sanitized.charAt(i);
+	            }
+	            if (sanitized.charAt(9) === 'X') {
+	                checksum += 10 * 10;
+	            } else {
+	                checksum += 10 * sanitized.charAt(9);
+	            }
+	            if ((checksum % 11) === 0) {
+	                return !!sanitized;
+	            }
+	        } else  if (version === '13') {
+	            if (!isbn13Maybe.test(sanitized)) {
+	                return false;
+	            }
+	            var factor = [ 1, 3 ];
+	            for (i = 0; i < 12; i++) {
+	                checksum += factor[i % 2] * sanitized.charAt(i);
+	            }
+	            if (sanitized.charAt(12) - ((10 - (checksum % 10)) % 10) === 0) {
+	                return !!sanitized;
+	            }
+	        }
+	        return false;
+	    };
+
+	    validator.isMobilePhone = function(str, locale) {
+	        if (locale in phones) {
+	            return phones[locale].test(str);
+	        }
+	        return false;
+	    };
+
+	    var default_currency_options = {
+	        symbol: '$'
+	      , require_symbol: false
+	      , allow_space_after_symbol: false
+	      , symbol_after_digits: false
+	      , allow_negatives: true
+	      , parens_for_negatives: false
+	      , negative_sign_before_digits: false
+	      , negative_sign_after_digits: false
+	      , allow_negative_sign_placeholder: false
+	      , thousands_separator: ','
+	      , decimal_separator: '.'
+	      , allow_space_after_digits: false
+	    };
+
+	    validator.isCurrency = function (str, options) {
+	        options = merge(options, default_currency_options);
+
+	        return currencyRegex(options).test(str);
+	    };
+
+	    validator.isJSON = function (str) {
+	        try {
+	            JSON.parse(str);
+	        } catch (e) {
+	            return false;
+	        }
+	        return true;
+	    };
+
+	    validator.isMultibyte = function (str) {
+	        return multibyte.test(str);
+	    };
+
+	    validator.isAscii = function (str) {
+	        return ascii.test(str);
+	    };
+
+	    validator.isFullWidth = function (str) {
+	        return fullWidth.test(str);
+	    };
+
+	    validator.isHalfWidth = function (str) {
+	        return halfWidth.test(str);
+	    };
+
+	    validator.isVariableWidth = function (str) {
+	        return fullWidth.test(str) && halfWidth.test(str);
+	    };
+
+	    validator.isSurrogatePair = function (str) {
+	        return surrogatePair.test(str);
+	    };
+
+	    validator.isBase64 = function (str) {
+	        return base64.test(str);
+	    };
+
+	    validator.isMongoId = function (str) {
+	        return validator.isHexadecimal(str) && str.length === 24;
+	    };
+
+	    validator.ltrim = function (str, chars) {
+	        var pattern = chars ? new RegExp('^[' + chars + ']+', 'g') : /^\s+/g;
+	        return str.replace(pattern, '');
+	    };
+
+	    validator.rtrim = function (str, chars) {
+	        var pattern = chars ? new RegExp('[' + chars + ']+$', 'g') : /\s+$/g;
+	        return str.replace(pattern, '');
+	    };
+
+	    validator.trim = function (str, chars) {
+	        var pattern = chars ? new RegExp('^[' + chars + ']+|[' + chars + ']+$', 'g') : /^\s+|\s+$/g;
+	        return str.replace(pattern, '');
+	    };
+
+	    validator.escape = function (str) {
+	        return (str.replace(/&/g, '&amp;')
+	            .replace(/"/g, '&quot;')
+	            .replace(/'/g, '&#x27;')
+	            .replace(/</g, '&lt;')
+	            .replace(/>/g, '&gt;')
+	            .replace(/\//g, '&#x2F;')
+	            .replace(/\`/g, '&#96;'));
+	    };
+
+	    validator.stripLow = function (str, keep_new_lines) {
+	        var chars = keep_new_lines ? '\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F' : '\\x00-\\x1F\\x7F';
+	        return validator.blacklist(str, chars);
+	    };
+
+	    validator.whitelist = function (str, chars) {
+	        return str.replace(new RegExp('[^' + chars + ']+', 'g'), '');
+	    };
+
+	    validator.blacklist = function (str, chars) {
+	        return str.replace(new RegExp('[' + chars + ']+', 'g'), '');
+	    };
+
+	    var default_normalize_email_options = {
+	        lowercase: true
+	    };
+
+	    validator.normalizeEmail = function (email, options) {
+	        options = merge(options, default_normalize_email_options);
+	        if (!validator.isEmail(email)) {
+	            return false;
+	        }
+	        var parts = email.split('@', 2);
+	        parts[1] = parts[1].toLowerCase();
+	        if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
+	            parts[0] = parts[0].toLowerCase().replace(/\./g, '');
+	            if (parts[0][0] === '+') {
+	                return false;
+	            }
+	            parts[0] = parts[0].split('+')[0];
+	            parts[1] = 'gmail.com';
+	        } else if (options.lowercase) {
+	            parts[0] = parts[0].toLowerCase();
+	        }
+	        return parts.join('@');
+	    };
+
+	    function merge(obj, defaults) {
+	        obj = obj || {};
+	        for (var key in defaults) {
+	            if (typeof obj[key] === 'undefined') {
+	                obj[key] = defaults[key];
+	            }
+	        }
+	        return obj;
+	    }
+
+	    function currencyRegex(options) {
+	        var symbol = '(\\' + options.symbol.replace(/\./g, '\\.') + ')' + (options.require_symbol ? '' : '?')
+	            , negative = '-?'
+	            , whole_dollar_amount_without_sep = '[1-9]\\d*'
+	            , whole_dollar_amount_with_sep = '[1-9]\\d{0,2}(\\' + options.thousands_separator + '\\d{3})*'
+	            , valid_whole_dollar_amounts = ['0', whole_dollar_amount_without_sep, whole_dollar_amount_with_sep]
+	            , whole_dollar_amount = '(' + valid_whole_dollar_amounts.join('|') + ')?'
+	            , decimal_amount = '(\\' + options.decimal_separator + '\\d{2})?';
+	        var pattern = whole_dollar_amount + decimal_amount;
+	        // default is negative sign before symbol, but there are two other options (besides parens)
+	        if (options.allow_negatives && !options.parens_for_negatives) {
+	            if (options.negative_sign_after_digits) {
+	                pattern += negative;
+	            }
+	            else if (options.negative_sign_before_digits) {
+	                pattern = negative + pattern;
+	            }
+	        }
+	        // South African Rand, for example, uses R 123 (space) and R-123 (no space)
+	        if (options.allow_negative_sign_placeholder) {
+	            pattern = '( (?!\\-))?' + pattern;
+	        }
+	        else if (options.allow_space_after_symbol) {
+	            pattern = ' ?' + pattern;
+	        }
+	        else if (options.allow_space_after_digits) {
+	            pattern += '( (?!$))?';
+	        }
+	        if (options.symbol_after_digits) {
+	            pattern += symbol;
+	        } else {
+	            pattern = symbol + pattern;
+	        }
+	        if (options.allow_negatives) {
+	            if (options.parens_for_negatives) {
+	                pattern = '(\\(' + pattern + '\\)|' + pattern + ')';
+	            }
+	            else if (!(options.negative_sign_before_digits || options.negative_sign_after_digits)) {
+	                pattern = negative + pattern;
+	            }
+	        }
+	        return new RegExp(
+	            '^' +
+	            // ensure there's a dollar and/or decimal amount, and that it doesn't start with a space or a negative sign followed by a space
+	            '(?!-? )(?=.*\\d)' +
+	            pattern +
+	            '$'
+	        );
+	    }
+
+	    validator.init();
+
+	    return validator;
+
+	});
+
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13692,7 +15971,7 @@ this["firenze"] =
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _bluebird = __webpack_require__(7);
+	var _bluebird = __webpack_require__(12);
 
 	var _bluebird2 = _interopRequireDefault(_bluebird);
 
@@ -13700,7 +15979,7 @@ this["firenze"] =
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, global, setImmediate) {/* @preserve
@@ -18808,2150 +21087,10 @@ this["firenze"] =
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), (function() { return this; }()), __webpack_require__(9).setImmediate))
 
 /***/ },
-/* 8 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-
-	var process = module.exports = {};
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-
-	function cleanUpNextTick() {
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = setTimeout(cleanUpNextTick);
-	    draining = true;
-
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            currentQueue[queueIndex].run();
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    clearTimeout(timeout);
-	}
-
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
-	    }
-	};
-
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-
-	function noop() {}
-
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-
-	// TODO(shtylman)
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(8).nextTick;
-	var apply = Function.prototype.apply;
-	var slice = Array.prototype.slice;
-	var immediateIds = {};
-	var nextImmediateId = 0;
-
-	// DOM APIs, for completeness
-
-	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-	};
-	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-	};
-	exports.clearTimeout =
-	exports.clearInterval = function(timeout) { timeout.close(); };
-
-	function Timeout(id, clearFn) {
-	  this._id = id;
-	  this._clearFn = clearFn;
-	}
-	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
-	};
-
-	// Does not start the time, just sets up the members needed.
-	exports.enroll = function(item, msecs) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = msecs;
-	};
-
-	exports.unenroll = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = -1;
-	};
-
-	exports._unrefActive = exports.active = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-
-	  var msecs = item._idleTimeout;
-	  if (msecs >= 0) {
-	    item._idleTimeoutId = setTimeout(function onTimeout() {
-	      if (item._onTimeout)
-	        item._onTimeout();
-	    }, msecs);
-	  }
-	};
-
-	// That's not how node.js implements it but the exposed api is the same.
-	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-	  var id = nextImmediateId++;
-	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-	  immediateIds[id] = true;
-
-	  nextTick(function onNextTick() {
-	    if (immediateIds[id]) {
-	      // fn.call() is faster so we optimize for the common use-case
-	      // @see http://jsperf.com/call-apply-segu
-	      if (args) {
-	        fn.apply(null, args);
-	      } else {
-	        fn.call(null);
-	      }
-	      // Prevent ids from leaking
-	      exports.clearImmediate(id);
-	    }
-	  });
-
-	  return id;
-	};
-
-	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-	  delete immediateIds[id];
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9).setImmediate, __webpack_require__(9).clearImmediate))
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*!
-	 * Copyright (c) 2015 Chris O'Hara <cohara87@gmail.com>
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining
-	 * a copy of this software and associated documentation files (the
-	 * "Software"), to deal in the Software without restriction, including
-	 * without limitation the rights to use, copy, modify, merge, publish,
-	 * distribute, sublicense, and/or sell copies of the Software, and to
-	 * permit persons to whom the Software is furnished to do so, subject to
-	 * the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be
-	 * included in all copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-	 * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	 * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-	 * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-	 * LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-	 * OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-	 * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-	 */
-
-	(function (name, definition) {
-	    if (true) {
-	        module.exports = definition();
-	    } else if (typeof define === 'function' && typeof define.amd === 'object') {
-	        define(definition);
-	    } else {
-	        this[name] = definition();
-	    }
-	})('validator', function (validator) {
-
-	    'use strict';
-
-	    validator = { version: '3.40.0' };
-
-	    var emailUser = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e])|(\\[\x01-\x09\x0b\x0c\x0d-\x7f])))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))$/i;
-
-	    var emailUserUtf8 = /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))$/i;
-
-	    var displayName = /^(?:[a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~\.]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(?:[a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~\.]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\s)*<(.+)>$/i;
-
-	    var creditCard = /^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/;
-
-	    var isin = /^[A-Z]{2}[0-9A-Z]{9}[0-9]$/;
-
-	    var isbn10Maybe = /^(?:[0-9]{9}X|[0-9]{10})$/
-	      , isbn13Maybe = /^(?:[0-9]{13})$/;
-
-	    var ipv4Maybe = /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/
-	      , ipv6Block = /^[0-9A-F]{1,4}$/i;
-
-	    var uuid = {
-	        '3': /^[0-9A-F]{8}-[0-9A-F]{4}-3[0-9A-F]{3}-[0-9A-F]{4}-[0-9A-F]{12}$/i
-	      , '4': /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
-	      , '5': /^[0-9A-F]{8}-[0-9A-F]{4}-5[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i
-	      , all: /^[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}$/i
-	    };
-
-	    var alpha = /^[A-Z]+$/i
-	      , alphanumeric = /^[0-9A-Z]+$/i
-	      , numeric = /^[-+]?[0-9]+$/
-	      , int = /^(?:[-+]?(?:0|[1-9][0-9]*))$/
-	      , float = /^(?:[-+]?(?:[0-9]+))?(?:\.[0-9]*)?(?:[eE][\+\-]?(?:[0-9]+))?$/
-	      , hexadecimal = /^[0-9A-F]+$/i
-	      , hexcolor = /^#?([0-9A-F]{3}|[0-9A-F]{6})$/i;
-
-	    var ascii = /^[\x00-\x7F]+$/
-	      , multibyte = /[^\x00-\x7F]/
-	      , fullWidth = /[^\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/
-	      , halfWidth = /[\u0020-\u007E\uFF61-\uFF9F\uFFA0-\uFFDC\uFFE8-\uFFEE0-9a-zA-Z]/;
-
-	    var surrogatePair = /[\uD800-\uDBFF][\uDC00-\uDFFF]/;
-
-	    var base64 = /^(?:[A-Z0-9+\/]{4})*(?:[A-Z0-9+\/]{2}==|[A-Z0-9+\/]{3}=|[A-Z0-9+\/]{4})$/i;
-
-	    var phones = {
-	      'zh-CN': /^(\+?0?86\-?)?1[345789]\d{9}$/,
-	      'en-ZA': /^(\+?27|0)\d{9}$/,
-	      'en-AU': /^(\+?61|0)4\d{8}$/,
-	      'en-HK': /^(\+?852\-?)?[569]\d{3}\-?\d{4}$/,
-	      'fr-FR': /^(\+?33|0)[67]\d{8}$/,
-	      'pt-PT': /^(\+351)?9[1236]\d{7}$/,
-	      'el-GR': /^(\+30)?((2\d{9})|(69\d{8}))$/,
-	      'en-GB': /^(\+?44|0)7\d{9}$/,
-	      'en-US': /^(\+?1)?[2-9]\d{2}[2-9](?!11)\d{6}$/,
-	      'en-ZM': /^(\+26)?09[567]\d{7}$/
-	    };
-
-	    validator.extend = function (name, fn) {
-	        validator[name] = function () {
-	            var args = Array.prototype.slice.call(arguments);
-	            args[0] = validator.toString(args[0]);
-	            return fn.apply(validator, args);
-	        };
-	    };
-
-	    //Right before exporting the validator object, pass each of the builtins
-	    //through extend() so that their first argument is coerced to a string
-	    validator.init = function () {
-	        for (var name in validator) {
-	            if (typeof validator[name] !== 'function' || name === 'toString' ||
-	                    name === 'toDate' || name === 'extend' || name === 'init') {
-	                continue;
-	            }
-	            validator.extend(name, validator[name]);
-	        }
-	    };
-
-	    validator.toString = function (input) {
-	        if (typeof input === 'object' && input !== null && input.toString) {
-	            input = input.toString();
-	        } else if (input === null || typeof input === 'undefined' || (isNaN(input) && !input.length)) {
-	            input = '';
-	        } else if (typeof input !== 'string') {
-	            input += '';
-	        }
-	        return input;
-	    };
-
-	    validator.toDate = function (date) {
-	        if (Object.prototype.toString.call(date) === '[object Date]') {
-	            return date;
-	        }
-	        date = Date.parse(date);
-	        return !isNaN(date) ? new Date(date) : null;
-	    };
-
-	    validator.toFloat = function (str) {
-	        return parseFloat(str);
-	    };
-
-	    validator.toInt = function (str, radix) {
-	        return parseInt(str, radix || 10);
-	    };
-
-	    validator.toBoolean = function (str, strict) {
-	        if (strict) {
-	            return str === '1' || str === 'true';
-	        }
-	        return str !== '0' && str !== 'false' && str !== '';
-	    };
-
-	    validator.equals = function (str, comparison) {
-	        return str === validator.toString(comparison);
-	    };
-
-	    validator.contains = function (str, elem) {
-	        return str.indexOf(validator.toString(elem)) >= 0;
-	    };
-
-	    validator.matches = function (str, pattern, modifiers) {
-	        if (Object.prototype.toString.call(pattern) !== '[object RegExp]') {
-	            pattern = new RegExp(pattern, modifiers);
-	        }
-	        return pattern.test(str);
-	    };
-
-	    var default_email_options = {
-	        allow_display_name: false,
-	        allow_utf8_local_part: true,
-	        require_tld: true
-	    };
-
-	    validator.isEmail = function (str, options) {
-	        options = merge(options, default_email_options);
-
-	        if (options.allow_display_name) {
-	            var display_email = str.match(displayName);
-	            if (display_email) {
-	                str = display_email[1];
-	            }
-	        } else if (/\s/.test(str)) {
-	            return false;
-	        }
-
-	        var parts = str.split('@')
-	          , domain = parts.pop()
-	          , user = parts.join('@');
-
-	        if (!validator.isFQDN(domain, {require_tld: options.require_tld})) {
-	            return false;
-	        }
-
-	        return options.allow_utf8_local_part ?
-	            emailUserUtf8.test(user) :
-	            emailUser.test(user);
-	    };
-
-	    var default_url_options = {
-	        protocols: [ 'http', 'https', 'ftp' ]
-	      , require_tld: true
-	      , require_protocol: false
-	      , allow_underscores: false
-	      , allow_trailing_dot: false
-	      , allow_protocol_relative_urls: false
-	    };
-
-	    validator.isURL = function (url, options) {
-	        if (!url || url.length >= 2083 || /\s/.test(url)) {
-	            return false;
-	        }
-	        if (url.indexOf('mailto:') === 0) {
-	            return false;
-	        }
-	        options = merge(options, default_url_options);
-	        var protocol, auth, host, hostname, port,
-	            port_str, split;
-	        split = url.split('://');
-	        if (split.length > 1) {
-	            protocol = split.shift();
-	            if (options.protocols.indexOf(protocol) === -1) {
-	                return false;
-	            }
-	        } else if (options.require_protocol) {
-	            return false;
-	        }  else if (options.allow_protocol_relative_urls && url.substr(0, 2) === '//') {
-	            split[0] = url.substr(2);
-	        }
-	        url = split.join('://');
-	        split = url.split('#');
-	        url = split.shift();
-
-	        split = url.split('?');
-	        url = split.shift();
-
-	        split = url.split('/');
-	        url = split.shift();
-	        split = url.split('@');
-	        if (split.length > 1) {
-	            auth = split.shift();
-	            if (auth.indexOf(':') >= 0 && auth.split(':').length > 2) {
-	                return false;
-	            }
-	        }
-	        hostname = split.join('@');
-	        split = hostname.split(':');
-	        host = split.shift();
-	        if (split.length) {
-	            port_str = split.join(':');
-	            port = parseInt(port_str, 10);
-	            if (!/^[0-9]+$/.test(port_str) || port <= 0 || port > 65535) {
-	                return false;
-	            }
-	        }
-	        if (!validator.isIP(host) && !validator.isFQDN(host, options) &&
-	                host !== 'localhost') {
-	            return false;
-	        }
-	        if (options.host_whitelist &&
-	                options.host_whitelist.indexOf(host) === -1) {
-	            return false;
-	        }
-	        if (options.host_blacklist &&
-	                options.host_blacklist.indexOf(host) !== -1) {
-	            return false;
-	        }
-	        return true;
-	    };
-
-	    validator.isIP = function (str, version) {
-	        version = validator.toString(version);
-	        if (!version) {
-	            return validator.isIP(str, 4) || validator.isIP(str, 6);
-	        } else if (version === '4') {
-	            if (!ipv4Maybe.test(str)) {
-	                return false;
-	            }
-	            var parts = str.split('.').sort(function (a, b) {
-	                return a - b;
-	            });
-	            return parts[3] <= 255;
-	        } else if (version === '6') {
-	            var blocks = str.split(':');
-	            var foundOmissionBlock = false; // marker to indicate ::
-
-	            if (blocks.length > 8)
-	                return false;
-
-	            // initial or final ::
-	            if (str === '::') {
-	                return true;
-	            } else if (str.substr(0, 2) === '::') {
-	                blocks.shift();
-	                blocks.shift();
-	                foundOmissionBlock = true;
-	            } else if (str.substr(str.length - 2) === '::') {
-	                blocks.pop();
-	                blocks.pop();
-	                foundOmissionBlock = true;
-	            }
-
-	            for (var i = 0; i < blocks.length; ++i) {
-	                // test for a :: which can not be at the string start/end
-	                // since those cases have been handled above
-	                if (blocks[i] === '' && i > 0 && i < blocks.length -1) {
-	                    if (foundOmissionBlock)
-	                        return false; // multiple :: in address
-	                    foundOmissionBlock = true;
-	                } else if (!ipv6Block.test(blocks[i])) {
-	                    return false;
-	                }
-	            }
-
-	            if (foundOmissionBlock) {
-	                return blocks.length >= 1;
-	            } else {
-	                return blocks.length === 8;
-	            }
-	        }
-	        return false;
-	    };
-
-	    var default_fqdn_options = {
-	        require_tld: true
-	      , allow_underscores: false
-	      , allow_trailing_dot: false
-	    };
-
-	    validator.isFQDN = function (str, options) {
-	        options = merge(options, default_fqdn_options);
-
-	        /* Remove the optional trailing dot before checking validity */
-	        if (options.allow_trailing_dot && str[str.length - 1] === '.') {
-	            str = str.substring(0, str.length - 1);
-	        }
-	        var parts = str.split('.');
-	        if (options.require_tld) {
-	            var tld = parts.pop();
-	            if (!parts.length || !/^([a-z\u00a1-\uffff]{2,}|xn[a-z0-9-]{2,})$/i.test(tld)) {
-	                return false;
-	            }
-	        }
-	        for (var part, i = 0; i < parts.length; i++) {
-	            part = parts[i];
-	            if (options.allow_underscores) {
-	                if (part.indexOf('__') >= 0) {
-	                    return false;
-	                }
-	                part = part.replace(/_/g, '');
-	            }
-	            if (!/^[a-z\u00a1-\uffff0-9-]+$/i.test(part)) {
-	                return false;
-	            }
-	            if (part[0] === '-' || part[part.length - 1] === '-' ||
-	                    part.indexOf('---') >= 0) {
-	                return false;
-	            }
-	        }
-	        return true;
-	    };
-
-	    validator.isBoolean = function(str) {
-	        return (['true', 'false', '1', '0'].indexOf(str) >= 0);
-	    };
-
-	    validator.isAlpha = function (str) {
-	        return alpha.test(str);
-	    };
-
-	    validator.isAlphanumeric = function (str) {
-	        return alphanumeric.test(str);
-	    };
-
-	    validator.isNumeric = function (str) {
-	        return numeric.test(str);
-	    };
-
-	    validator.isHexadecimal = function (str) {
-	        return hexadecimal.test(str);
-	    };
-
-	    validator.isHexColor = function (str) {
-	        return hexcolor.test(str);
-	    };
-
-	    validator.isLowercase = function (str) {
-	        return str === str.toLowerCase();
-	    };
-
-	    validator.isUppercase = function (str) {
-	        return str === str.toUpperCase();
-	    };
-
-	    validator.isInt = function (str, options) {
-	        options = options || {};
-	        return int.test(str) && (!options.hasOwnProperty('min') || str >= options.min) && (!options.hasOwnProperty('max') || str <= options.max);
-	    };
-
-	    validator.isFloat = function (str, options) {
-	        options = options || {};
-	        return str !== '' && float.test(str) && (!options.hasOwnProperty('min') || str >= options.min) && (!options.hasOwnProperty('max') || str <= options.max);
-	    };
-
-	    validator.isDivisibleBy = function (str, num) {
-	        return validator.toFloat(str) % validator.toInt(num) === 0;
-	    };
-
-	    validator.isNull = function (str) {
-	        return str.length === 0;
-	    };
-
-	    validator.isLength = function (str, min, max) {
-	        var surrogatePairs = str.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || [];
-	        var len = str.length - surrogatePairs.length;
-	        return len >= min && (typeof max === 'undefined' || len <= max);
-	    };
-
-	    validator.isByteLength = function (str, min, max) {
-	        return str.length >= min && (typeof max === 'undefined' || str.length <= max);
-	    };
-
-	    validator.isUUID = function (str, version) {
-	        var pattern = uuid[version ? version : 'all'];
-	        return pattern && pattern.test(str);
-	    };
-
-	    validator.isDate = function (str) {
-	        return !isNaN(Date.parse(str));
-	    };
-
-	    validator.isAfter = function (str, date) {
-	        var comparison = validator.toDate(date || new Date())
-	          , original = validator.toDate(str);
-	        return !!(original && comparison && original > comparison);
-	    };
-
-	    validator.isBefore = function (str, date) {
-	        var comparison = validator.toDate(date || new Date())
-	          , original = validator.toDate(str);
-	        return original && comparison && original < comparison;
-	    };
-
-	    validator.isIn = function (str, options) {
-	        var i;
-	        if (Object.prototype.toString.call(options) === '[object Array]') {
-	            var array = [];
-	            for (i in options) {
-	                array[i] = validator.toString(options[i]);
-	            }
-	            return array.indexOf(str) >= 0;
-	        } else if (typeof options === 'object') {
-	            return options.hasOwnProperty(str);
-	        } else if (options && typeof options.indexOf === 'function') {
-	            return options.indexOf(str) >= 0;
-	        }
-	        return false;
-	    };
-
-	    validator.isCreditCard = function (str) {
-	        var sanitized = str.replace(/[^0-9]+/g, '');
-	        if (!creditCard.test(sanitized)) {
-	            return false;
-	        }
-	        var sum = 0, digit, tmpNum, shouldDouble;
-	        for (var i = sanitized.length - 1; i >= 0; i--) {
-	            digit = sanitized.substring(i, (i + 1));
-	            tmpNum = parseInt(digit, 10);
-	            if (shouldDouble) {
-	                tmpNum *= 2;
-	                if (tmpNum >= 10) {
-	                    sum += ((tmpNum % 10) + 1);
-	                } else {
-	                    sum += tmpNum;
-	                }
-	            } else {
-	                sum += tmpNum;
-	            }
-	            shouldDouble = !shouldDouble;
-	        }
-	        return !!((sum % 10) === 0 ? sanitized : false);
-	    };
-
-	    validator.isISIN = function (str) {
-	        if (!isin.test(str)) {
-	            return false;
-	        }
-
-	        var checksumStr = str.replace(/[A-Z]/g, function(character) {
-	            return parseInt(character, 36);
-	        });
-
-	        var sum = 0, digit, tmpNum, shouldDouble = true;
-	        for (var i = checksumStr.length - 2; i >= 0; i--) {
-	            digit = checksumStr.substring(i, (i + 1));
-	            tmpNum = parseInt(digit, 10);
-	            if (shouldDouble) {
-	                tmpNum *= 2;
-	                if (tmpNum >= 10) {
-	                    sum += tmpNum + 1;
-	                } else {
-	                    sum += tmpNum;
-	                }
-	            } else {
-	                sum += tmpNum;
-	            }
-	            shouldDouble = !shouldDouble;
-	        }
-
-	        return parseInt(str.substr(str.length - 1), 10) === (10000 - sum) % 10;
-	    };
-
-	    validator.isISBN = function (str, version) {
-	        version = validator.toString(version);
-	        if (!version) {
-	            return validator.isISBN(str, 10) || validator.isISBN(str, 13);
-	        }
-	        var sanitized = str.replace(/[\s-]+/g, '')
-	          , checksum = 0, i;
-	        if (version === '10') {
-	            if (!isbn10Maybe.test(sanitized)) {
-	                return false;
-	            }
-	            for (i = 0; i < 9; i++) {
-	                checksum += (i + 1) * sanitized.charAt(i);
-	            }
-	            if (sanitized.charAt(9) === 'X') {
-	                checksum += 10 * 10;
-	            } else {
-	                checksum += 10 * sanitized.charAt(9);
-	            }
-	            if ((checksum % 11) === 0) {
-	                return !!sanitized;
-	            }
-	        } else  if (version === '13') {
-	            if (!isbn13Maybe.test(sanitized)) {
-	                return false;
-	            }
-	            var factor = [ 1, 3 ];
-	            for (i = 0; i < 12; i++) {
-	                checksum += factor[i % 2] * sanitized.charAt(i);
-	            }
-	            if (sanitized.charAt(12) - ((10 - (checksum % 10)) % 10) === 0) {
-	                return !!sanitized;
-	            }
-	        }
-	        return false;
-	    };
-
-	    validator.isMobilePhone = function(str, locale) {
-	        if (locale in phones) {
-	            return phones[locale].test(str);
-	        }
-	        return false;
-	    };
-
-	    var default_currency_options = {
-	        symbol: '$'
-	      , require_symbol: false
-	      , allow_space_after_symbol: false
-	      , symbol_after_digits: false
-	      , allow_negatives: true
-	      , parens_for_negatives: false
-	      , negative_sign_before_digits: false
-	      , negative_sign_after_digits: false
-	      , allow_negative_sign_placeholder: false
-	      , thousands_separator: ','
-	      , decimal_separator: '.'
-	      , allow_space_after_digits: false
-	    };
-
-	    validator.isCurrency = function (str, options) {
-	        options = merge(options, default_currency_options);
-
-	        return currencyRegex(options).test(str);
-	    };
-
-	    validator.isJSON = function (str) {
-	        try {
-	            JSON.parse(str);
-	        } catch (e) {
-	            return false;
-	        }
-	        return true;
-	    };
-
-	    validator.isMultibyte = function (str) {
-	        return multibyte.test(str);
-	    };
-
-	    validator.isAscii = function (str) {
-	        return ascii.test(str);
-	    };
-
-	    validator.isFullWidth = function (str) {
-	        return fullWidth.test(str);
-	    };
-
-	    validator.isHalfWidth = function (str) {
-	        return halfWidth.test(str);
-	    };
-
-	    validator.isVariableWidth = function (str) {
-	        return fullWidth.test(str) && halfWidth.test(str);
-	    };
-
-	    validator.isSurrogatePair = function (str) {
-	        return surrogatePair.test(str);
-	    };
-
-	    validator.isBase64 = function (str) {
-	        return base64.test(str);
-	    };
-
-	    validator.isMongoId = function (str) {
-	        return validator.isHexadecimal(str) && str.length === 24;
-	    };
-
-	    validator.ltrim = function (str, chars) {
-	        var pattern = chars ? new RegExp('^[' + chars + ']+', 'g') : /^\s+/g;
-	        return str.replace(pattern, '');
-	    };
-
-	    validator.rtrim = function (str, chars) {
-	        var pattern = chars ? new RegExp('[' + chars + ']+$', 'g') : /\s+$/g;
-	        return str.replace(pattern, '');
-	    };
-
-	    validator.trim = function (str, chars) {
-	        var pattern = chars ? new RegExp('^[' + chars + ']+|[' + chars + ']+$', 'g') : /^\s+|\s+$/g;
-	        return str.replace(pattern, '');
-	    };
-
-	    validator.escape = function (str) {
-	        return (str.replace(/&/g, '&amp;')
-	            .replace(/"/g, '&quot;')
-	            .replace(/'/g, '&#x27;')
-	            .replace(/</g, '&lt;')
-	            .replace(/>/g, '&gt;')
-	            .replace(/\//g, '&#x2F;')
-	            .replace(/\`/g, '&#96;'));
-	    };
-
-	    validator.stripLow = function (str, keep_new_lines) {
-	        var chars = keep_new_lines ? '\\x00-\\x09\\x0B\\x0C\\x0E-\\x1F\\x7F' : '\\x00-\\x1F\\x7F';
-	        return validator.blacklist(str, chars);
-	    };
-
-	    validator.whitelist = function (str, chars) {
-	        return str.replace(new RegExp('[^' + chars + ']+', 'g'), '');
-	    };
-
-	    validator.blacklist = function (str, chars) {
-	        return str.replace(new RegExp('[' + chars + ']+', 'g'), '');
-	    };
-
-	    var default_normalize_email_options = {
-	        lowercase: true
-	    };
-
-	    validator.normalizeEmail = function (email, options) {
-	        options = merge(options, default_normalize_email_options);
-	        if (!validator.isEmail(email)) {
-	            return false;
-	        }
-	        var parts = email.split('@', 2);
-	        parts[1] = parts[1].toLowerCase();
-	        if (parts[1] === 'gmail.com' || parts[1] === 'googlemail.com') {
-	            parts[0] = parts[0].toLowerCase().replace(/\./g, '');
-	            if (parts[0][0] === '+') {
-	                return false;
-	            }
-	            parts[0] = parts[0].split('+')[0];
-	            parts[1] = 'gmail.com';
-	        } else if (options.lowercase) {
-	            parts[0] = parts[0].toLowerCase();
-	        }
-	        return parts.join('@');
-	    };
-
-	    function merge(obj, defaults) {
-	        obj = obj || {};
-	        for (var key in defaults) {
-	            if (typeof obj[key] === 'undefined') {
-	                obj[key] = defaults[key];
-	            }
-	        }
-	        return obj;
-	    }
-
-	    function currencyRegex(options) {
-	        var symbol = '(\\' + options.symbol.replace(/\./g, '\\.') + ')' + (options.require_symbol ? '' : '?')
-	            , negative = '-?'
-	            , whole_dollar_amount_without_sep = '[1-9]\\d*'
-	            , whole_dollar_amount_with_sep = '[1-9]\\d{0,2}(\\' + options.thousands_separator + '\\d{3})*'
-	            , valid_whole_dollar_amounts = ['0', whole_dollar_amount_without_sep, whole_dollar_amount_with_sep]
-	            , whole_dollar_amount = '(' + valid_whole_dollar_amounts.join('|') + ')?'
-	            , decimal_amount = '(\\' + options.decimal_separator + '\\d{2})?';
-	        var pattern = whole_dollar_amount + decimal_amount;
-	        // default is negative sign before symbol, but there are two other options (besides parens)
-	        if (options.allow_negatives && !options.parens_for_negatives) {
-	            if (options.negative_sign_after_digits) {
-	                pattern += negative;
-	            }
-	            else if (options.negative_sign_before_digits) {
-	                pattern = negative + pattern;
-	            }
-	        }
-	        // South African Rand, for example, uses R 123 (space) and R-123 (no space)
-	        if (options.allow_negative_sign_placeholder) {
-	            pattern = '( (?!\\-))?' + pattern;
-	        }
-	        else if (options.allow_space_after_symbol) {
-	            pattern = ' ?' + pattern;
-	        }
-	        else if (options.allow_space_after_digits) {
-	            pattern += '( (?!$))?';
-	        }
-	        if (options.symbol_after_digits) {
-	            pattern += symbol;
-	        } else {
-	            pattern = symbol + pattern;
-	        }
-	        if (options.allow_negatives) {
-	            if (options.parens_for_negatives) {
-	                pattern = '(\\(' + pattern + '\\)|' + pattern + ')';
-	            }
-	            else if (!(options.negative_sign_before_digits || options.negative_sign_after_digits)) {
-	                pattern = negative + pattern;
-	            }
-	        }
-	        return new RegExp(
-	            '^' +
-	            // ensure there's a dollar and/or decimal amount, and that it doesn't start with a space or a negative sign followed by a space
-	            '(?!-? )(?=.*\\d)' +
-	            pattern +
-	            '$'
-	        );
-	    }
-
-	    validator.init();
-
-	    return validator;
-
-	});
-
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, setImmediate) {/*!
-	 * async
-	 * https://github.com/caolan/async
-	 *
-	 * Copyright 2010-2014 Caolan McMahon
-	 * Released under the MIT license
-	 */
-	/*jshint onevar: false, indent:4 */
-	/*global setImmediate: false, setTimeout: false, console: false */
-	(function () {
-
-	    var async = {};
-
-	    // global on the server, window in the browser
-	    var root, previous_async;
-
-	    root = this;
-	    if (root != null) {
-	      previous_async = root.async;
-	    }
-
-	    async.noConflict = function () {
-	        root.async = previous_async;
-	        return async;
-	    };
-
-	    function only_once(fn) {
-	        var called = false;
-	        return function() {
-	            if (called) throw new Error("Callback was already called.");
-	            called = true;
-	            fn.apply(root, arguments);
-	        }
-	    }
-
-	    //// cross-browser compatiblity functions ////
-
-	    var _toString = Object.prototype.toString;
-
-	    var _isArray = Array.isArray || function (obj) {
-	        return _toString.call(obj) === '[object Array]';
-	    };
-
-	    var _each = function (arr, iterator) {
-	        for (var i = 0; i < arr.length; i += 1) {
-	            iterator(arr[i], i, arr);
-	        }
-	    };
-
-	    var _map = function (arr, iterator) {
-	        if (arr.map) {
-	            return arr.map(iterator);
-	        }
-	        var results = [];
-	        _each(arr, function (x, i, a) {
-	            results.push(iterator(x, i, a));
-	        });
-	        return results;
-	    };
-
-	    var _reduce = function (arr, iterator, memo) {
-	        if (arr.reduce) {
-	            return arr.reduce(iterator, memo);
-	        }
-	        _each(arr, function (x, i, a) {
-	            memo = iterator(memo, x, i, a);
-	        });
-	        return memo;
-	    };
-
-	    var _keys = function (obj) {
-	        if (Object.keys) {
-	            return Object.keys(obj);
-	        }
-	        var keys = [];
-	        for (var k in obj) {
-	            if (obj.hasOwnProperty(k)) {
-	                keys.push(k);
-	            }
-	        }
-	        return keys;
-	    };
-
-	    //// exported async module functions ////
-
-	    //// nextTick implementation with browser-compatible fallback ////
-	    if (typeof process === 'undefined' || !(process.nextTick)) {
-	        if (typeof setImmediate === 'function') {
-	            async.nextTick = function (fn) {
-	                // not a direct alias for IE10 compatibility
-	                setImmediate(fn);
-	            };
-	            async.setImmediate = async.nextTick;
-	        }
-	        else {
-	            async.nextTick = function (fn) {
-	                setTimeout(fn, 0);
-	            };
-	            async.setImmediate = async.nextTick;
-	        }
-	    }
-	    else {
-	        async.nextTick = process.nextTick;
-	        if (typeof setImmediate !== 'undefined') {
-	            async.setImmediate = function (fn) {
-	              // not a direct alias for IE10 compatibility
-	              setImmediate(fn);
-	            };
-	        }
-	        else {
-	            async.setImmediate = async.nextTick;
-	        }
-	    }
-
-	    async.each = function (arr, iterator, callback) {
-	        callback = callback || function () {};
-	        if (!arr.length) {
-	            return callback();
-	        }
-	        var completed = 0;
-	        _each(arr, function (x) {
-	            iterator(x, only_once(done) );
-	        });
-	        function done(err) {
-	          if (err) {
-	              callback(err);
-	              callback = function () {};
-	          }
-	          else {
-	              completed += 1;
-	              if (completed >= arr.length) {
-	                  callback();
-	              }
-	          }
-	        }
-	    };
-	    async.forEach = async.each;
-
-	    async.eachSeries = function (arr, iterator, callback) {
-	        callback = callback || function () {};
-	        if (!arr.length) {
-	            return callback();
-	        }
-	        var completed = 0;
-	        var iterate = function () {
-	            iterator(arr[completed], function (err) {
-	                if (err) {
-	                    callback(err);
-	                    callback = function () {};
-	                }
-	                else {
-	                    completed += 1;
-	                    if (completed >= arr.length) {
-	                        callback();
-	                    }
-	                    else {
-	                        iterate();
-	                    }
-	                }
-	            });
-	        };
-	        iterate();
-	    };
-	    async.forEachSeries = async.eachSeries;
-
-	    async.eachLimit = function (arr, limit, iterator, callback) {
-	        var fn = _eachLimit(limit);
-	        fn.apply(null, [arr, iterator, callback]);
-	    };
-	    async.forEachLimit = async.eachLimit;
-
-	    var _eachLimit = function (limit) {
-
-	        return function (arr, iterator, callback) {
-	            callback = callback || function () {};
-	            if (!arr.length || limit <= 0) {
-	                return callback();
-	            }
-	            var completed = 0;
-	            var started = 0;
-	            var running = 0;
-
-	            (function replenish () {
-	                if (completed >= arr.length) {
-	                    return callback();
-	                }
-
-	                while (running < limit && started < arr.length) {
-	                    started += 1;
-	                    running += 1;
-	                    iterator(arr[started - 1], function (err) {
-	                        if (err) {
-	                            callback(err);
-	                            callback = function () {};
-	                        }
-	                        else {
-	                            completed += 1;
-	                            running -= 1;
-	                            if (completed >= arr.length) {
-	                                callback();
-	                            }
-	                            else {
-	                                replenish();
-	                            }
-	                        }
-	                    });
-	                }
-	            })();
-	        };
-	    };
-
-
-	    var doParallel = function (fn) {
-	        return function () {
-	            var args = Array.prototype.slice.call(arguments);
-	            return fn.apply(null, [async.each].concat(args));
-	        };
-	    };
-	    var doParallelLimit = function(limit, fn) {
-	        return function () {
-	            var args = Array.prototype.slice.call(arguments);
-	            return fn.apply(null, [_eachLimit(limit)].concat(args));
-	        };
-	    };
-	    var doSeries = function (fn) {
-	        return function () {
-	            var args = Array.prototype.slice.call(arguments);
-	            return fn.apply(null, [async.eachSeries].concat(args));
-	        };
-	    };
-
-
-	    var _asyncMap = function (eachfn, arr, iterator, callback) {
-	        arr = _map(arr, function (x, i) {
-	            return {index: i, value: x};
-	        });
-	        if (!callback) {
-	            eachfn(arr, function (x, callback) {
-	                iterator(x.value, function (err) {
-	                    callback(err);
-	                });
-	            });
-	        } else {
-	            var results = [];
-	            eachfn(arr, function (x, callback) {
-	                iterator(x.value, function (err, v) {
-	                    results[x.index] = v;
-	                    callback(err);
-	                });
-	            }, function (err) {
-	                callback(err, results);
-	            });
-	        }
-	    };
-	    async.map = doParallel(_asyncMap);
-	    async.mapSeries = doSeries(_asyncMap);
-	    async.mapLimit = function (arr, limit, iterator, callback) {
-	        return _mapLimit(limit)(arr, iterator, callback);
-	    };
-
-	    var _mapLimit = function(limit) {
-	        return doParallelLimit(limit, _asyncMap);
-	    };
-
-	    // reduce only has a series version, as doing reduce in parallel won't
-	    // work in many situations.
-	    async.reduce = function (arr, memo, iterator, callback) {
-	        async.eachSeries(arr, function (x, callback) {
-	            iterator(memo, x, function (err, v) {
-	                memo = v;
-	                callback(err);
-	            });
-	        }, function (err) {
-	            callback(err, memo);
-	        });
-	    };
-	    // inject alias
-	    async.inject = async.reduce;
-	    // foldl alias
-	    async.foldl = async.reduce;
-
-	    async.reduceRight = function (arr, memo, iterator, callback) {
-	        var reversed = _map(arr, function (x) {
-	            return x;
-	        }).reverse();
-	        async.reduce(reversed, memo, iterator, callback);
-	    };
-	    // foldr alias
-	    async.foldr = async.reduceRight;
-
-	    var _filter = function (eachfn, arr, iterator, callback) {
-	        var results = [];
-	        arr = _map(arr, function (x, i) {
-	            return {index: i, value: x};
-	        });
-	        eachfn(arr, function (x, callback) {
-	            iterator(x.value, function (v) {
-	                if (v) {
-	                    results.push(x);
-	                }
-	                callback();
-	            });
-	        }, function (err) {
-	            callback(_map(results.sort(function (a, b) {
-	                return a.index - b.index;
-	            }), function (x) {
-	                return x.value;
-	            }));
-	        });
-	    };
-	    async.filter = doParallel(_filter);
-	    async.filterSeries = doSeries(_filter);
-	    // select alias
-	    async.select = async.filter;
-	    async.selectSeries = async.filterSeries;
-
-	    var _reject = function (eachfn, arr, iterator, callback) {
-	        var results = [];
-	        arr = _map(arr, function (x, i) {
-	            return {index: i, value: x};
-	        });
-	        eachfn(arr, function (x, callback) {
-	            iterator(x.value, function (v) {
-	                if (!v) {
-	                    results.push(x);
-	                }
-	                callback();
-	            });
-	        }, function (err) {
-	            callback(_map(results.sort(function (a, b) {
-	                return a.index - b.index;
-	            }), function (x) {
-	                return x.value;
-	            }));
-	        });
-	    };
-	    async.reject = doParallel(_reject);
-	    async.rejectSeries = doSeries(_reject);
-
-	    var _detect = function (eachfn, arr, iterator, main_callback) {
-	        eachfn(arr, function (x, callback) {
-	            iterator(x, function (result) {
-	                if (result) {
-	                    main_callback(x);
-	                    main_callback = function () {};
-	                }
-	                else {
-	                    callback();
-	                }
-	            });
-	        }, function (err) {
-	            main_callback();
-	        });
-	    };
-	    async.detect = doParallel(_detect);
-	    async.detectSeries = doSeries(_detect);
-
-	    async.some = function (arr, iterator, main_callback) {
-	        async.each(arr, function (x, callback) {
-	            iterator(x, function (v) {
-	                if (v) {
-	                    main_callback(true);
-	                    main_callback = function () {};
-	                }
-	                callback();
-	            });
-	        }, function (err) {
-	            main_callback(false);
-	        });
-	    };
-	    // any alias
-	    async.any = async.some;
-
-	    async.every = function (arr, iterator, main_callback) {
-	        async.each(arr, function (x, callback) {
-	            iterator(x, function (v) {
-	                if (!v) {
-	                    main_callback(false);
-	                    main_callback = function () {};
-	                }
-	                callback();
-	            });
-	        }, function (err) {
-	            main_callback(true);
-	        });
-	    };
-	    // all alias
-	    async.all = async.every;
-
-	    async.sortBy = function (arr, iterator, callback) {
-	        async.map(arr, function (x, callback) {
-	            iterator(x, function (err, criteria) {
-	                if (err) {
-	                    callback(err);
-	                }
-	                else {
-	                    callback(null, {value: x, criteria: criteria});
-	                }
-	            });
-	        }, function (err, results) {
-	            if (err) {
-	                return callback(err);
-	            }
-	            else {
-	                var fn = function (left, right) {
-	                    var a = left.criteria, b = right.criteria;
-	                    return a < b ? -1 : a > b ? 1 : 0;
-	                };
-	                callback(null, _map(results.sort(fn), function (x) {
-	                    return x.value;
-	                }));
-	            }
-	        });
-	    };
-
-	    async.auto = function (tasks, callback) {
-	        callback = callback || function () {};
-	        var keys = _keys(tasks);
-	        var remainingTasks = keys.length
-	        if (!remainingTasks) {
-	            return callback();
-	        }
-
-	        var results = {};
-
-	        var listeners = [];
-	        var addListener = function (fn) {
-	            listeners.unshift(fn);
-	        };
-	        var removeListener = function (fn) {
-	            for (var i = 0; i < listeners.length; i += 1) {
-	                if (listeners[i] === fn) {
-	                    listeners.splice(i, 1);
-	                    return;
-	                }
-	            }
-	        };
-	        var taskComplete = function () {
-	            remainingTasks--
-	            _each(listeners.slice(0), function (fn) {
-	                fn();
-	            });
-	        };
-
-	        addListener(function () {
-	            if (!remainingTasks) {
-	                var theCallback = callback;
-	                // prevent final callback from calling itself if it errors
-	                callback = function () {};
-
-	                theCallback(null, results);
-	            }
-	        });
-
-	        _each(keys, function (k) {
-	            var task = _isArray(tasks[k]) ? tasks[k]: [tasks[k]];
-	            var taskCallback = function (err) {
-	                var args = Array.prototype.slice.call(arguments, 1);
-	                if (args.length <= 1) {
-	                    args = args[0];
-	                }
-	                if (err) {
-	                    var safeResults = {};
-	                    _each(_keys(results), function(rkey) {
-	                        safeResults[rkey] = results[rkey];
-	                    });
-	                    safeResults[k] = args;
-	                    callback(err, safeResults);
-	                    // stop subsequent errors hitting callback multiple times
-	                    callback = function () {};
-	                }
-	                else {
-	                    results[k] = args;
-	                    async.setImmediate(taskComplete);
-	                }
-	            };
-	            var requires = task.slice(0, Math.abs(task.length - 1)) || [];
-	            var ready = function () {
-	                return _reduce(requires, function (a, x) {
-	                    return (a && results.hasOwnProperty(x));
-	                }, true) && !results.hasOwnProperty(k);
-	            };
-	            if (ready()) {
-	                task[task.length - 1](taskCallback, results);
-	            }
-	            else {
-	                var listener = function () {
-	                    if (ready()) {
-	                        removeListener(listener);
-	                        task[task.length - 1](taskCallback, results);
-	                    }
-	                };
-	                addListener(listener);
-	            }
-	        });
-	    };
-
-	    async.retry = function(times, task, callback) {
-	        var DEFAULT_TIMES = 5;
-	        var attempts = [];
-	        // Use defaults if times not passed
-	        if (typeof times === 'function') {
-	            callback = task;
-	            task = times;
-	            times = DEFAULT_TIMES;
-	        }
-	        // Make sure times is a number
-	        times = parseInt(times, 10) || DEFAULT_TIMES;
-	        var wrappedTask = function(wrappedCallback, wrappedResults) {
-	            var retryAttempt = function(task, finalAttempt) {
-	                return function(seriesCallback) {
-	                    task(function(err, result){
-	                        seriesCallback(!err || finalAttempt, {err: err, result: result});
-	                    }, wrappedResults);
-	                };
-	            };
-	            while (times) {
-	                attempts.push(retryAttempt(task, !(times-=1)));
-	            }
-	            async.series(attempts, function(done, data){
-	                data = data[data.length - 1];
-	                (wrappedCallback || callback)(data.err, data.result);
-	            });
-	        }
-	        // If a callback is passed, run this as a controll flow
-	        return callback ? wrappedTask() : wrappedTask
-	    };
-
-	    async.waterfall = function (tasks, callback) {
-	        callback = callback || function () {};
-	        if (!_isArray(tasks)) {
-	          var err = new Error('First argument to waterfall must be an array of functions');
-	          return callback(err);
-	        }
-	        if (!tasks.length) {
-	            return callback();
-	        }
-	        var wrapIterator = function (iterator) {
-	            return function (err) {
-	                if (err) {
-	                    callback.apply(null, arguments);
-	                    callback = function () {};
-	                }
-	                else {
-	                    var args = Array.prototype.slice.call(arguments, 1);
-	                    var next = iterator.next();
-	                    if (next) {
-	                        args.push(wrapIterator(next));
-	                    }
-	                    else {
-	                        args.push(callback);
-	                    }
-	                    async.setImmediate(function () {
-	                        iterator.apply(null, args);
-	                    });
-	                }
-	            };
-	        };
-	        wrapIterator(async.iterator(tasks))();
-	    };
-
-	    var _parallel = function(eachfn, tasks, callback) {
-	        callback = callback || function () {};
-	        if (_isArray(tasks)) {
-	            eachfn.map(tasks, function (fn, callback) {
-	                if (fn) {
-	                    fn(function (err) {
-	                        var args = Array.prototype.slice.call(arguments, 1);
-	                        if (args.length <= 1) {
-	                            args = args[0];
-	                        }
-	                        callback.call(null, err, args);
-	                    });
-	                }
-	            }, callback);
-	        }
-	        else {
-	            var results = {};
-	            eachfn.each(_keys(tasks), function (k, callback) {
-	                tasks[k](function (err) {
-	                    var args = Array.prototype.slice.call(arguments, 1);
-	                    if (args.length <= 1) {
-	                        args = args[0];
-	                    }
-	                    results[k] = args;
-	                    callback(err);
-	                });
-	            }, function (err) {
-	                callback(err, results);
-	            });
-	        }
-	    };
-
-	    async.parallel = function (tasks, callback) {
-	        _parallel({ map: async.map, each: async.each }, tasks, callback);
-	    };
-
-	    async.parallelLimit = function(tasks, limit, callback) {
-	        _parallel({ map: _mapLimit(limit), each: _eachLimit(limit) }, tasks, callback);
-	    };
-
-	    async.series = function (tasks, callback) {
-	        callback = callback || function () {};
-	        if (_isArray(tasks)) {
-	            async.mapSeries(tasks, function (fn, callback) {
-	                if (fn) {
-	                    fn(function (err) {
-	                        var args = Array.prototype.slice.call(arguments, 1);
-	                        if (args.length <= 1) {
-	                            args = args[0];
-	                        }
-	                        callback.call(null, err, args);
-	                    });
-	                }
-	            }, callback);
-	        }
-	        else {
-	            var results = {};
-	            async.eachSeries(_keys(tasks), function (k, callback) {
-	                tasks[k](function (err) {
-	                    var args = Array.prototype.slice.call(arguments, 1);
-	                    if (args.length <= 1) {
-	                        args = args[0];
-	                    }
-	                    results[k] = args;
-	                    callback(err);
-	                });
-	            }, function (err) {
-	                callback(err, results);
-	            });
-	        }
-	    };
-
-	    async.iterator = function (tasks) {
-	        var makeCallback = function (index) {
-	            var fn = function () {
-	                if (tasks.length) {
-	                    tasks[index].apply(null, arguments);
-	                }
-	                return fn.next();
-	            };
-	            fn.next = function () {
-	                return (index < tasks.length - 1) ? makeCallback(index + 1): null;
-	            };
-	            return fn;
-	        };
-	        return makeCallback(0);
-	    };
-
-	    async.apply = function (fn) {
-	        var args = Array.prototype.slice.call(arguments, 1);
-	        return function () {
-	            return fn.apply(
-	                null, args.concat(Array.prototype.slice.call(arguments))
-	            );
-	        };
-	    };
-
-	    var _concat = function (eachfn, arr, fn, callback) {
-	        var r = [];
-	        eachfn(arr, function (x, cb) {
-	            fn(x, function (err, y) {
-	                r = r.concat(y || []);
-	                cb(err);
-	            });
-	        }, function (err) {
-	            callback(err, r);
-	        });
-	    };
-	    async.concat = doParallel(_concat);
-	    async.concatSeries = doSeries(_concat);
-
-	    async.whilst = function (test, iterator, callback) {
-	        if (test()) {
-	            iterator(function (err) {
-	                if (err) {
-	                    return callback(err);
-	                }
-	                async.whilst(test, iterator, callback);
-	            });
-	        }
-	        else {
-	            callback();
-	        }
-	    };
-
-	    async.doWhilst = function (iterator, test, callback) {
-	        iterator(function (err) {
-	            if (err) {
-	                return callback(err);
-	            }
-	            var args = Array.prototype.slice.call(arguments, 1);
-	            if (test.apply(null, args)) {
-	                async.doWhilst(iterator, test, callback);
-	            }
-	            else {
-	                callback();
-	            }
-	        });
-	    };
-
-	    async.until = function (test, iterator, callback) {
-	        if (!test()) {
-	            iterator(function (err) {
-	                if (err) {
-	                    return callback(err);
-	                }
-	                async.until(test, iterator, callback);
-	            });
-	        }
-	        else {
-	            callback();
-	        }
-	    };
-
-	    async.doUntil = function (iterator, test, callback) {
-	        iterator(function (err) {
-	            if (err) {
-	                return callback(err);
-	            }
-	            var args = Array.prototype.slice.call(arguments, 1);
-	            if (!test.apply(null, args)) {
-	                async.doUntil(iterator, test, callback);
-	            }
-	            else {
-	                callback();
-	            }
-	        });
-	    };
-
-	    async.queue = function (worker, concurrency) {
-	        if (concurrency === undefined) {
-	            concurrency = 1;
-	        }
-	        function _insert(q, data, pos, callback) {
-	          if (!q.started){
-	            q.started = true;
-	          }
-	          if (!_isArray(data)) {
-	              data = [data];
-	          }
-	          if(data.length == 0) {
-	             // call drain immediately if there are no tasks
-	             return async.setImmediate(function() {
-	                 if (q.drain) {
-	                     q.drain();
-	                 }
-	             });
-	          }
-	          _each(data, function(task) {
-	              var item = {
-	                  data: task,
-	                  callback: typeof callback === 'function' ? callback : null
-	              };
-
-	              if (pos) {
-	                q.tasks.unshift(item);
-	              } else {
-	                q.tasks.push(item);
-	              }
-
-	              if (q.saturated && q.tasks.length === q.concurrency) {
-	                  q.saturated();
-	              }
-	              async.setImmediate(q.process);
-	          });
-	        }
-
-	        var workers = 0;
-	        var q = {
-	            tasks: [],
-	            concurrency: concurrency,
-	            saturated: null,
-	            empty: null,
-	            drain: null,
-	            started: false,
-	            paused: false,
-	            push: function (data, callback) {
-	              _insert(q, data, false, callback);
-	            },
-	            kill: function () {
-	              q.drain = null;
-	              q.tasks = [];
-	            },
-	            unshift: function (data, callback) {
-	              _insert(q, data, true, callback);
-	            },
-	            process: function () {
-	                if (!q.paused && workers < q.concurrency && q.tasks.length) {
-	                    var task = q.tasks.shift();
-	                    if (q.empty && q.tasks.length === 0) {
-	                        q.empty();
-	                    }
-	                    workers += 1;
-	                    var next = function () {
-	                        workers -= 1;
-	                        if (task.callback) {
-	                            task.callback.apply(task, arguments);
-	                        }
-	                        if (q.drain && q.tasks.length + workers === 0) {
-	                            q.drain();
-	                        }
-	                        q.process();
-	                    };
-	                    var cb = only_once(next);
-	                    worker(task.data, cb);
-	                }
-	            },
-	            length: function () {
-	                return q.tasks.length;
-	            },
-	            running: function () {
-	                return workers;
-	            },
-	            idle: function() {
-	                return q.tasks.length + workers === 0;
-	            },
-	            pause: function () {
-	                if (q.paused === true) { return; }
-	                q.paused = true;
-	            },
-	            resume: function () {
-	                if (q.paused === false) { return; }
-	                q.paused = false;
-	                // Need to call q.process once per concurrent
-	                // worker to preserve full concurrency after pause
-	                for (var w = 1; w <= q.concurrency; w++) {
-	                    async.setImmediate(q.process);
-	                }
-	            }
-	        };
-	        return q;
-	    };
-
-	    async.priorityQueue = function (worker, concurrency) {
-
-	        function _compareTasks(a, b){
-	          return a.priority - b.priority;
-	        };
-
-	        function _binarySearch(sequence, item, compare) {
-	          var beg = -1,
-	              end = sequence.length - 1;
-	          while (beg < end) {
-	            var mid = beg + ((end - beg + 1) >>> 1);
-	            if (compare(item, sequence[mid]) >= 0) {
-	              beg = mid;
-	            } else {
-	              end = mid - 1;
-	            }
-	          }
-	          return beg;
-	        }
-
-	        function _insert(q, data, priority, callback) {
-	          if (!q.started){
-	            q.started = true;
-	          }
-	          if (!_isArray(data)) {
-	              data = [data];
-	          }
-	          if(data.length == 0) {
-	             // call drain immediately if there are no tasks
-	             return async.setImmediate(function() {
-	                 if (q.drain) {
-	                     q.drain();
-	                 }
-	             });
-	          }
-	          _each(data, function(task) {
-	              var item = {
-	                  data: task,
-	                  priority: priority,
-	                  callback: typeof callback === 'function' ? callback : null
-	              };
-
-	              q.tasks.splice(_binarySearch(q.tasks, item, _compareTasks) + 1, 0, item);
-
-	              if (q.saturated && q.tasks.length === q.concurrency) {
-	                  q.saturated();
-	              }
-	              async.setImmediate(q.process);
-	          });
-	        }
-
-	        // Start with a normal queue
-	        var q = async.queue(worker, concurrency);
-
-	        // Override push to accept second parameter representing priority
-	        q.push = function (data, priority, callback) {
-	          _insert(q, data, priority, callback);
-	        };
-
-	        // Remove unshift function
-	        delete q.unshift;
-
-	        return q;
-	    };
-
-	    async.cargo = function (worker, payload) {
-	        var working     = false,
-	            tasks       = [];
-
-	        var cargo = {
-	            tasks: tasks,
-	            payload: payload,
-	            saturated: null,
-	            empty: null,
-	            drain: null,
-	            drained: true,
-	            push: function (data, callback) {
-	                if (!_isArray(data)) {
-	                    data = [data];
-	                }
-	                _each(data, function(task) {
-	                    tasks.push({
-	                        data: task,
-	                        callback: typeof callback === 'function' ? callback : null
-	                    });
-	                    cargo.drained = false;
-	                    if (cargo.saturated && tasks.length === payload) {
-	                        cargo.saturated();
-	                    }
-	                });
-	                async.setImmediate(cargo.process);
-	            },
-	            process: function process() {
-	                if (working) return;
-	                if (tasks.length === 0) {
-	                    if(cargo.drain && !cargo.drained) cargo.drain();
-	                    cargo.drained = true;
-	                    return;
-	                }
-
-	                var ts = typeof payload === 'number'
-	                            ? tasks.splice(0, payload)
-	                            : tasks.splice(0, tasks.length);
-
-	                var ds = _map(ts, function (task) {
-	                    return task.data;
-	                });
-
-	                if(cargo.empty) cargo.empty();
-	                working = true;
-	                worker(ds, function () {
-	                    working = false;
-
-	                    var args = arguments;
-	                    _each(ts, function (data) {
-	                        if (data.callback) {
-	                            data.callback.apply(null, args);
-	                        }
-	                    });
-
-	                    process();
-	                });
-	            },
-	            length: function () {
-	                return tasks.length;
-	            },
-	            running: function () {
-	                return working;
-	            }
-	        };
-	        return cargo;
-	    };
-
-	    var _console_fn = function (name) {
-	        return function (fn) {
-	            var args = Array.prototype.slice.call(arguments, 1);
-	            fn.apply(null, args.concat([function (err) {
-	                var args = Array.prototype.slice.call(arguments, 1);
-	                if (typeof console !== 'undefined') {
-	                    if (err) {
-	                        if (console.error) {
-	                            console.error(err);
-	                        }
-	                    }
-	                    else if (console[name]) {
-	                        _each(args, function (x) {
-	                            console[name](x);
-	                        });
-	                    }
-	                }
-	            }]));
-	        };
-	    };
-	    async.log = _console_fn('log');
-	    async.dir = _console_fn('dir');
-	    /*async.info = _console_fn('info');
-	    async.warn = _console_fn('warn');
-	    async.error = _console_fn('error');*/
-
-	    async.memoize = function (fn, hasher) {
-	        var memo = {};
-	        var queues = {};
-	        hasher = hasher || function (x) {
-	            return x;
-	        };
-	        var memoized = function () {
-	            var args = Array.prototype.slice.call(arguments);
-	            var callback = args.pop();
-	            var key = hasher.apply(null, args);
-	            if (key in memo) {
-	                async.nextTick(function () {
-	                    callback.apply(null, memo[key]);
-	                });
-	            }
-	            else if (key in queues) {
-	                queues[key].push(callback);
-	            }
-	            else {
-	                queues[key] = [callback];
-	                fn.apply(null, args.concat([function () {
-	                    memo[key] = arguments;
-	                    var q = queues[key];
-	                    delete queues[key];
-	                    for (var i = 0, l = q.length; i < l; i++) {
-	                      q[i].apply(null, arguments);
-	                    }
-	                }]));
-	            }
-	        };
-	        memoized.memo = memo;
-	        memoized.unmemoized = fn;
-	        return memoized;
-	    };
-
-	    async.unmemoize = function (fn) {
-	      return function () {
-	        return (fn.unmemoized || fn).apply(null, arguments);
-	      };
-	    };
-
-	    async.times = function (count, iterator, callback) {
-	        var counter = [];
-	        for (var i = 0; i < count; i++) {
-	            counter.push(i);
-	        }
-	        return async.map(counter, iterator, callback);
-	    };
-
-	    async.timesSeries = function (count, iterator, callback) {
-	        var counter = [];
-	        for (var i = 0; i < count; i++) {
-	            counter.push(i);
-	        }
-	        return async.mapSeries(counter, iterator, callback);
-	    };
-
-	    async.seq = function (/* functions... */) {
-	        var fns = arguments;
-	        return function () {
-	            var that = this;
-	            var args = Array.prototype.slice.call(arguments);
-	            var callback = args.pop();
-	            async.reduce(fns, args, function (newargs, fn, cb) {
-	                fn.apply(that, newargs.concat([function () {
-	                    var err = arguments[0];
-	                    var nextargs = Array.prototype.slice.call(arguments, 1);
-	                    cb(err, nextargs);
-	                }]))
-	            },
-	            function (err, results) {
-	                callback.apply(that, [err].concat(results));
-	            });
-	        };
-	    };
-
-	    async.compose = function (/* functions... */) {
-	      return async.seq.apply(null, Array.prototype.reverse.call(arguments));
-	    };
-
-	    var _applyEach = function (eachfn, fns /*args...*/) {
-	        var go = function () {
-	            var that = this;
-	            var args = Array.prototype.slice.call(arguments);
-	            var callback = args.pop();
-	            return eachfn(fns, function (fn, cb) {
-	                fn.apply(that, args.concat([cb]));
-	            },
-	            callback);
-	        };
-	        if (arguments.length > 2) {
-	            var args = Array.prototype.slice.call(arguments, 2);
-	            return go.apply(this, args);
-	        }
-	        else {
-	            return go;
-	        }
-	    };
-	    async.applyEach = doParallel(_applyEach);
-	    async.applyEachSeries = doSeries(_applyEach);
-
-	    async.forever = function (fn, callback) {
-	        function next(err) {
-	            if (err) {
-	                if (callback) {
-	                    return callback(err);
-	                }
-	                throw err;
-	            }
-	            fn(next);
-	        }
-	        next();
-	    };
-
-	    // Node.js
-	    if (typeof module !== 'undefined' && module.exports) {
-	        module.exports = async;
-	    }
-	    // AMD / RequireJS
-	    else if (true) {
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	            return async;
-	        }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    }
-	    // included directly via <script> tag
-	    else {
-	        root.async = async;
-	    }
-
-	}());
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(9).setImmediate))
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	/* global window */
-	var GetParams = function (func) {
-		'use strict';
-
-		if (typeof func !== 'function') {
-			return [];
-		}
-
-		var patternComments = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-		var patternArguments = /([^\s,]+)/g;
-
-		var funcString = func
-			.toString()
-			.replace(patternComments, '');
-
-		var result = funcString
-			.slice(
-				funcString.indexOf('(') + 1,
-				funcString.indexOf(')')
-			)
-			.match(patternArguments);
-
-		if (result === null) {
-			return [];
-		}
-
-		return result;
-	};
-
-	if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
-		module.exports = GetParams;
-	}
-
-	if (typeof window !== 'undefined') {
-		window.GetParams = GetParams;
-	}
-
-
-/***/ },
 /* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
-
-	var _lodash = __webpack_require__(2);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _Collection2 = __webpack_require__(14);
-
-	var _Collection3 = _interopRequireDefault(_Collection2);
-
-	module.exports = function () {
-	  var db = arguments[0] === undefined ? null : arguments[0];
-
-	  return function (extend) {
-	    var GeneratedCollection = (function (_Collection) {
-	      function GeneratedCollection() {
-	        var _extend = arguments[0] === undefined ? {} : arguments[0];
-
-	        _classCallCheck(this, GeneratedCollection);
-
-	        _get(Object.getPrototypeOf(GeneratedCollection.prototype), 'constructor', this).call(this, _extend);
-
-	        if (!this.getDatabase() && db) {
-	          this.setDatabase(db);
-	        }
-
-	        _lodash2['default'].merge(this, extend);
-	      }
-
-	      _inherits(GeneratedCollection, _Collection);
-
-	      return GeneratedCollection;
-	    })(_Collection3['default']);
-
-	    return GeneratedCollection;
-	  };
-	};
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
+	/* eslint-disable new-cap */
 
 	'use strict';
 
@@ -20971,477 +21110,292 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(11);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
-	// # Collection
+	// # Models
 	//
-	// A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
-	//
-	// ## Creating classes
-	//
-	// You can create a Collection class from your Database instance. And it requires minimum two properies, `table`, and `modelClass`:
-	//
-	// ```js
-	// var Posts = db.createCollectionClass({
-	//   table: 'posts',
-	//
-	//   modelClass: function () {
-	//     return Post;
-	//   }
-	// });
-	// ```
-	//
-	// There is also a short method for creating Collection class via `db.Collection()`.
-	//
-	// You can also create a Collection class like this:
-	//
-	// ```js
-	// var Posts = f.createCollectionClass({
-	//   db: db, // instance of your Database
-	//
-	//   table: 'posts',
-	//
-	//   // ...
-	// });
-	// ```
-	//
-	// If you are using ES6:
-	//
-	// ```js
-	// class Posts extends f.Collection {
-	//   constructor(extend = {}) {
-	//     super(extend);
-	//     this.setDatabase(db);
-	//   }
-	// }
-	// ```
+	// A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
 	//
 
-	var Collection = (function () {
-	  function Collection() {
-	    var extend = arguments[0] === undefined ? {} : arguments[0];
+	var Model = (function () {
 
-	    _classCallCheck(this, Collection);
+	  // ## Creating classes
+	  //
+	  // You can create a Model class as follows:
+	  //
+	  // ```js
+	  // var Post = f.createModelClass({
+	  //   // ...
+	  // });
+	  // ```
+	  //
+	  // If you are using ES6:
+	  //
+	  // ```js
+	  // import {Model} from 'firenze';
+	  //
+	  // class Post extends Model {
+	  //   constructor(attributes = {}, extend = {}) {
+	  //     super(attributes, extend);
+	  //   }
+	  // }
+	  // ```
+	  //
+
+	  function Model() {
+	    var attributes = arguments[0] === undefined ? {} : arguments[0];
+	    var extend = arguments[1] === undefined ? {} : arguments[1];
+
+	    _classCallCheck(this, Model);
 
 	    // ### Properties
 	    //
-	    // #### modelClass
+	    // #### attributes
 	    //
-	    // Every collection requires a Model for representing its records. This property can directly reference to the Model class, or it can be a function that returns the Model class.
+	    // Your model's data
 	    //
-	    this.modelClass = null;
+	    this.attributes = attributes ? attributes : {};
 
-	    // #### table
+	    // #### collection
 	    //
-	    // The name of the table that this Collection represents. Always as a string.
+	    // Reference to the instantiated Collection
 	    //
-	    this.table = null;
 
-	    // #### finders
+	    // #### id
 	    //
-	    // List of mapped finder methods that you want available in `.find(mappedName, options)`
+	    // For convenience, stores the ID of the model in this property
 	    //
-	    // By default these are set:
-	    //
-	    // ```js
-	    // {
-	    //   all: 'findAll',
-	    //   first: 'findFirst',
-	    //   count: 'findCount',
-	    //   list: 'findList'
-	    // }
-	    // ```
-	    //
-	    // This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
-	    //
-	    this.finders = {
-	      all: 'findAll',
-	      first: 'findFirst',
-	      count: 'findCount',
-	      list: 'findList'
-	    };
+	    this.id = null;
 
 	    _lodash2['default'].merge(this, extend);
+
+	    var id = this.get(this.collection.primaryKey);
+	    if (id) {
+	      this.id = id;
+	    }
+
+	    this.collection.callBehavedMethod(this, 'modelInitialize');
 	  }
 
-	  _createClass(Collection, [{
-	    key: 'model',
+	  _createClass(Model, [{
+	    key: 'get',
 
 	    // ## Usage
 	    //
-	    // Before using the Collection, you need to create an instance of it:
+	    // Ideally, you would be create a new Model instance via Collection:
 	    //
 	    // ```js
 	    // var posts = new Posts();
+	    // var post = posts.model({
+	    //   title: 'Hello World'
+	    // });
 	    // ```
 	    //
 
 	    // ## Methods
 	    //
-	    // ### model(attributes = {}, extend = {})
+	    // ### get(field)
 	    //
-	    // Get an instance of this Collection's model
+	    // Get the field of current model
 	    //
-	    value: function model() {
-	      var attributes = arguments[0] === undefined ? {} : arguments[0];
-	      var extend = arguments[1] === undefined ? {} : arguments[1];
+	    value: function get(field) {
+	      var obj = this.toObject();
+	      return _lodash2['default'].get(obj, field);
+	    }
+	  }, {
+	    key: 'set',
 
-	      if (!this.modelClass) {
-	        return new Error('Cannot find any modelClass');
+	    // ### set(field, value)
+	    //
+	    // Set an attribute with given value for the field
+	    //
+	    value: function set(field, value) {
+	      if (_lodash2['default'].isObject(field)) {
+	        return _lodash2['default'].merge(this.attributes, field);
 	      }
 
-	      var isInstance = function isInstance(i) {
-	        return !_lodash2['default'].isFunction(i) && _lodash2['default'].isObject(i.schema);
-	      };
-
-	      var M = this.modelClass;
-
-	      M = new M(attributes, extend);
-	      if (isInstance(M)) {
-	        return M;
-	      }
-
-	      M = new M(attributes, extend);
-	      if (isInstance(M)) {
-	        return M;
-	      }
-
-	      return new M(attributes, extend);
+	      return _lodash2['default'].set(this.attributes, field, value);
 	    }
 	  }, {
-	    key: 'getDatabase',
+	    key: 'toObject',
 
-	    // ### getDatabase()
+	    // ### toObject()
 	    //
-	    // Get in instance of the current Database
+	    // Returns a plain object of the model
 	    //
-	    value: function getDatabase() {
-	      return this.db;
+	    value: function toObject() {
+	      return this.attributes;
 	    }
 	  }, {
-	    key: 'getAdapter',
+	    key: 'toJSON',
 
-	    // ### getAdapter()
+	    // ### toJSON()
 	    //
-	    // Get adapter of the Collections' database
+	    // Alias of `.toObject()`.
 	    //
-	    value: function getAdapter() {
-	      return this.getDatabase().getAdapter();
+	    value: function toJSON() {
+	      return this.toObject();
 	    }
 	  }, {
-	    key: 'setDatabase',
+	    key: 'fetch',
 
-	    // ### setDatabase(db)
+	    // ### fetch(options = {})
 	    //
-	    // Change database instance of this Collection to `db`
+	    // Fetches the model again from the Database, and returns it with a promise.
 	    //
-	    value: function setDatabase(db) {
-	      this.db = db;
-	    }
-	  }, {
-	    key: 'query',
-
-	    // ### query(options = {})
+	    // A quick example:
 	    //
-	    // Get query object for this Collection
+	    // ```js
+	    // var post = posts.model({id: 1});
+	    // post.fetch().then(function (model) {
+	    //   var title = model.get('title');
+	    // });
+	    // ```
 	    //
-	    value: function query() {
-	      var options = arguments[0] === undefined ? {} : arguments[0];
-
-	      return this.getAdapter().query(this, options);
-	    }
-	  }, {
-	    key: 'find',
-
-	    // ### find(type, options = {})
+	    // Returns a promise.
 	    //
-	    // Explained above in `finders` section
-	    //
-	    value: function find() {
-	      var type = arguments[0] === undefined ? null : arguments[0];
-	      var options = arguments[1] === undefined ? {} : arguments[1];
-
-	      if (!type || !this.finders[type] || !_lodash2['default'].isFunction(this[this.finders[type]])) {
-	        throw new Error('Invalid find type');
-	      }
-
-	      return this[this.finders[type]](options);
-	    }
-	  }, {
-	    key: 'findAll',
-
-	    // ### findAll(options = {})
-	    //
-	    // Returns a promise with matched results.
-	    //
-	    // Same as `collection.find('all', options)`.
-	    //
-	    value: function findAll() {
+	    value: function fetch() {
 	      var _this = this;
 
 	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      var q = this.query(options);
-
-	      return new _Promise2['default'](function (resolve, reject) {
-	        return _this.getAdapter().read(q).then(function (results) {
-	          var models = [];
-	          _lodash2['default'].each(results, function (v) {
-	            models.push(_this.model(v));
-	          });
-	          return resolve(models);
-	        })['catch'](reject);
-	      });
-	    }
-	  }, {
-	    key: 'findFirst',
-
-	    // ### findFirst(options = {})
-	    //
-	    // Returns a promise with matched model if any.
-	    //
-	    // Same as `collection.find('first', options)`.
-	    //
-	    value: function findFirst() {
-	      var _this2 = this;
-
-	      var options = arguments[0] === undefined ? {} : arguments[0];
-
-	      var q = this.query(_lodash2['default'].merge(options, {
-	        limit: 1
-	      }));
-
-	      return new _Promise2['default'](function (resolve, reject) {
-	        return _this2.getAdapter().read(q).then(function (results) {
-	          if (results.length === 0) {
-	            return resolve(null);
-	          }
-
-	          return resolve(_this2.model(results[0]));
-	        })['catch'](reject);
-	      });
-	    }
-	  }, {
-	    key: 'findCount',
-
-	    // ### findCount(options = {})
-	    //
-	    // Returns a promise with count of matched results.
-	    //
-	    // Same as `collection.find('count', options)`.
-	    //
-	    value: function findCount() {
-	      var _this3 = this;
-
-	      var options = arguments[0] === undefined ? {} : arguments[0];
-
-	      var q = this.query(_lodash2['default'].merge(options, {
-	        count: true
-	      }));
-
-	      return new _Promise2['default'](function (resolve, reject) {
-	        return _this3.getAdapter().read(q).then(function (results) {
-	          if (results.length === 0) {
-	            return resolve(null);
-	          }
-
-	          var firstKey = _lodash2['default'].first(_lodash2['default'].keys(results[0]));
-	          var count = results[0][firstKey];
-
-	          return resolve(count);
-	        })['catch'](reject);
-	      });
-	    }
-	  }, {
-	    key: 'findList',
-
-	    // ### findList(options = {})
-	    //
-	    // Returns a promise with key/value pair of matched results.
-	    //
-	    // Same as `collection.find('list', options)`.
-	    //
-	    value: function findList() {
-	      var options = arguments[0] === undefined ? {} : arguments[0];
-
-	      var model = this.model();
-	      if (!_lodash2['default'].isArray(options.fields)) {
-	        options.fields = [model.primaryKey, model.displayField];
+	      var id = this.getId();
+	      if (!id) {
+	        throw new Error('No ID found');
 	      }
 
-	      var q = this.query(options);
-
+	      _lodash2['default'].merge(options, {
+	        conditions: _defineProperty({}, this.collection.alias + '.' + this.collection.primaryKey, id)
+	      });
 	      return new _Promise2['default'](function (resolve, reject) {
-	        return q.then(function (results) {
-	          var list = {};
-
-	          _lodash2['default'].each(results, function (v) {
-	            var listK = v[model.primaryKey];
-	            var listV = v[model.displayField];
-	            list[listK] = listV;
-	          });
-
-	          return resolve(list);
+	        return _this.collection.find('first', options).then(function (model) {
+	          resolve(model);
 	        })['catch'](reject);
 	      });
 	    }
 	  }, {
-	    key: 'findBy',
+	    key: 'getId',
 
-	    // ### findBy(field, value, options = {})
+	    // ### getId()
 	    //
-	    // Shortcut method for finding a single record.
+	    // Get the ID of model
 	    //
-	    // Same as:
-	    //
-	    // ```js
-	    // collection.find('first', {
-	    //   conditions: {
-	    //     field: value
-	    //   }
-	    // });
-	    // ```
-	    //
-	    // Returns a promise.
-	    //
-	    value: function findBy(field, value) {
-	      var options = arguments[2] === undefined ? {} : arguments[2];
+	    value: function getId() {
+	      var id = this.id || this.get(this.collection.primaryKey);
+	      if (!_lodash2['default'].isUndefined(id)) {
+	        return id;
+	      }
 
-	      return this.find('first', _lodash2['default'].merge({
-	        conditions: _defineProperty({}, field, value)
-	      }, options));
+	      return null;
 	    }
 	  }, {
-	    key: 'findById',
+	    key: 'isNew',
 
-	    // ### findById(value, options = {})
+	    // ### isNew()
 	    //
-	    // Shortcut method for finding record by ID.
+	    // Is the current model new? As in saved in Database, or yet to be saved?
 	    //
-	    // Same as:
-	    //
-	    // ```js
-	    // collection.find('first', {
-	    //   conditions: {
-	    //     id: value // `id` key comes from `model.primaryKey
-	    //   }
-	    // });
-	    // ```
-	    //
-	    // Returns a promise.
-	    //
-	    value: function findById(value) {
-	      var options = arguments[1] === undefined ? {} : arguments[1];
-
-	      return this.findBy(this.primaryKey, value, options);
-	    }
-	  }, {
-	    key: 'findByKey',
-
-	    // ### findByKey(value, options = {})
-	    //
-	    // Alias for `collection.findById()`.
-	    //
-	    // Returns a promise.
-	    //
-	    value: function findByKey(value) {
-	      var options = arguments[1] === undefined ? {} : arguments[1];
-
-	      return this.findById(value, options);
+	    value: function isNew() {
+	      return this.getId() ? false : true;
 	    }
 	  }, {
 	    key: 'save',
 
-	    // ### save(model, options = {})
+	    // ### save(options = {})
 	    //
-	    // Save the given model. This method is not usually called directly, but rather via `Model.save()`.
+	    // Save the current model, and returns a promise.
 	    //
-	    // Returns a promise with model instance.
+	    // Calls `Collection.save()`.
 	    //
-	    value: function save(model) {
-	      var _this4 = this;
+	    // Returns a promise.
+	    //
+	    value: function save() {
+	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      var options = arguments[1] === undefined ? {} : arguments[1];
+	      return this.collection.save(this, options);
+	    }
+	  }, {
+	    key: 'saveField',
 
-	      var obj = model.toObject();
-	      return new _Promise2['default'](function (resolve, reject) {
-	        var promise = null;
-	        var q = null;
-
-	        if (model.isNew()) {
-	          q = _this4.query({
-	            alias: false
-	          });
-	          promise = _this4.getAdapter().create(q, obj);
-	        } else {
-	          obj = _lodash2['default'].omit(obj, model.primaryKey);
-	          if (_lodash2['default'].isArray(options.fields)) {
-	            obj = _lodash2['default'].pick(obj, options.fields);
-	          }
-
-	          q = _this4.query({
-	            alias: false,
-	            conditions: _defineProperty({}, model.primaryKey, model.getId())
-	          });
-	          promise = _this4.getAdapter().update(q, obj);
-	        }
-
-	        promise.then(function (ids) {
-	          var id = null;
-	          if (_lodash2['default'].isArray(ids) && ids.length === 0 || !ids) {
-	            return resolve(id);
-	          } else if (_lodash2['default'].isArray(ids)) {
-	            id = ids[0];
-	          } else {
-	            id = ids;
-	          }
-
-	          return _this4.model({ id: id }).fetch().then(function (m) {
-	            resolve(m);
-	          })['catch'](function (error) {
-	            reject(error);
-	          });
-	        })['catch'](reject);
+	    // ### saveField(field, value)
+	    //
+	    // Save a particular field with value.
+	    //
+	    // Returns a promise.
+	    //
+	    value: function saveField(field, value) {
+	      this.set(field, value);
+	      return this.save({
+	        fields: [field]
 	      });
+	    }
+	  }, {
+	    key: 'clear',
+
+	    // ### clear()
+	    //
+	    // Clear the current instance of model of any data
+	    //
+	    value: function clear() {
+	      this.id = null;
+	      this.attributes = {};
 	    }
 	  }, {
 	    key: 'delete',
 
-	    // ### delete(model)
+	    // ### delete(options = {})
 	    //
-	    // Deletes the given model. Usually called via `Model.delete()`.
+	    // Delete the current model, and return a promise.
 	    //
-	    // Returns a promise.
+	    // Calls `Collection.delete()`
 	    //
-	    value: function _delete(model) {
-	      var _this5 = this;
+	    value: function _delete() {
+	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	      return new _Promise2['default'](function (resolve, reject) {
-	        if (model.isNew()) {
-	          var error = new Error('Cannot delete a model without ID');
-	          return reject(error);
-	        }
+	      return this.collection['delete'](this, options);
+	    }
+	  }, {
+	    key: 'validate',
 
-	        var q = _this5.query({
-	          alias: false,
-	          conditions: _defineProperty({}, model.primaryKey, model.getId())
-	        });
+	    // ### validate()
+	    //
+	    // Validates all fields of the current Model
+	    //
+	    // Calls `Collection.validate()`
+	    //
+	    value: function validate() {
+	      var options = arguments[0] === undefined ? {} : arguments[0];
 
-	        return _this5.getAdapter()['delete'](q).then(resolve)['catch'](reject);
-	      });
+	      return this.collection.validate(this, options);
+	    }
+	  }, {
+	    key: 'validateField',
+
+	    // ### validateField(field, value = null)
+	    //
+	    // Validates a single field
+	    //
+	    // Calls `Collection.validateField()`
+	    //
+	    // Returns a promise
+	    //
+	    value: function validateField(field) {
+	      var value = arguments[1] === undefined ? null : arguments[1];
+
+	      return this.collection.validateField(this, field, value);
 	    }
 	  }]);
 
-	  return Collection;
+	  return Model;
 	})();
 
-	exports['default'] = Collection;
+	exports['default'] = Model;
 	module.exports = exports['default'];
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21456,15 +21410,11 @@ this["firenze"] =
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var _lodash = __webpack_require__(2);
-
-	var _lodash2 = _interopRequireDefault(_lodash);
-
-	var _async = __webpack_require__(11);
+	var _async = __webpack_require__(7);
 
 	var _async2 = _interopRequireDefault(_async);
 
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(11);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
@@ -21528,17 +21478,13 @@ this["firenze"] =
 
 	    // ### closeConnection(cb = null)
 	    //
-	    // Closes the current connection, and calls the callback function `cb()` if passed.
+	    // Closes the current connection.
+	    //
+	    // Returns a promise.
 	    //
 	    value: function closeConnection() {
-	      var cb = arguments[0] === undefined ? null : arguments[0];
-
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
-	      }).then(function () {
-	        if (_lodash2['default'].isFunction(cb)) {
-	          return cb();
-	        }
 	      });
 	    }
 	  }, {
@@ -21610,11 +21556,11 @@ this["firenze"] =
 	  }, {
 	    key: 'dropTable',
 
-	    // ### dropTable(model)
+	    // ### dropTable(collection)
 	    //
 	    // Drop table if exists
 	    //
-	    value: function dropTable(model) {
+	    value: function dropTable(collection) {
 	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
@@ -21623,11 +21569,11 @@ this["firenze"] =
 	  }, {
 	    key: 'createTable',
 
-	    // ### createTable(model)
+	    // ### createTable(collection)
 	    //
-	    // Create table based on model's schema
+	    // Create table based on collection's schema
 	    //
-	    value: function createTable(model) {
+	    value: function createTable(collection) {
 	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
@@ -21636,11 +21582,11 @@ this["firenze"] =
 	  }, {
 	    key: 'populateTable',
 
-	    // ### populateTable(model, rows)
+	    // ### populateTable(collection, rows)
 	    //
-	    // Insert rows into model's table
+	    // Insert rows into collection's table
 	    //
-	    value: function populateTable(model, rows) {
+	    value: function populateTable(collection, rows) {
 	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
@@ -21649,29 +21595,29 @@ this["firenze"] =
 	  }, {
 	    key: 'loadFixture',
 
-	    // ### loadFixture(model, rows)
+	    // ### loadFixture(collection, rows)
 	    //
-	    // Creates table, and loads data for given model
+	    // Creates table, and loads data for given collection
 	    //
-	    value: function loadFixture(model, rows) {
+	    value: function loadFixture(collection, rows) {
 	      var _this = this;
 
 	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve, reject) {
 	        _async2['default'].series([function (callback) {
-	          _this.dropTable(model).then(function (response) {
+	          _this.dropTable(collection).then(function (response) {
 	            callback(null, response);
 	          })['catch'](function (error) {
 	            callback(error);
 	          });
 	        }, function (callback) {
-	          _this.createTable(model).then(function (response) {
+	          _this.createTable(collection).then(function (response) {
 	            callback(null, response);
 	          })['catch'](function (error) {
 	            callback(error);
 	          });
 	        }, function (callback) {
-	          _this.populateTable(model, rows).then(function (response) {
+	          _this.populateTable(collection, rows).then(function (response) {
 	            callback(null, response);
 	          })['catch'](function (error) {
 	            callback(error);
@@ -21690,9 +21636,9 @@ this["firenze"] =
 
 	    // ### loadAllFixtures(arr)
 	    //
-	    // Runs fixtures for multiple models
+	    // Runs fixtures for multiple collections
 	    //
-	    // arr = [{model: post, rows: rows}]
+	    // arr = [{collection: post, rows: rows}]
 	    //
 	    value: function loadAllFixtures(arr) {
 	      var _this2 = this;
@@ -21700,7 +21646,7 @@ this["firenze"] =
 	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve, reject) {
 	        _async2['default'].map(arr, function (fixture, callback) {
-	          _this2.loadFixture(fixture.model, fixture.rows).then(function (results) {
+	          _this2.loadFixture(fixture.collection, fixture.rows).then(function (results) {
 	            callback(null, results);
 	          })['catch'](function (error) {
 	            callback(error);
@@ -21724,7 +21670,7 @@ this["firenze"] =
 	//eslint-disable-line
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21743,22 +21689,18 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _async = __webpack_require__(11);
-
-	var _async2 = _interopRequireDefault(_async);
-
-	var _Promise = __webpack_require__(6);
+	var _Promise = __webpack_require__(11);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
 	// # Behavior
 	//
-	// Behaviors allow you to hook into your Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Models.
+	// Behaviors allow you to hook into your Collections and Models and make them behave in a certain way. This allows for more re-usability in your code, since you can put common operations at Behavior level, and can then just assign the single Behavior to multiple Collections/Models.
 	//
 	// ## Usage
 	//
 	// ```js
-	// var Post = db.createModelClass({
+	// var Posts = db.createCollectionClass({
 	//   behaviors: [
 	//     TimestampBehavior,
 	//     AnotherBehavior
@@ -21769,10 +21711,10 @@ this["firenze"] =
 	// With custom configuration:
 	//
 	// ```js
-	// var Post = db.createModelClass({
+	// var Posts = db.createCollectionClass({
 	//   behaviors: [
 	//     {
-	//       class: TimestampBehavior,
+	//       'class': TimestampBehavior,
 	//       options: {
 	//         timezone: 'UTC'
 	//       }
@@ -21788,8 +21730,8 @@ this["firenze"] =
 	// var f = require('firenze');
 	//
 	// var TimestampBehavior = f.createBehaviorClass({
-	//   beforeSave: function () {
-	//     this.model.set('created', new Date());
+	//   beforeSave: function (model) {
+	//     model.set('created', new Date());
 	//     return new f.Promise(true);
 	//   }
 	// });
@@ -21798,12 +21740,12 @@ this["firenze"] =
 	// If you are using ES6, the syntax is much simpler:
 	//
 	// ```js
-	// import f from 'firenze';
+	// import {Behavior, Promise} from 'firenze';
 	//
-	// class TimestampBehavior extends f.Behavior {
-	//   beforeSave() {
-	//     this.model.set('created', new Date());
-	//     return new f.Promise(true);
+	// class TimestampBehavior extends Behavior {
+	//   beforeSave(model) {
+	//     model.set('created', new Date());
+	//     return new Promise(true);
 	//   }
 	// }
 	// ```
@@ -21817,11 +21759,11 @@ this["firenze"] =
 
 	    // ## Properties
 	    //
-	    // ### model
+	    // ### collection
 	    //
-	    // The current instance of model
+	    // The current instance of collection
 	    //
-	    this.model = null;
+	    this.collection = null;
 
 	    // ### options
 	    //
@@ -21830,16 +21772,10 @@ this["firenze"] =
 	    this.options = {};
 
 	    _lodash2['default'].merge(this, extend);
-
-	    // ### name
-	    //
-	    // Optionally give your behavior a unique name, which would allow you to later enable/disable them.
-	    //
-	    this.name = 'CustomBehavior';
 	  }
 
 	  _createClass(Behavior, [{
-	    key: 'initialize',
+	    key: 'collectionInitialize',
 
 	    // ## Callback methods
 	    //
@@ -21847,21 +21783,31 @@ this["firenze"] =
 	    //
 	    // The following callbacks are supported:
 	    //
-	    // ### initialize()
+	    // ### collectionInitialize(collection)
+	    //
+	    // Called right after collection's construction, synchronous operations only.
+	    //
+	    value: function collectionInitialize(model) {}
+	  }, {
+	    key: 'modelInitialize',
+
+	    //
+	    // ### modelInitialize(model)
 	    //
 	    // Called right after model's construction, synchronous operations only.
 	    //
-	    value: function initialize() {}
+	    value: function modelInitialize(model) {}
 	  }, {
 	    key: 'beforeSave',
 
-	    // ### beforeSave()
+	    // ### beforeSave(model)
 	    //
 	    // Called before saving the model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function beforeSave() {
+	    value: function beforeSave(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21869,13 +21815,14 @@ this["firenze"] =
 	  }, {
 	    key: 'afterSave',
 
-	    // ### afterSave()
+	    // ### afterSave(model)
 	    //
 	    // Called after saving the model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function afterSave() {
+	    value: function afterSave(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21883,13 +21830,14 @@ this["firenze"] =
 	  }, {
 	    key: 'beforeValidate',
 
-	    // ### beforeValidate()
+	    // ### beforeValidate(model)
 	    //
 	    // Called before validating a model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function beforeValidate() {
+	    value: function beforeValidate(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21897,13 +21845,14 @@ this["firenze"] =
 	  }, {
 	    key: 'afterValidate',
 
-	    // ### afterValidate()
+	    // ### afterValidate(model)
 	    //
 	    // Called after validating a model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function afterValidate() {
+	    value: function afterValidate(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21911,13 +21860,14 @@ this["firenze"] =
 	  }, {
 	    key: 'beforeDelete',
 
-	    // ### beforeDelete()
+	    // ### beforeDelete(model)
 	    //
 	    // Called before deleting a model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function beforeDelete() {
+	    value: function beforeDelete(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21925,13 +21875,14 @@ this["firenze"] =
 	  }, {
 	    key: 'afterDelete',
 
-	    // ### afterDelete()
+	    // ### afterDelete(model)
 	    //
 	    // Called after deleting a model.
 	    //
 	    // Returns a promise.
 	    //
-	    value: function afterDelete() {
+	    value: function afterDelete(model) {
+	      //eslint-disable-line
 	      return new _Promise2['default'](function (resolve) {
 	        return resolve();
 	      });
@@ -21943,6 +21894,54 @@ this["firenze"] =
 
 	exports['default'] = Behavior;
 	module.exports = exports['default'];
+	//eslint-disable-line
+
+	//eslint-disable-line
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _get = function get(_x3, _x4, _x5) { var _again = true; _function: while (_again) { var object = _x3, property = _x4, receiver = _x5; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x3 = parent; _x4 = property; _x5 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+	var _lodash = __webpack_require__(2);
+
+	var _lodash2 = _interopRequireDefault(_lodash);
+
+	var _Model2 = __webpack_require__(13);
+
+	var _Model3 = _interopRequireDefault(_Model2);
+
+	module.exports = function () {
+	  return function (extend) {
+	    var GeneratedModel = (function (_Model) {
+	      function GeneratedModel() {
+	        var attributes = arguments[0] === undefined ? {} : arguments[0];
+
+	        var _extend = arguments[1] === undefined ? {} : arguments[1];
+
+	        _classCallCheck(this, GeneratedModel);
+
+	        _get(Object.getPrototypeOf(GeneratedModel.prototype), 'constructor', this).call(this, attributes, _extend);
+	        _lodash2['default'].merge(this, extend);
+	      }
+
+	      _inherits(GeneratedModel, _Model);
+
+	      return GeneratedModel;
+	    })(_Model3['default']);
+
+	    return GeneratedModel;
+	  };
+	};
 
 /***/ },
 /* 17 */
@@ -21962,7 +21961,7 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Behavior2 = __webpack_require__(16);
+	var _Behavior2 = __webpack_require__(15);
 
 	var _Behavior3 = _interopRequireDefault(_Behavior2);
 
