@@ -1340,7 +1340,7 @@ this["firenze"] =
 
 	          q = _this9.query({
 	            alias: false,
-	            conditions: _defineProperty({}, model.primaryKey, model.getId())
+	            conditions: _defineProperty({}, _this9.primaryKey, model.getId())
 	          });
 	          promise = _this9.getAdapter().update(q, obj);
 	        }

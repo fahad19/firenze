@@ -977,7 +977,7 @@ export default class Collection {
         q = this.query({
           alias: false,
           conditions: {
-            [model.primaryKey]: model.getId()
+            [this.primaryKey]: model.getId()
           }
         });
         promise = this
