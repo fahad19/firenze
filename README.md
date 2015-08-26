@@ -40,6 +40,7 @@ The project is still in heavy development, and more features are expected to lan
 #### Available behaviors
 
 * [Slug](https://github.com/fahad19/firenze-behavior-slug)
+* [Timestamp](https://github.com/fahad19/firenze-behavior-timestamp)
 
 #### Terminologies
 
