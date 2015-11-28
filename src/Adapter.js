@@ -1,6 +1,9 @@
 import async from 'async';
 import P from './Promise';
 
+import Query from './Query';
+import Schema from './Schema';
+
 // # Adapter
 //
 // Adapter is responsible for making the actual database operations.
@@ -65,81 +68,31 @@ export default class Adapter {
 
 // ### query()
 //
+// Gets a new query object
+//
+  query() { //eslint-disable-line
+    return new Query(this);
+  }
+
+// ### schema()
+//
 // Gets a query object
 //
-  query(options = {}) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### create(q, obj)
-//
-// Creates a new record
-//
-  create(q, obj) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### read(q)
-//
-// Fetches the results found against the query object
-//
-  read(q) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### update(q, obj)
-//
-// Updates the records matching againt query object with given data
-//
-  update(q, obj) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### delete(q)
-//
-// Deletes the records matching against query object
-//
-  delete(q) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### dropTable(collection)
-//
-// Drop table if exists
-//
-  dropTable(collection) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
-  }
-
-// ### createTable(collection)
-//
-// Create table based on collection's schema
-//
-  createTable(collection) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
-    });
+  schema() {
+    return new Schema(this);
   }
 
 // ### populateTable(collection, rows)
 //
 // Insert rows into collection's table
 //
-  populateTable(collection, rows) { //eslint-disable-line
-    return new P(function (resolve) {
-      return resolve();
+  populateTable(collection, rows) {
+    return new P((resolve, reject) => {
+      this.query()
+        .table(collection.table)
+        .create(rows)
+        .then(resolve)
+        .catch(reject);
     });
   }
 
@@ -151,7 +104,7 @@ export default class Adapter {
     return new P((resolve, reject) => {
       async.series([
         (callback) => {
-          this.dropTable(collection)
+          this.schema().dropTable(collection)
             .then(function (response) {
               callback(null, response);
             })
@@ -160,7 +113,7 @@ export default class Adapter {
             });
         },
         (callback) => {
-          this.createTable(collection)
+          this.schema().createTable(collection)
             .then(function (response) {
               callback(null, response);
             })
@@ -191,7 +144,7 @@ export default class Adapter {
 //
 // Runs fixtures for multiple collections
 //
-// arr = [{collection: post, rows: rows}]
+// arr = [{collection: posts, rows: rows}]
 //
   loadAllFixtures(arr) { //eslint-disable-line
     return new P((resolve, reject) => {
@@ -209,6 +162,5 @@ export default class Adapter {
         return resolve(results);
       });
     });
-
   }
 }

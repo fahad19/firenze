@@ -11,7 +11,7 @@ module.exports = function (db) {
 
     alias: 'City',
 
-    displayField: 'title',
+    displayField: 'name',
 
     schema: {
       id: {

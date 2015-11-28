@@ -128,21 +128,17 @@ export default class Model {
 //
 // Returns a promise.
 //
-  fetch(options = {}) {
+  fetch() {
     let id = this.getId();
     if (!id) {
       throw new Error('No ID found');
     }
 
-    _.merge(options, {
-      conditions: {
-        [this.collection.alias + '.' + this.collection.primaryKey]: id
-      }
-    });
     return new P((resolve, reject) => {
-      return this.collection.find('first', options).then(function (model) {
-        resolve(model);
-      }).catch(reject);
+      return this.collection.findById(id)
+        .then(function (model) {
+          resolve(model);
+        }).catch(reject);
     });
   }
 

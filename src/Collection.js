@@ -163,30 +163,6 @@ export default class Collection {
 //
     this.loadedBehaviors = [];
 
-// #### finders
-//
-// List of mapped finder methods that you want available in `.find(mappedName, options)`
-//
-// By default these are set:
-//
-// ```js
-// {
-//   all: 'findAll',
-//   first: 'findFirst',
-//   count: 'findCount',
-//   list: 'findList'
-// }
-// ```
-//
-// This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
-//
-    this.finders = {
-      all: 'findAll',
-      first: 'findFirst',
-      count: 'findCount',
-      list: 'findList'
-    };
-
     _.merge(this, extend);
 
 // #### alias
@@ -456,14 +432,6 @@ export default class Collection {
     return this.db;
   }
 
-// ### getAdapter()
-//
-// Get adapter of the Collection's database
-//
-  getAdapter() {
-    return this.getDatabase().getAdapter();
-  }
-
 // ### setDatabase(db)
 //
 // Change database instance of this Collection to `db`
@@ -472,188 +440,76 @@ export default class Collection {
     this.db = db;
   }
 
-// ### query(options = {})
+// ### getAdapter()
 //
-// Get query object for this Collection
+// Get adapter of the Collection's database
 //
-  query(options = {}) {
-    return this.getAdapter().query(this, options);
+  getAdapter() {
+    return this.getDatabase().getAdapter();
   }
 
-// ### find(type, options = {})
+// ### query()
 //
-// Explained above in `finders` section
+// Get a new query builder for this Collection's table
 //
-  find(type = null, options = {}) {
-    if (!type || !this.finders[type] || !_.isFunction(this[this.finders[type]])) {
-      throw new Error('Invalid find type');
-    }
-
-    return this[this.finders[type]](options);
+  query() {
+    return this.getAdapter.query().table(this.table);
   }
 
-// ### findAll(options = {})
+// ### find()
 //
-// Returns a promise with matched results.
+// Returns query builder for fetching records of this Collection
 //
-// Same as `collection.find('all', options)`.
-//
-  findAll(options = {}) {
-    let q = this.query(options);
-
-    return new P((resolve, reject) => {
-      return this
-        .getAdapter()
-        .read(q)
-        .then((results) => {
-          let models = [];
-          _.each(results, (v) => {
-            models.push(this.model(v));
-          });
-          return resolve(models);
-        })
-        .catch(reject);
-    });
+  find() {
+    return this.query().from(this.table, this.alias);
   }
 
-// ### findFirst(options = {})
+// ### findBy(field, value)
 //
-// Returns a promise with matched model if any.
-//
-// Same as `collection.find('first', options)`.
-//
-  findFirst(options = {}) {
-    let q = this.query(_.merge(options, {
-      limit: 1
-    }));
-
-    return new P((resolve, reject) => {
-      return this
-        .getAdapter()
-        .read(q)
-        .then((results) => {
-          if (results.length === 0) {
-            return resolve(null);
-          }
-
-          return resolve(this.model(results[0]));
-        })
-        .catch(reject);
-    });
-  }
-
-// ### findCount(options = {})
-//
-// Returns a promise with count of matched results.
-//
-// Same as `collection.find('count', options)`.
-//
-  findCount(options = {}) {
-    let q = this.query(_.merge(options, {
-      count: true
-    }));
-
-    return new P((resolve, reject) => {
-      return this
-        .getAdapter()
-        .read(q)
-        .then(function (results) {
-          if (results.length === 0) {
-            return resolve(null);
-          }
-
-          let firstKey = _.first(_.keys(results[0]));
-          let count = results[0][firstKey];
-
-          return resolve(count);
-        })
-        .catch(reject);
-    });
-  }
-
-// ### findList(options = {})
-//
-// Returns a promise with key/value pair of matched results.
-//
-// Same as `collection.find('list', options)`.
-//
-  findList(options = {}) {
-    if (!_.isArray(options.fields)) {
-      options.fields = [
-        this.primaryKey,
-        this.displayField
-      ];
-    }
-
-    let q = this.query(options);
-
-    return new P((resolve, reject) => {
-      return q.then((results) => {
-        let list = {};
-
-        _.each(results, (v) => {
-          let listK = v[this.primaryKey];
-          let listV = v[this.displayField];
-          list[listK] = listV;
-        });
-
-        return resolve(list);
-      }).catch(reject);
-    });
-  }
-
-// ### findBy(field, value, options = {})
-//
-// Shortcut method for finding a single record.
-//
-// Same as:
-//
-// ```js
-// collection.find('first', {
-//   conditions: {
-//     field: value
-//   }
-// });
-// ```
+// Shortcut method for finding single record that matches a field's value.
 //
 // Returns a promise.
 //
-  findBy(field, value, options = {}) {
-    return this.find('first', _.merge({
-      conditions: {
+  findBy(field, value) {
+    return this.find()
+      .where({
         [field]: value
-      }
-    }, options));
+      })
+      .first();
   }
 
-// ### findById(value, options = {})
+// ### findAllBy(field, value)
 //
-// Shortcut method for finding record by ID.
-//
-// Same as:
-//
-// ```js
-// collection.find('first', {
-//   conditions: {
-//     id: value // `id` key comes from `model.primaryKey
-//   }
-// });
-// ```
+// Shortcut method for finding all records that matche a field's value.
 //
 // Returns a promise.
 //
-  findById(value, options = {}) {
-    return this.findBy(this.primaryKey, value, options);
+  findAllBy(field, value) {
+    return this.find()
+      .where({
+        [field]: value
+      })
+      .all();
   }
 
-// ### findByKey(value, options = {})
+// ### findById(value)
+//
+// Shortcut method for finding a record by its ID.
+//
+// Returns a promise.
+//
+  findById(value) {
+    return this.findBy(this.primaryKey, value);
+  }
+
+// ### findByKey(value)
 //
 // Alias for `collection.findById()`.
 //
 // Returns a promise.
 //
-  findByKey(value, options = {}) {
-    return this.findById(value, options);
+  findByKey(value) {
+    return this.findById(value);
   }
 
 // ### validate()
@@ -964,25 +820,19 @@ export default class Collection {
       let q = null;
 
       if (model.isNew()) {
-        q = this.query({
-          alias: false
-        });
-        promise = this.getAdapter().create(q, obj);
+        promise = this.query()
+          .create(obj);
       } else {
         obj = _.omit(obj, model.primaryKey);
         if (_.isArray(options.fields)) {
           obj = _.pick(obj, options.fields);
         }
 
-        q = this.query({
-          alias: false,
-          conditions: {
+        promise = this.query()
+          .where({
             [this.primaryKey]: model.getId()
-          }
-        });
-        promise = this
-          .getAdapter()
-          .update(q, obj);
+          })
+          .update(obj);
       }
 
       promise.then((ids) => {
@@ -1004,7 +854,7 @@ export default class Collection {
     });
   }
 
-// ### delete(model)
+// ### delete(model, options = {})
 //
 // Deletes the given model. Usually called via `Model.delete()`.
 //
@@ -1070,16 +920,12 @@ export default class Collection {
         return reject(error);
       }
 
-      let q = this.query({
-        alias: false,
-        conditions: {
+      this.query()
+        .delete()
+        .where({
           [this.primaryKey]: model.getId()
-        }
-      });
-
-      return this
-        .getAdapter()
-        .delete(q)
+        })
+        .run()
         .then(resolve)
         .catch(reject);
     });

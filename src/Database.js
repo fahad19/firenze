@@ -60,6 +60,22 @@ export default class Database {
     return this.adapter;
   }
 
+// ### query()
+//
+// Returns query builder of the Adapter
+//
+  query() {
+    return this.adapter.query();
+  }
+
+// ### schema()
+//
+// Returns schema object
+//
+  schema() {
+    return this.adapter.schema();
+  }
+
 // ### getConnection()
 //
 // Returns connection of the Adapter

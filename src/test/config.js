@@ -1,5 +1,5 @@
-var MemoryAdapter = require('./adapters/Memory');
+var Memory = require('../adapters/Memory');
 
 module.exports = {
-  adapter: MemoryAdapter
+  adapter: Memory
 };
