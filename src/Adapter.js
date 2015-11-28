@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import async from 'async';
 import P from './Promise';
 
@@ -38,8 +39,10 @@ export default class Adapter {
 // });
 // ```
 //
-  constructor(options = {}) { //eslint-disable-line
+  constructor(extend = {}) { //eslint-disable-line
+    this.queryClass = Query;
 
+    _.merge(this, extend);
   }
 
 // ## Methods
@@ -71,7 +74,7 @@ export default class Adapter {
 // Gets a new query object
 //
   query() { //eslint-disable-line
-    return new Query(this);
+    return new this.queryClass(this);
   }
 
 // ### schema()
@@ -91,6 +94,7 @@ export default class Adapter {
       this.query()
         .table(collection.table)
         .create(rows)
+        .run()
         .then(resolve)
         .catch(reject);
     });

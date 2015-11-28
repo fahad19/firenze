@@ -4,6 +4,9 @@ import _ from 'lodash';
 import f from '../../';
 import async from 'async';
 
+import Query from './Query';
+import Schema from './Schema';
+
 let P = f.Promise;
 let Adapter = f.Adapter;
 
@@ -59,6 +62,12 @@ let Adapter = f.Adapter;
 //
 export default class MemoryAdapter extends Adapter {
   constructor(options) {
+    options = {
+      queryClass: Query,
+      schemaClass: Schema,
+      ...options
+    };
+
     super(options);
 
     this.options = options;
@@ -73,39 +82,8 @@ export default class MemoryAdapter extends Adapter {
     return new P.resolve(true);
   }
 
-  dropTable(collection) {
-    this.data = _.omit(this.data, collection.table);
-    return new P.resolve(true);
-  }
-
-  createTable(collection) {
-    this.data[collection.table] = [];
-    return new P.resolve(true);
-  }
-
   populateTable(collection, rows) {
     this.data[collection.table] = _.clone(rows);
     return new P.resolve(true);
-  }
-
-  query(collection, options = {}) {
-    let opt = _.merge(options, {
-      table: collection.table,
-      alias: collection.alias,
-      primaryKey: collection.primaryKey
-    });
-
-    let promise = new P((resolve, reject) => {
-      return this
-        .findRecords(opt)
-        .then((results) => {
-          return resolve(results);
-        })
-        .catch((error) => {
-          return reject(error);
-        });
-    });
-
-    return _.merge(promise, opt);
   }
 }

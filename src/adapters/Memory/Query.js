@@ -1,5 +1,5 @@
-import Query from '../../../Query';
+import Query from '../../Query';
 
-export class MemoryQuery extends Query {
+export default class MemoryQuery extends Query {
 
 }

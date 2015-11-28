@@ -1,3 +1,5 @@
+import P from 'bluebird';
+
 // # Query
 //
 // The query builder.
@@ -8,8 +10,8 @@
 // db.query()
 //   .select('id', 'title')
 //   .from('posts', 'Post')
-//   .where(function (query) {
-//
+//   .where({
+//     id: 1
 //   })
 //   .offset(0)
 //   .limit(10)
@@ -24,73 +26,37 @@ export default class Query {
     this.adapter = adapter;
   }
 
-  select(fields) {
-    return this;
-  }
+  select(fields) { return this; }
 
-  from() {
-    return this;
-  }
+  from() { return this; }
 
-  where() {
-    return this;
-  }
+  where() { return this; }
 
-  andWhere() {
-    return this;
-  }
+  andWhere() { return this; }
 
-  orWhere() {
-    return this;
-  }
+  orWhere() { return this; }
 
-  groupBy() {
-    return this;
-  }
+  groupBy() { return this; }
 
-  orderBy() {
-    return this;
-  }
+  orderBy() { return this; }
 
-  offset() {
-    return this;
-  }
+  offset() { return this; }
 
-  limit() {
-    return this;
-  }
+  limit() { return this; }
 
-  create() {
-    return this;
-  }
+  create() { return this; }
 
-  update() {
-    return this;
-  }
+  update() { return this; }
 
-  delete() {
-    return this;
-  }
+  delete() { return this; }
 
-  table() {
-    return this;
-  }
+  table() { return this; }
 
-  expr() {
-    return this;
-  }
+  expr() { return this; }
 
-  all() { }
+  all() { return new P.resolve(true); }
 
-  first() { }
+  first() { return new P.resolve(true); }
 
-  run() { }
-
-  then() {
-
-  }
-
-  catch() {
-
-  }
+  run() { return new P.resolve(true); }
 }
