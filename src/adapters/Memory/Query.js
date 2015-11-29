@@ -38,11 +38,23 @@ export default class MemoryQuery extends Query {
 
   groupBy() { return this; }
 
-  orderBy() { return this; }
+  orderBy(orderBy) {
+    this._orderBy = orderBy;
 
-  offset() { return this; }
+    return this;
+  }
 
-  limit() { return this; }
+  offset(offset) {
+    this._offset = offset;
+
+    return this;
+  }
+
+  limit(limit) {
+    this._limit = limit;
+
+    return this;
+  }
 
   create(row) {
     this._create = _.isArray(row) ? row : [row];
@@ -50,7 +62,11 @@ export default class MemoryQuery extends Query {
     return this;
   }
 
-  update() { return this; }
+  update(row) {
+    this._update = _.isArray(row) ? row : [row];
+
+    return this;
+  }
 
   delete() {
     this._delete = true;
@@ -63,8 +79,6 @@ export default class MemoryQuery extends Query {
 
     return this;
   }
-
-  expr() { return this; }
 
   count() {
     this._count = true;
@@ -184,6 +198,24 @@ export default class MemoryQuery extends Query {
         }
 
         return _.filter(data, _.matches(this._where));
+      })
+      .thru((data) => {
+        // ordering
+        if (!this._orderBy) {
+          return data;
+        }
+
+        return _.sortByOrder(data, _.keys(this._orderBy), _.values(this._orderBy));
+      })
+      .thru((data) => {
+        // offset and limit
+        if (this._offset && this._limit) {
+          data = data.slice(this._offset, this._limit + 1);
+        } else if (this._limit) {
+          data = data.slice(0, this._limit);
+        }
+
+        return data;
       })
       .thru((data) => {
         // all or first
