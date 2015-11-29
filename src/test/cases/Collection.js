@@ -83,7 +83,7 @@ describe('Collection', function () {
     var posts = new this.Posts();
     posts.find()
       .count()
-      .all()
+      .run()
       .then(function (count) {
         count.should.equal(3);
         done();

@@ -7,7 +7,7 @@
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src",
-    "mocha": "mocha --compilers js:babel/register $(find src/test/cases -name 'Adapter.js')",
+    "mocha": "mocha --compilers js:babel/register $(find src/test/cases -name 'Query.js')",
     "test": "run-scripts lint babel mocha",
     "doctoc": "doctoc README.md --github --title '# Contents'",
     "docume": "docume README.md",

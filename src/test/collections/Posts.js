@@ -32,6 +32,12 @@ module.exports = function (db) {
       },
       note: {
         type: 'string'
+      },
+      created: {
+        type: 'datetime'
+      },
+      updated: {
+        type: 'datetime'
       }
     },
 

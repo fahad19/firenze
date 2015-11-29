@@ -50,7 +50,6 @@ export default class Query {
 
   setCollection(collection) {
     this.collection = collection;
-    this.table(this.collection.table);
 
     return this;
   }
