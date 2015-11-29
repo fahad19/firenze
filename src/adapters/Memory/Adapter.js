@@ -74,16 +74,19 @@ export default class MemoryAdapter extends Adapter {
     this.data = {};
   }
 
+  getData(path = null) {
+    if (!path) {
+      return this.data;
+    }
+
+    return _.get(this.data, path);
+  }
+
+  setData(path = null, value = null) {
+    return _.set(this.data, path, value);
+  }
+
   getConnection() {
     return this.data;
-  }
-
-  closeConnection() {
-    return new P.resolve(true);
-  }
-
-  populateTable(collection, rows) {
-    this.data[collection.table] = _.clone(rows);
-    return new P.resolve(true);
   }
 }

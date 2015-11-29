@@ -41,6 +41,7 @@ export default class Adapter {
 //
   constructor(extend = {}) { //eslint-disable-line
     this.queryClass = Query;
+    this.schemaClass = Schema;
 
     _.merge(this, extend);
   }
@@ -73,8 +74,11 @@ export default class Adapter {
 //
 // Gets a new query object
 //
-  query() { //eslint-disable-line
-    return new this.queryClass(this);
+  query(options = {}) {
+    return new this.queryClass({
+      ...options,
+      adapter: this
+    });
   }
 
 // ### schema()
@@ -82,7 +86,7 @@ export default class Adapter {
 // Gets a query object
 //
   schema() {
-    return new Schema(this);
+    return new this.schemaClass(this);
   }
 
 // ### populateTable(collection, rows)

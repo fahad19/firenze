@@ -452,8 +452,11 @@ export default class Collection {
 //
 // Get a new query builder for this Collection's table
 //
-  query() {
-    return this.getAdapter.query().table(this.table);
+  query(options = {}) {
+    return this.getAdapter().query({
+      ...options,
+      collection: this
+    });
   }
 
 // ### find()
@@ -461,7 +464,8 @@ export default class Collection {
 // Returns query builder for fetching records of this Collection
 //
   find() {
-    return this.query().from(this.table, this.alias);
+    return this.query()
+      .from(this.table, this.alias);
   }
 
 // ### findBy(field, value)
@@ -816,11 +820,10 @@ export default class Collection {
   _save(model, options = {}) {
     let obj = model.toObject();
     return new P((resolve, reject) => {
-      let promise = null;
       let q = null;
 
       if (model.isNew()) {
-        promise = this.query()
+        q = this.query()
           .create(obj);
       } else {
         obj = _.omit(obj, model.primaryKey);
@@ -828,14 +831,14 @@ export default class Collection {
           obj = _.pick(obj, options.fields);
         }
 
-        promise = this.query()
+        q = this.query()
           .where({
             [this.primaryKey]: model.getId()
           })
           .update(obj);
       }
 
-      promise.then((ids) => {
+      q.run().then((ids) => {
         let id = null;
         if ((_.isArray(ids) && ids.length === 0) || !ids) {
           return resolve(id);

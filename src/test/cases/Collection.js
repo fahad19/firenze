@@ -50,56 +50,46 @@ describe('Collection', function () {
 
   it('should find all results', function (done) {
     var posts = new this.Posts();
-    posts.find('all').then(function (models) {
-      models.should.be.instanceOf(Array);
-      models.should.have.lengthOf(3);
+    posts.find()
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(3);
 
-      var firstPost = models[0];
-      firstPost.should.have.property('attributes');
-      firstPost.attributes.title.should.be.exactly('Hello World');
+        var firstPost = models[0];
+        firstPost.should.have.property('attributes');
+        firstPost.attributes.title.should.be.exactly('Hello World');
 
-      done();
-    }).catch(function (error) {
-      throw error;
-    });
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
   });
 
   it('should find single result', function (done) {
     var posts = new this.Posts();
-    posts.find('first', {
-      conditions: {
-        id: 1
-      }
-    }).then(function (post) {
-      post.get('title').should.equal('Hello World');
-      done();
-    }).catch(function (error) {
-      throw error;
-    });
-  });
-
-  it('should find list', function (done) {
-    var posts = new this.Posts();
-    posts.find('list').then(function (list) {
-      list.should.eql({
-        1: 'Hello World',
-        2: 'About',
-        3: 'Contact'
+    posts.find()
+      .where({id: 1})
+      .first()
+      .then(function (post) {
+        post.get('title').should.equal('Hello World');
+        done();
+      }).catch(function (error) {
+        throw error;
       });
-      done();
-    }).catch(function (error) {
-      throw error;
-    });
   });
 
   it('should find count of results', function (done) {
     var posts = new this.Posts();
-    posts.find('count').then(function (count) {
-      count.should.equal(3);
-      done();
-    }).catch(function(error) {
-      throw error;
-    });
+    posts.find()
+      .count()
+      .all()
+      .then(function (count) {
+        count.should.equal(3);
+        done();
+      }).catch(function(error) {
+        throw error;
+      });
   });
 
   it('should find single result by primaryKey', function (done) {

@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import P from 'bluebird';
 
 // # Query
@@ -22,13 +23,41 @@ import P from 'bluebird';
 // ```
 //
 export default class Query {
-  constructor(adapter) {
+  constructor(options = {}) {
+    this.adapter = null;
+    this.collection = null;
+
+    if (options.adapter) {
+      this.setAdapter(options.adapter);
+    }
+
+    if (options.collection) {
+      this.setCollection(options.collection);
+    }
+
+    this.options = _.omit(options, 'adapter', 'collection');
+  }
+
+  setAdapter(adapter) {
     this.adapter = adapter;
+
+    return this;
+  }
+
+  getAdapter() {
+    return this.adapter;
+  }
+
+  setCollection(collection) {
+    this.collection = collection;
+    this.table(this.collection.table);
+
+    return this;
   }
 
   select(fields) { return this; }
 
-  from() { return this; }
+  from(table, alias) { return this; }
 
   where() { return this; }
 
@@ -54,9 +83,36 @@ export default class Query {
 
   expr() { return this; }
 
+  count() { return this; }
+
   all() { return new P.resolve(true); }
 
   first() { return new P.resolve(true); }
 
   run() { return new P.resolve(true); }
+
+  toModels(results) {
+    if (!results || !this.collection) {
+      return results;
+    }
+
+    if (_.isArray(results)) {
+      const models = [];
+      results.forEach((model) => {
+        models.push(this.collection.model(model));
+      });
+
+      return models;
+    }
+
+    if (_.isObject(results)) {
+      return this.collection.model(results);
+    }
+
+    return results;
+  }
+
+  toModel(...args) {
+    return this.toModels(...args);
+  }
 }
