@@ -59,6 +59,30 @@ export default class SqlQuery extends Query {
     return this;
   }
 
+  orderBy(name, direction = 'asc') {
+    if (_.isObject(name)) {
+      _.each(name, (v, k) => {
+        this.orderBy(k, v);
+      });
+
+      return this;
+    }
+
+    this.builder.orderBy(name, direction);
+
+    return this;
+  }
+
+  groupBy(columns) {
+    if (_.isString(columns)) {
+      columns = [columns];
+    }
+
+    this.builder.groupBy(columns);
+
+    return this;
+  }
+
   count(...args) {
     this.builder.count(...args);
     this._count = true;

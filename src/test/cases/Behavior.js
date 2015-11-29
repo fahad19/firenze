@@ -12,7 +12,7 @@ describe('Behavior', function () {
     this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
 
-    this.Authors = require('../collections/Posts')(this.db);
+    this.Authors = require('../collections/Authors')(this.db);
     this.authorsData = require('../fixtures/authors');
 
     this.db.getAdapter().loadAllFixtures([
