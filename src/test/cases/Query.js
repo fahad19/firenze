@@ -101,4 +101,29 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find all by grouping', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .groupBy('author_id')
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+
+        var titles = [];
+        models.forEach(function (model) {
+          titles.push(model.get('title'));
+        });
+
+        titles.should.eql([
+          'Hello World',
+          'Contact'
+        ]);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

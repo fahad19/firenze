@@ -32,11 +32,15 @@ export default class MemoryQuery extends Query {
     return this;
   }
 
-  andWhere() { return this; }
+  groupBy(columns) {
+    if (_.isString(columns)) {
+      columns = [columns];
+    }
 
-  orWhere() { return this; }
+    this._groupBy = columns;
 
-  groupBy() { return this; }
+    return this;
+  }
 
   orderBy(orderBy) {
     this._orderBy = orderBy;
@@ -206,6 +210,24 @@ export default class MemoryQuery extends Query {
         }
 
         return _.sortByOrder(data, _.keys(this._orderBy), _.values(this._orderBy));
+      })
+      .thru((data) => {
+        // grouping
+        if (!this._groupBy) {
+          return data;
+        }
+
+        const column = _.first(this._groupBy);
+        const grouped = _.groupBy(data, (row) => {
+          return row[column];
+        });
+
+        const results = [];
+        _.each(grouped, (rows, groupedK) => {
+          results.push(rows[0]);
+        });
+
+        return results;
       })
       .thru((data) => {
         // offset and limit
