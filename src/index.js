@@ -3,6 +3,7 @@ import Adapter from './Adapter';
 import Collection from './Collection';
 import Model from './Model';
 import Behavior from './Behavior';
+import Query from './Query';
 import P from './Promise';
 
 import collectionFactory from './common/collectionFactory';
@@ -10,11 +11,12 @@ import modelFactory from './common/modelFactory';
 import behaviorFactory from './common/behaviorFactory';
 
 export default {
-  Database: Database,
-  Adapter: Adapter,
-  Collection: Collection,
-  Model: Model,
-  Behavior: Behavior,
+  Database,
+  Adapter,
+  Collection,
+  Model,
+  Behavior,
+  Query,
 
   Promise: P,
 
