@@ -52,7 +52,11 @@ export default class MemoryQuery extends Query {
 
   update() { return this; }
 
-  delete() { return this; }
+  delete() {
+    this._delete = true;
+
+    return this;
+  }
 
   table(table) {
     this._table = table;
@@ -106,11 +110,11 @@ export default class MemoryQuery extends Query {
     }
 
     const k = _.findIndex(tableRows, this._where);
-    tableRows.splice(k, 1);
+    const removed = tableRows.splice(k, 1);
 
     this.adapter.setData(table, tableRows);
 
-    return true;
+    return removed.length;
   }
 
   _runUpdate() {
@@ -172,6 +176,14 @@ export default class MemoryQuery extends Query {
         }
 
         return [];
+      })
+      .thru((data) => {
+        // conditions
+        if (!this._where) {
+          return data;
+        }
+
+        return _.filter(data, _.matches(this._where));
       })
       .thru((data) => {
         // all or first
