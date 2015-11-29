@@ -19,6 +19,6 @@ export default {
   password: '',
   pool: {
     min: 0,
-    max: 1
+    max: 5
   }
 }

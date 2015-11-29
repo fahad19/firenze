@@ -19,11 +19,17 @@ export default class SqlAdapter extends Adapter {
 
     super(options);
 
-    this.knex = knex(_.omit(options, [
-      'queryClass',
-      'schemaClass',
-      'adapter'
-    ]));
+    const config = {
+      client: options.client,
+      connection: _.omit(options, [
+        'queryClass',
+        'schemaClass',
+        'adapter',
+        'pool'
+      ]),
+      pool: options.pool ? options.pool : undefined
+    };
+    this.knex = knex(config);
   }
 
   getConnection() {

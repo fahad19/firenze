@@ -5,6 +5,10 @@ export default class Schema {
     this.adapter = adapter;
   }
 
+  getConnection() {
+    return this.adapter.getConnection();
+  }
+
   dropTable(collection) {
     return new P.resolve(true);
   }
