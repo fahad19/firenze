@@ -126,4 +126,74 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find all by conditions', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where({id: 2})
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find all by conditions, with AND', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where({id: 2})
+      .andWhere({title: 'About'})
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find all by conditions, with OR', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where({id: 2})
+      .orWhere({title: 'Contact'})
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+
+        models[0].get('title').should.eql('About');
+        models[1].get('title').should.eql('Contact');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find all by conditions, with NOT', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .notWhere({title: 'Contact'})
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+
+        models[0].get('title').should.eql('Hello World');
+        models[1].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

@@ -64,6 +64,8 @@ export default class Query {
 
   orWhere() { return this; }
 
+  notWhere() { return this; }
+
   groupBy() { return this; }
 
   orderBy() { return this; }
@@ -113,5 +115,11 @@ export default class Query {
 
   toModel(...args) {
     return this.toModels(...args);
+  }
+
+  tap(func) {
+    func.bind(this)();
+
+    return this;
   }
 }

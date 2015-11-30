@@ -37,6 +37,24 @@ export default class SqlQuery extends Query {
     return this;
   }
 
+  andWhere(conditions) {
+    this.builder.andWhere(conditions);
+
+    return this;
+  }
+
+  orWhere(conditions) {
+    this.builder.orWhere(conditions);
+
+    return this;
+  }
+
+  notWhere(conditions) {
+    this.builder.whereNot(conditions);
+
+    return this;
+  }
+
   select(fields = []) {
     if (fields.length === 0) {
       return this;
