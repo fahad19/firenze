@@ -218,7 +218,7 @@ describe('Query', function () {
       });
   });
 
-  it('should find by expression - equals', function (done) {
+  it('should find by expression - equals (=)', function (done) {
     var posts = new this.Posts();
     posts.find()
       .where(function () {
@@ -230,6 +230,63 @@ describe('Query', function () {
         models.should.have.lengthOf(1);
 
         models[0].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - not equals (!=)', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().notEq('id', 1);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+
+        models[0].get('id').should.eql(2);
+        models[1].get('id').should.eql(3);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - less than (<)', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().lt('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('id').should.eql(1);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - less than and equals (<=)', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().lte('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('id').should.eql(1);
+        models[1].get('id').should.eql(2);
 
         done();
       }).catch(function (error) {

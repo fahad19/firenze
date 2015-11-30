@@ -38,14 +38,14 @@ export default class SqlQuery extends Query {
     return this;
   }
 
-  where(conditions) {
-    if (typeof conditions === 'function') {
-      conditions.bind(this)();
+  where(...args) {
+    if (typeof args[0] === 'function') {
+      args[0].bind(this)();
 
       return this;
     }
 
-    this.builder.where(conditions);
+    this.builder.where(...args);
 
     return this;
   }

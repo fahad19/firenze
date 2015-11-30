@@ -6,4 +6,18 @@ export default class SqlExpression extends Expression {
       [field]: value
     });
   }
+
+  notEq(field, value) {
+    this.query.notWhere({
+      [field]: value
+    });
+  }
+
+  lt(field, value) {
+    this.query.where(field, '<', value);
+  }
+
+  lte(field, value) {
+    this.query.where(field, '<=', value);
+  }
 }
