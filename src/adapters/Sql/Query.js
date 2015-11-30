@@ -65,6 +65,20 @@ export default class SqlQuery extends Query {
     return this;
   }
 
+  distinct(fields = []) {
+    if (_.isString(fields)) {
+      fields = [fields];
+    }
+
+    if (fields.length === 0) {
+      return this;
+    }
+
+    this.builder.distinct(fields);
+
+    return this;
+  }
+
   limit(limit) {
     this.builder.limit(limit);
 
@@ -164,5 +178,11 @@ export default class SqlQuery extends Query {
         })
         .catch(reject);
     });
+  }
+
+  debug() {
+    console.log('query:', this.builder.toString());
+
+    return this;
   }
 }

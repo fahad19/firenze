@@ -35,6 +35,27 @@ describe('Query', function () {
     this.db.close().then(done);
   });
 
+  it('should find with distinct', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .distinct('author_id')
+      .run()
+      .then(function (results) {
+        var authorIds = results.map(function (result) {
+          return result.author_id;
+        });
+
+        authorIds.should.eql([
+          1,
+          2
+        ]);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
   it('should find all by limiting', function (done) {
     var posts = new this.Posts();
     posts.find()

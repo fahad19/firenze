@@ -56,6 +56,8 @@ export default class Query {
 
   select(fields) { return this; }
 
+  distinct() { return this; }
+
   from(table, alias) { return this; }
 
   where() { return this; }
@@ -116,6 +118,8 @@ export default class Query {
   toModel(...args) {
     return this.toModels(...args);
   }
+
+  debug() { return this; }
 
   tap(func) {
     func.bind(this)();
