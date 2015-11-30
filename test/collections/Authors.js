@@ -1,6 +1,7 @@
 /* eslint-disable new-cap */
 
-var P = require('../../Promise');
+var lib = require('../../src/index');
+var P = lib.Promise;
 var TimestampBehavior = require('../behaviors/Timestamp');
 var Author = require('../models/Author');
 

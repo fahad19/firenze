@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var should = require('should'); //eslint-disable-line
-var lib = require('../../index');
+var lib = require('../../src/index');
 
 describe('lib', function () {
   it('should have properties', function () {

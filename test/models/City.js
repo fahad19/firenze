@@ -1,3 +1,3 @@
-var f = require('../../index');
+var f = require('../../src/index');
 
 module.exports = f.createModelClass({});

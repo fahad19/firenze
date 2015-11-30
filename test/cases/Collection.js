@@ -1,9 +1,9 @@
 /* global describe, before, after, it */
 
 var should = require('should'); //eslint-disable-line
-var lib = require('../../index');
+var lib = require('../../src/index');
 var config = require('../config');
-var P = require('../../Promise');
+var P = lib.Promise;
 
 describe('Collection', function () {
   before(function (done) {

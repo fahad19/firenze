@@ -6,7 +6,7 @@
 // };
 
 // MySQL
-import SqlAdapter from '../adapters/Sql';
+import SqlAdapter from '../src/adapters/Sql';
 
 export default {
   adapter: SqlAdapter,

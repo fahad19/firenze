@@ -1,6 +1,7 @@
 /* eslint-disable new-cap */
 
-var P = require('../../Promise');
+var lib = require('../../src/index');
+var P = lib.Promise;
 var City = require('../models/City');
 
 module.exports = function (db) {

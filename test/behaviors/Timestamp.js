@@ -1,6 +1,6 @@
 /* eslint-disable new-cap */
 
-import f from '../../';
+import f from '../../src/index';
 
 let Behavior = f.Behavior;
 let P = f.Promise;

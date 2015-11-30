@@ -1,7 +1,7 @@
 /* global describe, it */
 
 var should = require('should'); //eslint-disable-line
-var lib = require('../../index');
+var lib = require('../../src/index');
 var config = require('../config');
 
 describe('Database', function () {
