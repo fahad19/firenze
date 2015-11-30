@@ -1,4 +1,8 @@
 export default class Expression {
+  constructor(query) {
+    this.query = query;
+  }
+
   and() {
     return this;
   }

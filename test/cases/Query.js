@@ -217,4 +217,23 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by expression - equals', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().eq('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+
+        models[0].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

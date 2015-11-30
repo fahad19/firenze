@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import P from 'bluebird';
 
+import Expression from './Expression';
+
 // # Query
 //
 // The query builder.
@@ -24,6 +26,11 @@ import P from 'bluebird';
 //
 export default class Query {
   constructor(options = {}) {
+    options = {
+      expressionClass: Expression,
+      ...options
+    };
+
     this.adapter = null;
     this.collection = null;
 
@@ -84,7 +91,9 @@ export default class Query {
 
   table() { return this; }
 
-  expr() { return this; }
+  expr() {
+    return new this.options.expressionClass(this);
+  }
 
   count() { return this; }
 

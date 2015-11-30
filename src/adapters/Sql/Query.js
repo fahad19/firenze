@@ -3,9 +3,16 @@ import P from 'bluebird';
 
 import Query from '../../Query';
 
+import SqlExpression from './Expression';
+
 export default class SqlQuery extends Query {
-  constructor(...args) {
-    super(...args);
+  constructor(options = {}) {
+    options = {
+      expressionClass: SqlExpression,
+      ...options
+    };
+
+    super(options);
 
     this.builder = this.adapter.getConnection().queryBuilder();
 
@@ -32,6 +39,12 @@ export default class SqlQuery extends Query {
   }
 
   where(conditions) {
+    if (typeof conditions === 'function') {
+      conditions.bind(this)();
+
+      return this;
+    }
+
     this.builder.where(conditions);
 
     return this;
