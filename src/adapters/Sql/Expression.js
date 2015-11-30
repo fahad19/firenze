@@ -8,9 +8,7 @@ export default class SqlExpression extends Expression {
   }
 
   notEq(field, value) {
-    this.query.notWhere({
-      [field]: value
-    });
+    this.query.where(field, '<>', value);
   }
 
   lt(field, value) {
@@ -19,5 +17,13 @@ export default class SqlExpression extends Expression {
 
   lte(field, value) {
     this.query.where(field, '<=', value);
+  }
+
+  gt(field, value) {
+    this.query.where(field, '>', value);
+  }
+
+  gte(field, value) {
+    this.query.where(field, '>=', value);
   }
 }

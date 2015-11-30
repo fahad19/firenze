@@ -293,4 +293,41 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by expression - greater than (>)', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().gt('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('id').should.eql(3);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - greater than and equals (>=)', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().gte('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('id').should.eql(2);
+        models[1].get('id').should.eql(3);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });
