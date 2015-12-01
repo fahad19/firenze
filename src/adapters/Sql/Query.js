@@ -40,7 +40,7 @@ export default class SqlQuery extends Query {
 
   _where(method, ...args) {
     if (typeof args[0] === 'function') {
-      args[0].bind(this)();
+      args[0].apply(this, [this.expr()]);
 
       return this;
     }

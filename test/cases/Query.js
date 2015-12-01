@@ -221,8 +221,8 @@ describe('Query', function () {
   it('should find by expression - equals (=)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().eq('id', 2);
+      .where(function (expr) {
+        expr.eq('id', 2);
       })
       .all()
       .then(function (models) {
@@ -240,8 +240,8 @@ describe('Query', function () {
   it('should find by expression - not equals (!=)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().notEq('id', 1);
+      .where(function (expr) {
+        expr.notEq('id', 1);
       })
       .all()
       .then(function (models) {
@@ -260,8 +260,8 @@ describe('Query', function () {
   it('should find by expression - less than (<)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().lt('id', 2);
+      .where(function (expr) {
+        expr.lt('id', 2);
       })
       .all()
       .then(function (models) {
@@ -278,8 +278,8 @@ describe('Query', function () {
   it('should find by expression - less than and equals (<=)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().lte('id', 2);
+      .where(function (expr) {
+        expr.lte('id', 2);
       })
       .all()
       .then(function (models) {
@@ -297,8 +297,8 @@ describe('Query', function () {
   it('should find by expression - greater than (>)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().gt('id', 2);
+      .where(function (expr) {
+        expr.gt('id', 2);
       })
       .all()
       .then(function (models) {
@@ -315,8 +315,8 @@ describe('Query', function () {
   it('should find by expression - greater than and equals (>=)', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().gte('id', 2);
+      .where(function (expr) {
+        expr.gte('id', 2);
       })
       .all()
       .then(function (models) {
@@ -334,8 +334,8 @@ describe('Query', function () {
   it('should find by expression - like', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().like('title', '%ontac%');
+      .where(function (expr) {
+        expr.like('title', '%ontac%');
       })
       .all()
       .then(function (models) {
@@ -352,8 +352,8 @@ describe('Query', function () {
   it('should find by expression - in', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().in('id', [1, 2]);
+      .where(function (expr) {
+        expr.in('id', [1, 2]);
       })
       .all()
       .then(function (models) {
@@ -371,8 +371,8 @@ describe('Query', function () {
   it('should find by expression - not in', function (done) {
     var posts = new this.Posts();
     posts.find()
-      .where(function () {
-        this.expr().notIn('id', [1, 2]);
+      .where(function (expr) {
+        expr.notIn('id', [1, 2]);
       })
       .all()
       .then(function (models) {
