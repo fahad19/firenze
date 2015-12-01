@@ -404,4 +404,41 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by expression - is null', function (done) {
+    var authors = new this.Authors();
+    authors.find()
+      .where(function (expr) {
+        expr.isNull('country');
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('name').should.eql('Salazar Slytherin');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - is not null', function (done) {
+    var authors = new this.Authors();
+    authors.find()
+      .where(function (expr) {
+        expr.isNotNull('country');
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('name').should.eql('Fahad Ibnay Heylaal');
+        models[1].get('name').should.eql('Harry Potter');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

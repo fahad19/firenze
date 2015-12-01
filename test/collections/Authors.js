@@ -24,6 +24,9 @@ module.exports = function (db) {
       },
       bio: {
         type: 'text'
+      },
+      country: {
+        type: 'string'
       }
     },
 

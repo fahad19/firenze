@@ -60,4 +60,16 @@ export default class SqlExpression extends Expression {
 
     return this;
   }
+
+  isNull(field) {
+    this.query.builder.whereNull(field);
+
+    return this;
+  }
+
+  isNotNull(field) {
+    this.query.builder.whereNotNull(field);
+
+    return this;
+  }
 }
