@@ -330,4 +330,22 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by expression - like', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().like('title', '%ontac%');
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('title').should.eql('Contact');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });
