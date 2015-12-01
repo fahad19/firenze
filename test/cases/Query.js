@@ -368,6 +368,43 @@ describe('Query', function () {
       });
   });
 
+  it('should find by expression - between', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function (expr) {
+        expr.between('views', 15, 25);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('title').should.eql('About');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - not between', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function (expr) {
+        expr.notBetween('views', 15, 25);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('title').should.eql('Hello World');
+        models[1].get('title').should.eql('Contact');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
   it('should find by expression - in', function (done) {
     var posts = new this.Posts();
     posts.find()

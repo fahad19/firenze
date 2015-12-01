@@ -78,4 +78,16 @@ export default class SqlExpression extends Expression {
 
     return this;
   }
+
+  between(field, from, to) {
+    this.builder.whereBetween(field, [from, to]);
+
+    return this;
+  }
+
+  notBetween(field, from, to) {
+    this.builder.whereNotBetween(field, [from, to]);
+
+    return this;
+  }
 }
