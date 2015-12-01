@@ -441,4 +441,24 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by chaining expressions', function (done) {
+    var authors = new this.Authors();
+    authors.find()
+      .where(function (expr) {
+        expr
+          .like('name', 'Fahad%')
+          .isNotNull('country');
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('name').should.eql('Fahad Ibnay Heylaal');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });
