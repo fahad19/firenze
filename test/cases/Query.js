@@ -461,4 +461,26 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by multiple scoped function expressions', function (done) {
+    var authors = new this.Authors();
+    authors.find()
+      .where(function (expr) {
+        expr.eq('id', 1);
+      })
+      .orWhere(function (expr) {
+        expr.eq('id', 2);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('name').should.eql('Fahad Ibnay Heylaal');
+        models[1].get('name').should.eql('Harry Potter');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

@@ -39,13 +39,18 @@ export default class SqlQuery extends Query {
   }
 
   _where(method, ...args) {
-    if (typeof args[0] === 'function') {
-      args[0].apply(this, [this.expr()]);
+    if (typeof args[0] !== 'function') {
+      this.builder[method](...args);
 
       return this;
     }
 
-    this.builder[method](...args);
+    const self = this;
+    this.builder[method](function () {
+      const expr = self.expr(this);
+
+      args[0].apply(self, [expr]);
+    });
 
     return this;
   }

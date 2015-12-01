@@ -91,8 +91,8 @@ export default class Query {
 
   table() { return this; }
 
-  expr() {
-    return new this.options.expressionClass(this);
+  expr(...args) {
+    return new this.options.expressionClass(this, ...args);
   }
 
   count() { return this; }
