@@ -43,6 +43,12 @@ export default class SqlExpression extends Expression {
     return this;
   }
 
+  notLike(field, value) {
+    this.query.notWhere(field, 'like', value);
+
+    return this;
+  }
+
   in(field, values) {
     this.query.where(field, 'in', values);
 
