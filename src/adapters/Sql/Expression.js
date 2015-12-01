@@ -28,4 +28,12 @@ export default class SqlExpression extends Expression {
   like(field, value) {
     this.query.where(field, 'like', value);
   }
+
+  in(field, values) {
+    this.query.where(field, 'in', values);
+  }
+
+  notIn(field, values) {
+    this.query.builder.whereNotIn(field, values);
+  }
 }

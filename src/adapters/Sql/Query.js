@@ -50,20 +50,38 @@ export default class SqlQuery extends Query {
     return this;
   }
 
-  andWhere(conditions) {
-    this.builder.andWhere(conditions);
+  andWhere(...args) {
+    if (typeof args[0] === 'function') {
+      args[0].bind(this)();
+
+      return this;
+    }
+
+    this.builder.andWhere(...args);
 
     return this;
   }
 
-  orWhere(conditions) {
-    this.builder.orWhere(conditions);
+  orWhere(...args) {
+    if (typeof args[0] === 'function') {
+      args[0].bind(this)();
+
+      return this;
+    }
+
+    this.builder.orWhere(...args);
 
     return this;
   }
 
-  notWhere(conditions) {
-    this.builder.whereNot(conditions);
+  notWhere(...args) {
+    if (typeof args[0] === 'function') {
+      args[0].bind(this)();
+
+      return this;
+    }
+
+    this.builder.whereNot(...args);
 
     return this;
   }

@@ -348,4 +348,41 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find by expression - in', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().in('id', [1, 2]);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(2);
+        models[0].get('id').should.eql(1);
+        models[1].get('id').should.eql(2);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find by expression - not in', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .where(function () {
+        this.expr().notIn('id', [1, 2]);
+      })
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('id').should.eql(3);
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });
