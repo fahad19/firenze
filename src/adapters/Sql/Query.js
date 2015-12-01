@@ -38,52 +38,32 @@ export default class SqlQuery extends Query {
     return this;
   }
 
-  where(...args) {
+  _where(method, ...args) {
     if (typeof args[0] === 'function') {
       args[0].bind(this)();
 
       return this;
     }
 
-    this.builder.where(...args);
+    this.builder[method](...args);
 
     return this;
+  }
+
+  where(...args) {
+    return this._where('where', ...args);
   }
 
   andWhere(...args) {
-    if (typeof args[0] === 'function') {
-      args[0].bind(this)();
-
-      return this;
-    }
-
-    this.builder.andWhere(...args);
-
-    return this;
+    return this._where('andWhere', ...args);
   }
 
   orWhere(...args) {
-    if (typeof args[0] === 'function') {
-      args[0].bind(this)();
-
-      return this;
-    }
-
-    this.builder.orWhere(...args);
-
-    return this;
+    return this._where('orWhere', ...args);
   }
 
   notWhere(...args) {
-    if (typeof args[0] === 'function') {
-      args[0].bind(this)();
-
-      return this;
-    }
-
-    this.builder.whereNot(...args);
-
-    return this;
+    return this._where('whereNot', ...args);
   }
 
   select(fields = []) {
