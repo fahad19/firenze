@@ -1,3 +1,4 @@
-import Adapter from './Adapter';
+import makeAdapter from './makeAdapter';
+import makeConnection from './makeConnection';
 
-export default Adapter;
+export default makeAdapter(makeConnection);

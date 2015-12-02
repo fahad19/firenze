@@ -10,7 +10,6 @@ import SqlAdapter from '../src/adapters/Sql';
 
 export default {
   adapter: SqlAdapter,
-  client: 'mysql',
 
   host: '127.0.0.1',
   port: 3306,

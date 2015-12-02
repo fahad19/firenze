@@ -3,71 +3,39 @@ export default class Expression {
     this.query = query;
   }
 
-  and() {
-    return this;
-  }
+  and() { return this; }
 
-  or() {
-    return this;
-  }
+  or() { return this; }
 
-  eq() {
-    return this;
-  }
+  not() { return this; }
 
-  notEq() {
-    return this;
-  }
+  eq() { return this; }
 
-  lt() {
-    return this;
-  }
+  notEq() { return this; }
 
-  lte() {
-    return this;
-  }
+  lt() { return this; }
 
-  gt() {
-    return this;
-  }
+  lte() { return this; }
 
-  gte() {
-    return this;
-  }
+  gt() { return this; }
 
-  isNull() {
-    return this;
-  }
+  gte() { return this; }
 
-  isNotNull() {
-    return this;
-  }
+  isNull() { return this; }
 
-  not() {
-    return this;
-  }
+  isNotNull() { return this; }
 
-  in() {
-    return this;
-  }
+  in() { return this; }
 
-  notIn() {
-    return this;
-  }
+  notIn() { return this; }
 
-  like() {
-    return this;
-  }
+  like() { return this; }
 
-  notLike() {
-    return this;
-  }
+  notLike() { return this; }
 
-  between() {
-    return this;
-  }
+  between() { return this; }
 
-  count() {
-    return this;
-  }
+  notBetween() { return this; }
+
+  count() { return this; }
 }
