@@ -1,14 +1,17 @@
 import _ from 'lodash';
 import P from 'bluebird';
+import knex from 'knex';
 
 import Query from '../../Query';
 
 import SqlExpression from './Expression';
+import SqlFunctions from './Functions';
 
 export default class SqlQuery extends Query {
   constructor(options = {}) {
     options = {
       expressionClass: SqlExpression,
+      functionsClass: SqlFunctions,
       ...options
     };
 
@@ -77,18 +80,32 @@ export default class SqlQuery extends Query {
     }
 
     args.forEach((arg) => {
-      if (_.isArray(arg)) {
-        this.builder.select(arg);
-      } else if (typeof arg === 'string') {
-        this.builder.select([arg]);
-      } else if (typeof arg === 'object') {
-        _.each(arg, (field, as) => {
-          this.builder.select(`${field} as ${as}`);
-        });
-      } else if (typeof arg === 'function') {
-        // magic
-      }
+      this._select(arg);
     });
+
+    return this;
+  }
+
+  _select(field) {
+    if (typeof field === 'string') {
+      this.builder.select(field);
+    } else if (_.isArray(field)) {
+      field.forEach((f) => {
+        this.builder.select(f);
+      });
+    } else if (typeof field === 'object') {
+      _.each(field, (f, as) => {
+        if (typeof f === 'object' && f instanceof SqlFunctions) {
+          const funcString = f.toString();
+          const raw = knex.raw(`${funcString} as ${as}`);
+          this.builder.select(raw);
+
+          return;
+        }
+
+        this.builder.select(`${f} as ${as}`);
+      });
+    }
 
     return this;
   }

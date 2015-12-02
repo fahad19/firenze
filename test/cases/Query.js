@@ -189,6 +189,31 @@ describe('Query', function () {
       });
   });
 
+  it('should find all with selected fields, with chained functions', function (done) {
+    var posts = new this.Posts();
+    var query = posts.find();
+
+    query
+      .select('id', 'title', {
+        titleUppercased: query.func('title')
+          .upper()
+          .lower()
+          .upper()
+       })
+      .limit(1)
+      .debug()
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('titleUppercased').should.eql('HELLO WORLD');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
   it('should find all by conditions', function (done) {
     var posts = new this.Posts();
     posts.find()

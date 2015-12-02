@@ -2,6 +2,7 @@ import _ from 'lodash';
 import P from 'bluebird';
 
 import Expression from './Expression';
+import Functions from './Functions';
 
 // # Query
 //
@@ -18,7 +19,7 @@ import Expression from './Expression';
 //   })
 //   .offset(0)
 //   .limit(10)
-//   .all() // or .first()
+//   .run()
 //   .then(function (results) {
 //
 //   });
@@ -28,6 +29,7 @@ export default class Query {
   constructor(options = {}) {
     options = {
       expressionClass: Expression,
+      functionsClass: Functions,
       ...options
     };
 
@@ -93,6 +95,10 @@ export default class Query {
 
   expr(...args) {
     return new this.options.expressionClass(this, ...args);
+  }
+
+  func(...args) {
+    return new this.options.functionsClass(this, ...args);
   }
 
   count() { return this; }
