@@ -148,6 +148,47 @@ describe('Query', function () {
       });
   });
 
+  it('should find all with selected fields', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .select('id', 'title')
+      .limit(1)
+      .run()
+      .then(function (results) {
+        results.should.be.instanceOf(Array);
+        results.should.have.lengthOf(1);
+        results[0].should.eql({
+          id: 1,
+          title: 'Hello World'
+        });
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find all with selected fields, with renaming', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .select('id', 'title', {title2: 'title'})
+      .limit(1)
+      .run()
+      .then(function (results) {
+        results.should.be.instanceOf(Array);
+        results.should.have.lengthOf(1);
+        results[0].should.eql({
+          id: 1,
+          title: 'Hello World',
+          title2: 'Hello World'
+        });
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
   it('should find all by conditions', function (done) {
     var posts = new this.Posts();
     posts.find()

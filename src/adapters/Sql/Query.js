@@ -71,12 +71,24 @@ export default class SqlQuery extends Query {
     return this._where('whereNot', ...args);
   }
 
-  select(fields = []) {
-    if (fields.length === 0) {
+  select(...args) {
+    if (args.length === 0) {
       return this;
     }
 
-    this.builder.select(fields);
+    args.forEach((arg) => {
+      if (_.isArray(arg)) {
+        this.builder.select(arg);
+      } else if (typeof arg === 'string') {
+        this.builder.select([arg]);
+      } else if (typeof arg === 'object') {
+        _.each(arg, (field, as) => {
+          this.builder.select(`${field} as ${as}`);
+        });
+      } else if (typeof arg === 'function') {
+        // magic
+      }
+    });
 
     return this;
   }
