@@ -5,6 +5,7 @@ import Query from '../../Query';
 
 import SqlExpression from './Expression';
 import SqlFunctions from './Functions';
+import makeWhere from './makeWhere';
 
 export default function makeQuery(knex) {
   class SqlQuery extends Query {
@@ -41,37 +42,20 @@ export default function makeQuery(knex) {
       return this;
     }
 
-    _where(method, ...args) {
-      if (typeof args[0] !== 'function') {
-        this.builder[method](...args);
-
-        return this;
-      }
-
-      const self = this;
-      this.builder[method](function () {
-        const expr = self.expr(this);
-
-        args[0].apply(self, [expr]);
-      });
-
-      return this;
-    }
-
     where(...args) {
-      return this._where('where', ...args);
+      return makeWhere(this, 'where', ...args);
     }
 
     andWhere(...args) {
-      return this._where('andWhere', ...args);
+      return makeWhere(this, 'andWhere', ...args);
     }
 
     orWhere(...args) {
-      return this._where('orWhere', ...args);
+      return makeWhere(this, 'orWhere', ...args);
     }
 
     notWhere(...args) {
-      return this._where('whereNot', ...args);
+      return makeWhere(this, 'whereNot', ...args);
     }
 
     select(...args) {
