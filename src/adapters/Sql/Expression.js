@@ -1,10 +1,37 @@
+import _ from 'lodash';
+
 import Expression from '../../Expression';
+
+function makeWhere(context, method, ...args) {
+  if (typeof args[0] === 'object') {
+    context.builder[method](...args);
+  } else if (typeof args[0] === 'function') {
+    context.builder[method](function () {
+      const expr = new SqlExpression(context.query, this);
+      args[0].apply(context.query, [expr]);
+    });
+  }
+
+  return context;
+}
 
 export default class SqlExpression extends Expression {
   constructor(...args) {
     super(...args);
 
     this.builder = (typeof args[1] !== 'undefined') ? args[1] : null;
+  }
+
+  and(...args) {
+    return makeWhere(this, 'andWhere', ...args);
+  }
+
+  or(...args) {
+    return makeWhere(this, 'orWhere', ...args);
+  }
+
+  not(...args) {
+    return makeWhere(this, 'whereNot', ...args);
   }
 
   eq(field, value) {

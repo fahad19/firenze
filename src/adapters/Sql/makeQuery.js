@@ -5,7 +5,22 @@ import Query from '../../Query';
 
 import SqlExpression from './Expression';
 import SqlFunctions from './Functions';
-import makeWhere from './makeWhere';
+
+function makeWhere(query, method, ...args) {
+  if (typeof args[0] !== 'function') {
+    query.builder[method](...args);
+
+    return query;
+  }
+
+  query.builder[method](function () {
+    const expr = query.expr(this);
+
+    args[0].apply(query, [expr]);
+  });
+
+  return query;
+}
 
 export default function makeQuery(knex) {
   class SqlQuery extends Query {
