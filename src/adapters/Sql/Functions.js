@@ -5,26 +5,14 @@ export default class SqlFunctions extends Functions {
     super(...args);
 
     this.builder = this.query.builder;
-
-    this.column = args[1];
-
-    this.funcs = [];
-  }
-
-  setColumn(column) {
-    this.column = column;
   }
 
   upper(field) {
-    this.funcs.push('UPPER');
-
-    return this;
+    return this.addFunction('UPPER');
   }
 
   lower(field) {
-    this.funcs.push('LOWER');
-
-    return this;
+    return this.addFunction('LOWER');
   }
 
   toString() {

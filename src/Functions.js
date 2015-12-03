@@ -1,23 +1,38 @@
 export default class Functions {
-  constructor(query) {
-    this.query = query;
+  constructor(...args) {
+    this.query = args[0];
+
+    this.column = args[1];
+    this.funcs = [];
   }
 
-  upper(field) { return field; }
+  addFunction(funcName) {
+    this.funcs.push(funcName);
 
-  lower(field) { return field; }
+    return this;
+  }
+
+  setColumn(column) {
+    this.column = column;
+
+    return this;
+  }
+
+  upper() { return this; }
+
+  lower() { return this; }
 
   concat() { return null; }
 
-  sum(field) { return field; }
+  sum() { return this; }
 
-  avg(field) { return field; }
+  avg() { return this; }
 
-  min(field) { return field; }
+  min() { return this; }
 
-  max(field) { return field; }
+  max() { return this; }
 
-  count(field) { return field; }
+  count() { return this; }
 
   now() { return null; }
 }
