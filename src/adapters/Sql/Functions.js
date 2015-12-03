@@ -11,6 +11,10 @@ export default class SqlFunctions extends Functions {
     this.funcs = [];
   }
 
+  setColumn(column) {
+    this.column = column;
+  }
+
   upper(field) {
     this.funcs.push('UPPER');
 
@@ -25,15 +29,9 @@ export default class SqlFunctions extends Functions {
 
   toString() {
     const columnName = this.column;
-    let str = '';
+    let str = columnName;
 
     this.funcs.forEach((funcName, i) => {
-      if (i === 0) {
-        str = `${funcName}(${columnName})`;
-
-        return;
-      }
-
       str = `${funcName}(${str})`;
     });
 

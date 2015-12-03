@@ -95,15 +95,23 @@ export default class SqlQuery extends Query {
       });
     } else if (typeof field === 'object') {
       _.each(field, (f, as) => {
-        if (typeof f === 'object' && f instanceof SqlFunctions) {
-          const funcString = f.toString();
-          const raw = knex.raw(`${funcString} as ${as}`);
-          this.builder.select(raw);
+        if (typeof f !== 'object' && typeof f !== 'function') {
+          this.builder.select(`${f} as ${as}`);
 
           return;
         }
 
-        this.builder.select(`${f} as ${as}`);
+        let funcString;
+
+        if (typeof f === 'object' && f instanceof SqlFunctions) {
+          funcString = f.toString();
+        } else if (typeof f === 'function') {
+          const func = this.func.bind(this);
+          funcString = f.bind(this)(func).toString();
+        }
+
+        const raw = knex.raw(`${funcString} as ${as}`);
+        this.builder.select(raw);
       });
     }
 

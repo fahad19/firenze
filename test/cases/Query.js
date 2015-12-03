@@ -189,7 +189,7 @@ describe('Query', function () {
       });
   });
 
-  it('should find all with selected fields, with chained functions', function (done) {
+  it('should find all with selected fields, with chained column functions', function (done) {
     var posts = new this.Posts();
     var query = posts.find();
 
@@ -201,7 +201,30 @@ describe('Query', function () {
           .upper()
        })
       .limit(1)
-      .debug()
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('titleUppercased').should.eql('HELLO WORLD');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
+  it('should find all with selected fields, with embedded column function', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .select('id', 'title', {
+        titleUppercased: function (func) {
+          return func('title')
+            .upper()
+            .lower()
+            .upper();
+        }
+      })
+      .limit(1)
       .all()
       .then(function (models) {
         models.should.be.instanceOf(Array);
