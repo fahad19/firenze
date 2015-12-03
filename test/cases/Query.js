@@ -237,6 +237,29 @@ describe('Query', function () {
       });
   });
 
+  it('should find all with selected fields, with concat function', function (done) {
+    var posts = new this.Posts();
+    posts.find()
+      .select('id', 'title', {
+        idAndTitle: function (func) {
+          return func()
+            .concat('id', JSON.stringify(' '), 'title')
+            .upper();
+        }
+      })
+      .limit(1)
+      .all()
+      .then(function (models) {
+        models.should.be.instanceOf(Array);
+        models.should.have.lengthOf(1);
+        models[0].get('idAndTitle').should.eql('1 HELLO WORLD');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
+
   it('should find all by conditions', function (done) {
     var posts = new this.Posts();
     posts.find()
