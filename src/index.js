@@ -4,7 +4,10 @@ import Collection from './Collection';
 import Model from './Model';
 import Behavior from './Behavior';
 import Query from './Query';
-import P from './Promise';
+import Expression from './Expression';
+import Functions from './Functions';
+import Schema from './Schema';
+import Promise from './Promise';
 
 import collectionFactory from './common/collectionFactory';
 import modelFactory from './common/modelFactory';
@@ -13,12 +16,17 @@ import behaviorFactory from './common/behaviorFactory';
 export default {
   Database,
   Adapter,
+
   Collection,
   Model,
   Behavior,
-  Query,
 
-  Promise: P,
+  Query,
+  Expression,
+  Functions,
+  Schema,
+
+  Promise,
 
   createCollection: collectionFactory(),
   createModel: modelFactory(),
