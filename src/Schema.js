@@ -9,11 +9,11 @@ export default class Schema {
     return this.adapter.getConnection();
   }
 
-  dropTable(collection) {
+  dropTable(collection) { // eslint-disable-line
     return new P.resolve(true);
   }
 
-  createTable(collection) {
+  createTable(collection) { // eslint-disable-line
     return new P.resolve(true);
   }
 

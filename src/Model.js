@@ -160,7 +160,7 @@ export default class Model {
 // Is the current model new? As in saved in Database, or yet to be saved?
 //
   isNew() {
-    return this.getId() ? false : true;
+    return this.getId() ? false : true; // eslint-disable-line
   }
 
 // ### save(options = {})

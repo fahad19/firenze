@@ -1,4 +1,4 @@
-import _ from 'lodash';
+/* eslint-disable no-undefined */
 import knex from 'knex';
 
 export default function makeConnection(options = {}) {

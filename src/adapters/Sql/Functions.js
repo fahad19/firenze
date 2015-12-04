@@ -44,7 +44,7 @@ export default class SqlFunctions extends Functions {
   toString() {
     let str = this.column ? this.column : '';
 
-    this.funcs.forEach((funcName, i) => {
+    this.funcs.forEach((funcName) => {
       str = `${funcName}(${str})`;
     });
 

@@ -8,11 +8,11 @@ let P = f.Promise;
 
 export default function makeAdapter(makeConnection) {
   class SqlAdapter extends Adapter {
-    constructor(options) {
-      options = {
+    constructor(givenOptions) {
+      const options = {
         queryClass: Query,
         schemaClass: Schema,
-        ...options
+        ...givenOptions
       };
 
       super(options);

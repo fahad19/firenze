@@ -1,14 +1,10 @@
 /* eslint-disable new-cap */
-
 import _ from 'lodash';
-import f from '../../';
-import async from 'async';
+
+import {Adapter} from '../../';
 
 import Query from './Query';
 import Schema from './Schema';
-
-let P = f.Promise;
-let Adapter = f.Adapter;
 
 // ## Usage
 //
@@ -61,11 +57,11 @@ let Adapter = f.Adapter;
 // ```
 //
 export default class MemoryAdapter extends Adapter {
-  constructor(options) {
-    options = {
+  constructor(givenOptions = {}) {
+    const options = {
       queryClass: Query,
       schemaClass: Schema,
-      ...options
+      ...givenOptions
     };
 
     super(options);

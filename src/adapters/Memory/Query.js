@@ -12,7 +12,7 @@ export default class MemoryQuery extends Query {
     this.builder = _(this.data);
   }
 
-  from(table, alias) {
+  from(table) {
     this._from = table;
 
     return this;
@@ -32,10 +32,8 @@ export default class MemoryQuery extends Query {
     return this;
   }
 
-  groupBy(columns) {
-    if (_.isString(columns)) {
-      columns = [columns];
-    }
+  groupBy(givenColumns) {
+    const columns = _.isString(givenColumns) ? [givenColumns] : givenColumns;
 
     this._groupBy = columns;
 
@@ -120,7 +118,6 @@ export default class MemoryQuery extends Query {
 
   _runDelete() {
     const table = this._table;
-    const ids = [];
 
     let tableRows = this.adapter.getData(table);
     if (typeof tableRows === 'undefined') {
@@ -223,18 +220,20 @@ export default class MemoryQuery extends Query {
         });
 
         const results = [];
-        _.each(grouped, (rows, groupedK) => {
+        _.each(grouped, (rows) => {
           results.push(rows[0]);
         });
 
         return results;
       })
-      .thru((data) => {
+      .thru((givenData) => {
         // offset and limit
+        let data;
+
         if (this._offset && this._limit) {
-          data = data.slice(this._offset, this._limit + 1);
+          data = givenData.slice(this._offset, this._limit + 1);
         } else if (this._limit) {
-          data = data.slice(0, this._limit);
+          data = givenData.slice(0, this._limit);
         }
 
         return data;

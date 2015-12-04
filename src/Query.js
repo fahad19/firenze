@@ -26,11 +26,11 @@ import Functions from './Functions';
 // ```
 //
 export default class Query {
-  constructor(options = {}) {
-    options = {
+  constructor(givenOptions = {}) {
+    const options = {
       expressionClass: Expression,
       functionsClass: Functions,
-      ...options
+      ...givenOptions
     };
 
     this.adapter = null;
@@ -63,11 +63,11 @@ export default class Query {
     return this;
   }
 
-  select(fields) { return this; }
+  select() { return this; }
 
   distinct() { return this; }
 
-  from(table, alias) { return this; }
+  from() { return this; }
 
   where() { return this; }
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-invalid-this */
 import _ from 'lodash';
 
 import P from '../../Promise';
@@ -24,11 +25,11 @@ function makeWhere(query, method, ...args) {
 
 export default function makeQuery(knex) {
   class SqlQuery extends Query {
-    constructor(options = {}) {
-      options = {
+    constructor(givenOptions = {}) {
+      const options = {
         expressionClass: SqlExpression,
         functionsClass: SqlFunctions,
-        ...options
+        ...givenOptions
       };
 
       super(options);
@@ -117,10 +118,8 @@ export default function makeQuery(knex) {
       return this;
     }
 
-    distinct(fields = []) {
-      if (_.isString(fields)) {
-        fields = [fields];
-      }
+    distinct(givenFields = []) {
+      const fields = _.isString(givenFields) ? [givenFields] : givenFields;
 
       if (fields.length === 0) {
         return this;
@@ -157,10 +156,8 @@ export default function makeQuery(knex) {
       return this;
     }
 
-    groupBy(columns) {
-      if (_.isString(columns)) {
-        columns = [columns];
-      }
+    groupBy(givenColumns) {
+      const columns = _.isString(givenColumns) ? [givenColumns] : givenColumns;
 
       this.builder.groupBy(columns);
 
@@ -233,7 +230,7 @@ export default function makeQuery(knex) {
     }
 
     debug() {
-      console.log('query:', this.builder.toString());
+      console.log('query:', this.builder.toString()); // eslint-disable-line
 
       return this;
     }

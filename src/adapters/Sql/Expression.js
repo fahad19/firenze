@@ -1,5 +1,4 @@
-import _ from 'lodash';
-
+/* eslint-disable no-use-before-define, no-invalid-this */
 import Expression from '../../Expression';
 
 function applyConditions(context, method, ...args) {

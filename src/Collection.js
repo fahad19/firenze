@@ -529,7 +529,7 @@ export default class Collection {
 // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 //
   validate(model, options = {}) {
-    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
     return new P((resolve, reject) => {
       return async.waterfall([
@@ -655,10 +655,8 @@ export default class Collection {
 //
 // Returns a promise with true if validated, otherwise error message
 //
-  validateField(model, field, value = null) {
-    if (!value) {
-      value = model.get(field);
-    }
+  validateField(model, field, givenValue = null) {
+    const value = !givenValue ? model.get(field) : givenValue;
 
     let fieldSchema = this.schema[field];
     if (!_.isObject(fieldSchema) || !fieldSchema.validate) {
@@ -748,7 +746,7 @@ export default class Collection {
 // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 //
   save(model, options = {}) {
-    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
     return new P((resolve, reject) => {
       return async.waterfall([
@@ -868,7 +866,7 @@ export default class Collection {
 // * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 //
   delete(model, options = {}) {
-    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks) ? true : false;
+    let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
     return new P((resolve, reject) => {
       return async.waterfall([
