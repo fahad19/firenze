@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import P from 'bluebird';
 
+import Promise from './Promise';
 import Expression from './Expression';
 import Functions from './Functions';
 
@@ -103,11 +103,11 @@ export default class Query {
 
   count() { return this; }
 
-  all() { return new P.resolve(true); }
+  all() { return new Promise.resolve(true); }
 
-  first() { return new P.resolve(true); }
+  first() { return new Promise.resolve(true); }
 
-  run() { return new P.resolve(true); }
+  run() { return new Promise.resolve(true); }
 
   toModels(results) {
     if (!results || !this.collection) {
