@@ -1,3 +1,3 @@
-var f = require('../../src/index');
+import {createModel} from '../../src';
 
-module.exports = f.createModelClass({});
+export default createModel();

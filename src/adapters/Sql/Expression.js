@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import Expression from '../../Expression';
 
-function makeWhere(context, method, ...args) {
+function applyConditions(context, method, ...args) {
   if (typeof args[0] === 'object') {
     context.builder[method](...args);
   } else if (typeof args[0] === 'function') {
@@ -23,15 +23,15 @@ export default class SqlExpression extends Expression {
   }
 
   and(...args) {
-    return makeWhere(this, 'andWhere', ...args);
+    return applyConditions(this, 'andWhere', ...args);
   }
 
   or(...args) {
-    return makeWhere(this, 'orWhere', ...args);
+    return applyConditions(this, 'orWhere', ...args);
   }
 
   not(...args) {
-    return makeWhere(this, 'whereNot', ...args);
+    return applyConditions(this, 'whereNot', ...args);
   }
 
   eq(field, value) {

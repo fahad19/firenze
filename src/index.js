@@ -20,7 +20,7 @@ export default {
 
   Promise: P,
 
-  createCollectionClass: collectionFactory(),
-  createModelClass: modelFactory(),
-  createBehaviorClass: behaviorFactory()
+  createCollection: collectionFactory(),
+  createModel: modelFactory(),
+  createBehavior: behaviorFactory()
 };

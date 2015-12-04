@@ -1,12 +1,11 @@
 /* eslint-disable new-cap */
+import {Promise} from '../../src';
 
-var lib = require('../../src/index');
-var P = lib.Promise;
-var TimestampBehavior = require('../behaviors/Timestamp');
-var Author = require('../models/Author');
+import TimestampBehavior from '../behaviors/Timestamp';
+import Author from '../models/Author';
 
-module.exports = function (db) {
-  return db.createCollectionClass({
+export default function (db) {
+  return db.createCollection({
     table: 'authors',
 
     modelClass: Author,
@@ -37,12 +36,12 @@ module.exports = function (db) {
       }
     ],
 
-    beforeDelete: function () {
-      return new P.reject(true);
+    beforeDelete() {
+      return new Promise.reject(true);
     },
 
-    afterDelete: function (model) {
-      return new P(function (resolve, reject) {
+    afterDelete(model) {
+      return new Promise(function (resolve, reject) {
         model.set('title', 'Deleted');
         reject(true);
       });

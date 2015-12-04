@@ -1,11 +1,10 @@
 /* eslint-disable new-cap */
+import {Promise} from '../../src';
 
-var lib = require('../../src/index');
-var P = lib.Promise;
-var City = require('../models/City');
+import City from '../models/City';
 
-module.exports = function (db) {
-  return db.createCollectionClass({
+export default function (db) {
+  return db.createCollection({
     table: 'cities',
 
     modelClass: City,

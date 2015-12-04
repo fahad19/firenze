@@ -45,11 +45,9 @@ export default class Database {
 
 // ## Methods
 //
-// ### createCollectionClass(extend)
+// ### createCollection(extend)
 //
-// Also aliased as `.Collection(extend)`.
-//
-    this.createCollectionClass = this.Collection = collectionFactory(this);
+    this.createCollection = collectionFactory(this);
   }
 
 // ### getAdapter()

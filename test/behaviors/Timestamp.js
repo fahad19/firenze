@@ -1,19 +1,15 @@
 /* eslint-disable new-cap */
+import {createBehavior, Promise} from '../../src';
 
-import f from '../../src/index';
-
-let Behavior = f.Behavior;
-let P = f.Promise;
-
-export default class Timestamp extends Behavior {
+export default createBehavior({
   // sync
   modelInitialize(model) {
     model.set('created', new Date());
-  }
+  },
 
   // async
   beforeSave(model) {
     model.set('updated', new Date());
-    return new P.resolve(true);
+    return new Promise.resolve(true);
   }
-}
+})

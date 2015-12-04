@@ -1,9 +1,9 @@
 import _ from 'lodash';
-import Collection from '../Collection';
+import C from '../Collection';
 
 module.exports = function (db = null) {
-  return function (extend) {
-    class GeneratedCollection extends Collection {
+  return function (extend = {}) {
+    class Collection extends C {
       constructor(_extend = {}) {
         super(extend);
 
@@ -15,6 +15,6 @@ module.exports = function (db = null) {
       }
     }
 
-    return GeneratedCollection;
+    return Collection;
   };
 };

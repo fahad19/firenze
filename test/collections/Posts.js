@@ -1,12 +1,11 @@
 /* eslint-disable new-cap */
+import {Promise} from '../../src';
 
-var lib = require('../../src/index');
-var P = lib.Promise;
-var TimestampBehavior = require('../behaviors/Timestamp');
-var Post = require('../models/Post');
+import TimestampBehavior from '../behaviors/Timestamp';
+import Post from '../models/Post';
 
-module.exports = function (db) {
-  return db.createCollectionClass({
+export default function (db) {
+  return db.createCollection({
     table: 'posts',
 
     modelClass: Post,
@@ -46,9 +45,9 @@ module.exports = function (db) {
       TimestampBehavior
     ],
 
-    afterDelete: function (model) {
+    afterDelete(model) {
       model.set('_field', 'afterDelete');
-      return new P.resolve(true);
+      return new Promise.resolve(true);
     }
   });
 };
