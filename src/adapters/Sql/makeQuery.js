@@ -131,7 +131,19 @@ export default function makeQuery(knex) {
     }
 
     limit(limit) {
+      this._limit = limit;
       this.builder.limit(limit);
+
+      return this;
+    }
+
+    page(page) {
+      if (typeof this._limit === 'undefined') {
+        return this;
+      }
+
+      const offset = (page - 1) * this._limit;
+      this.offset(offset);
 
       return this;
     }

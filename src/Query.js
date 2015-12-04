@@ -85,6 +85,8 @@ export default class Query {
 
   limit() { return this; }
 
+  page() { return this; }
+
   create() { return this; }
 
   update() { return this; }
