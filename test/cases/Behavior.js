@@ -1,13 +1,13 @@
 /* global describe, before, after, it */
 /* eslint-disable no-unused-expressions */
+import should from 'should-promised';
 
-var should = require('should-promised'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
+import {Database} from '../../src';
+import config from '../config';
 
 describe('Behavior', function () {
   before(function (done) {
-    this.db = new lib.Database(config);
+    this.db = new Database(config);
 
     this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
@@ -36,13 +36,13 @@ describe('Behavior', function () {
   });
 
   it('should load in collection', function () {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.loadedBehaviors.length.should.eql(1);
   });
 
   it('should fire sync callback in model', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       title: 'New Post',
       body: 'text...'
     });
@@ -51,8 +51,8 @@ describe('Behavior', function () {
   });
 
   it('should fire async callback in model', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       title: 'New Post',
       body: 'text...'
     });

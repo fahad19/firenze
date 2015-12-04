@@ -1,13 +1,13 @@
 /* global describe, before, after, it */
 /* eslint-disable no-unused-expressions */
+import should from 'should-promised';
 
-var should = require('should-promised'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
+import {Database} from '../../src';
+import config from '../config';
 
 describe('Model', function () {
   before(function (done) {
-    this.db = new lib.Database(config);
+    this.db = new Database(config);
 
     this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
@@ -36,21 +36,21 @@ describe('Model', function () {
   });
 
   it('should have an instance', function () {
-    var posts = new this.Posts();
-    var post = posts.model();
+    const posts = new this.Posts();
+    const post = posts.model();
     post.should.have.property('get');
   });
 
   it('should have a collection', function () {
-    var posts = new this.Posts();
-    var post = posts.model();
+    const posts = new this.Posts();
+    const post = posts.model();
     post.should.have.property('collection');
     post.collection.should.have.property('table').which.is.exactly('posts');
   });
 
   it('should fetch itself', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 2
     });
     post.fetch().then(function (model) {
@@ -62,16 +62,16 @@ describe('Model', function () {
   });
 
   it('should get its attributes', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 2
     });
     post.get('id').should.eql(2);
   });
 
   it('should set its attributes', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 2
     });
     post.set('title', 'Hello World');
@@ -80,7 +80,7 @@ describe('Model', function () {
     post.set({
       body: 'blah...'
     });
-    var postObj = post.toObject();
+    const postObj = post.toObject();
     postObj.should.have.properties({
       id: 2,
       title: 'Hello World',
@@ -89,13 +89,13 @@ describe('Model', function () {
   });
 
   it('should check if it is new', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       title: 'Post here'
     });
     post.isNew().should.be.true; //eslint-disable-line
 
-    var anotherPost = posts.model({
+    const anotherPost = posts.model({
       id: 1,
       title: 'Yo'
     });
@@ -103,12 +103,12 @@ describe('Model', function () {
   });
 
   it('should get plain object', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 2,
       title: 'Post here'
     });
-    var postObj = post.toObject();
+    const postObj = post.toObject();
     postObj.should.have.properties({
       id: 2,
       title: 'Post here'
@@ -116,8 +116,8 @@ describe('Model', function () {
   });
 
   it('should create a new record', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       title: 'New Post',
       body: 'text...'
     });
@@ -130,8 +130,8 @@ describe('Model', function () {
   });
 
   it('should update existing record', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({id: 1});
+    const posts = new this.Posts();
+    const post = posts.model({id: 1});
     post.fetch().then(function (model) {
       model.set('title', 'Hello Universe');
       model.save().then(function (m) {
@@ -142,8 +142,8 @@ describe('Model', function () {
   });
 
   it('should update particular field', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({id: 1});
+    const posts = new this.Posts();
+    const post = posts.model({id: 1});
     post.fetch().then(function (model) {
       model.saveField('title', 'Hello Universe').then(function (m) {
         m.get('title').should.eql('Hello Universe');
@@ -153,8 +153,8 @@ describe('Model', function () {
   });
 
   it('should clear', function () {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 1,
       title: 'Hi'
     });
@@ -165,8 +165,8 @@ describe('Model', function () {
   });
 
   it('should delete a record', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({id: 2});
+    const posts = new this.Posts();
+    const post = posts.model({id: 2});
     post.delete().then(function (affectedRows) {
       affectedRows.should.eql(1);
       done();
@@ -174,7 +174,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -184,7 +184,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -204,7 +204,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with multiple rules', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: [
@@ -231,7 +231,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -258,7 +258,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with validator options', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: [
@@ -276,7 +276,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -296,7 +296,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with custom rule function', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -308,7 +308,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -328,7 +328,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with custom pre-defined rule function', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -343,7 +343,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -363,7 +363,7 @@ describe('Model', function () {
   });
 
   it('should validate a single field with async rule function', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -375,13 +375,13 @@ describe('Model', function () {
       validationRules: {
         voldemort: function (field, value, done) {
           setTimeout(function () {
-            var passed = value === 'Voldemort';
+            const passed = value === 'Voldemort';
             done(passed);
           }, 100);
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 
@@ -401,7 +401,7 @@ describe('Model', function () {
   });
 
   it('should try to validate model with all fields', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -417,7 +417,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World',
       body: 'Blah... 123'
     });
@@ -433,7 +433,7 @@ describe('Model', function () {
   });
 
   it('should validate model with all fields successfully', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -449,7 +449,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'hello',
       body: 'blah'
     });
@@ -463,7 +463,7 @@ describe('Model', function () {
   });
 
   it('should validate required fields', function () {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -474,7 +474,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({});
+    const post = posts.model({});
 
     post
       .validate()
@@ -486,7 +486,7 @@ describe('Model', function () {
   });
 
   it('should not save if validation fails', function (done) {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       schema: {
         title: {
           validate: {
@@ -496,7 +496,7 @@ describe('Model', function () {
         }
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'Hello World'
     });
 

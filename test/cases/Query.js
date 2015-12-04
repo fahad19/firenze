@@ -1,13 +1,12 @@
 /* global describe, before, after, it */
+import should from 'should';
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
-var P = lib.Promise;
+import {Database, Promise} from '../../src';
+import config from '../config';
 
 describe('Query', function () {
   before(function (done) {
-    this.db = new lib.Database(config);
+    this.db = new Database(config);
 
     this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
@@ -36,12 +35,12 @@ describe('Query', function () {
   });
 
   it('should find with distinct', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .distinct('author_id')
       .run()
       .then(function (results) {
-        var authorIds = results.map(function (result) {
+        const authorIds = results.map(function (result) {
           return result.author_id;
         });
 
@@ -57,7 +56,7 @@ describe('Query', function () {
   });
 
   it('should find all by limiting', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .limit(1)
       .all()
@@ -65,7 +64,7 @@ describe('Query', function () {
         models.should.be.instanceOf(Array);
         models.should.have.lengthOf(1);
 
-        var firstPost = models[0];
+        const firstPost = models[0];
         firstPost.should.have.property('attributes');
         firstPost.attributes.title.should.be.exactly('Hello World');
 
@@ -76,7 +75,7 @@ describe('Query', function () {
   });
 
   it('should find all by offsetting', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .limit(1)
       .offset(1)
@@ -85,7 +84,7 @@ describe('Query', function () {
         models.should.be.instanceOf(Array);
         models.should.have.lengthOf(1);
 
-        var firstPost = models[0];
+        const firstPost = models[0];
         firstPost.should.have.property('attributes');
         firstPost.attributes.title.should.be.exactly('About');
 
@@ -96,7 +95,7 @@ describe('Query', function () {
   });
 
   it('should find all by sorting', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .orderBy({
         title: 'asc'
@@ -106,7 +105,7 @@ describe('Query', function () {
         models.should.be.instanceOf(Array);
         models.should.have.lengthOf(3);
 
-        var titles = [];
+        const titles = [];
         models.forEach(function (model) {
           titles.push(model.get('title'));
         });
@@ -124,7 +123,7 @@ describe('Query', function () {
   });
 
   it('should find all by grouping', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .groupBy('author_id')
       .all()
@@ -132,7 +131,7 @@ describe('Query', function () {
         models.should.be.instanceOf(Array);
         models.should.have.lengthOf(2);
 
-        var titles = [];
+        const titles = [];
         models.forEach(function (model) {
           titles.push(model.get('title'));
         });
@@ -149,7 +148,7 @@ describe('Query', function () {
   });
 
   it('should find all with selected fields', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .select('id', 'title')
       .limit(1)
@@ -169,7 +168,7 @@ describe('Query', function () {
   });
 
   it('should find all with selected fields, with renaming', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .select('id', 'title', {title2: 'title'})
       .limit(1)
@@ -190,8 +189,8 @@ describe('Query', function () {
   });
 
   it('should find all with selected fields, with chained column functions', function (done) {
-    var posts = new this.Posts();
-    var query = posts.find();
+    const posts = new this.Posts();
+    const query = posts.find();
 
     query
       .select('id', 'title', {
@@ -214,7 +213,7 @@ describe('Query', function () {
   });
 
   it('should find all with selected fields, with embedded column function', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .select('id', 'title', {
         titleUppercased: function (func) {
@@ -238,7 +237,7 @@ describe('Query', function () {
   });
 
   it('should find all with selected fields, with concat function', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .select('id', 'title', {
         idAndTitle: function (func) {
@@ -261,7 +260,7 @@ describe('Query', function () {
   });
 
   it('should find all by conditions', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where({id: 2})
       .all()
@@ -277,7 +276,7 @@ describe('Query', function () {
   });
 
   it('should find all by conditions, with AND', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where({id: 2})
       .andWhere({title: 'About'})
@@ -294,7 +293,7 @@ describe('Query', function () {
   });
 
   it('should find all by conditions, with OR', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where({id: 2})
       .orWhere({title: 'Contact'})
@@ -313,7 +312,7 @@ describe('Query', function () {
   });
 
   it('should find all by conditions, with NOT', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .notWhere({title: 'Contact'})
       .all()
@@ -331,7 +330,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - equals (=)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.eq('id', 2);
@@ -350,7 +349,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - not equals (!=)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.notEq('id', 1);
@@ -370,7 +369,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - less than (<)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.lt('id', 2);
@@ -388,7 +387,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - less than and equals (<=)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.lte('id', 2);
@@ -407,7 +406,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - greater than (>)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.gt('id', 2);
@@ -425,7 +424,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - greater than and equals (>=)', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.gte('id', 2);
@@ -444,7 +443,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - like', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.like('title', '%ontac%');
@@ -462,7 +461,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - not like', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.notLike('title', '%ontac%');
@@ -481,7 +480,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - between', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.between('views', 15, 25);
@@ -499,7 +498,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - not between', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.notBetween('views', 15, 25);
@@ -518,7 +517,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - in', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.in('id', [1, 2]);
@@ -537,7 +536,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - not in', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr.notIn('id', [1, 2]);
@@ -555,7 +554,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - is null', function (done) {
-    var authors = new this.Authors();
+    const authors = new this.Authors();
     authors.find()
       .where(function (expr) {
         expr.isNull('country');
@@ -573,7 +572,7 @@ describe('Query', function () {
   });
 
   it('should find by expression - is not null', function (done) {
-    var authors = new this.Authors();
+    const authors = new this.Authors();
     authors.find()
       .where(function (expr) {
         expr.isNotNull('country');
@@ -592,7 +591,7 @@ describe('Query', function () {
   });
 
   it('should find by chaining expressions', function (done) {
-    var authors = new this.Authors();
+    const authors = new this.Authors();
     authors.find()
       .where(function (expr) {
         expr
@@ -612,7 +611,7 @@ describe('Query', function () {
   });
 
   it('should find by multiple scoped function expressions', function (done) {
-    var authors = new this.Authors();
+    const authors = new this.Authors();
     authors.find()
       .where(function (expr) {
         expr.eq('id', 1);
@@ -634,7 +633,7 @@ describe('Query', function () {
   });
 
   it('should find by multiple nested expressions', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where(function (expr) {
         expr

@@ -1,12 +1,12 @@
 /* global describe, before, after, it */
+import should from 'should';
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
+import {Database} from '../../src';
+import config from '../config';
 
 describe('Adapter', function () {
   before(function () {
-    this.db = new lib.Database(config);
+    this.db = new Database(config);
     this.Posts = require('../collections/Posts')(this.db);
     this.Authors = require('../collections/Authors')(this.db);
   });
@@ -16,8 +16,8 @@ describe('Adapter', function () {
   });
 
   it('should load fixtures for a single Collection', function (done) {
-    var posts = new this.Posts();
-    var data = require('../fixtures/posts');
+    const posts = new this.Posts();
+    const data = require('../fixtures/posts');
     this.db.getAdapter().loadFixture(posts, data).then(function () {
       done();
     }).catch(function (error) {

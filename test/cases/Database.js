@@ -1,20 +1,20 @@
 /* global describe, it */
+import should from 'should';
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
+import {Database} from '../../src';
+import config from '../config';
 
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
-    var db = new lib.Database(config);
+    const db = new Database(config);
     db.close().then(done);
   });
 
   it('should generate Collection class', function (done) {
-    var db = new lib.Database(config);
-    var Posts = require('../collections/Posts')(db);
+    const db = new Database(config);
+    const Posts = require('../collections/Posts')(db);
 
-    var posts = new Posts();
+    const posts = new Posts();
     posts.table.should.be.exactly('posts');
     db.close().then(done);
   });

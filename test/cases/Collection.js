@@ -1,13 +1,12 @@
 /* global describe, before, after, it */
+import should from 'should';
 
-var should = require('should'); //eslint-disable-line
-var lib = require('../../src/index');
-var config = require('../config');
-var P = lib.Promise;
+import {Database, Promise} from '../../src';
+import config from '../config';
 
 describe('Collection', function () {
   before(function (done) {
-    this.db = new lib.Database(config);
+    this.db = new Database(config);
 
     this.Posts = require('../collections/Posts')(this.db);
     this.postsData = require('../fixtures/posts');
@@ -36,27 +35,27 @@ describe('Collection', function () {
   });
 
   it('should have an instance', function () {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.should.have.property('table').which.is.exactly('posts');
   });
 
   it('should have a model', function () {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.should.have.property('model');
 
-    var post = posts.model();
+    const post = posts.model();
     post.should.have.property('get');
   });
 
   it('should find all results', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .all()
       .then(function (models) {
         models.should.be.instanceOf(Array);
         models.should.have.lengthOf(3);
 
-        var firstPost = models[0];
+        const firstPost = models[0];
         firstPost.should.have.property('attributes');
         firstPost.attributes.title.should.be.exactly('Hello World');
 
@@ -67,7 +66,7 @@ describe('Collection', function () {
   });
 
   it('should find single result', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .where({id: 1})
       .first()
@@ -80,7 +79,7 @@ describe('Collection', function () {
   });
 
   it('should find count of results', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.find()
       .count()
       .run()
@@ -93,8 +92,8 @@ describe('Collection', function () {
   });
 
   it('should find single result by primaryKey', function (done) {
-    var posts = new this.Posts();
-    var promise = posts.findById(1);
+    const posts = new this.Posts();
+    const promise = posts.findById(1);
 
     promise.then(function (post) {
       post.get('title').should.equal('Hello World');
@@ -105,7 +104,7 @@ describe('Collection', function () {
   });
 
   it('should find single result by field', function (done) {
-    var posts = new this.Posts();
+    const posts = new this.Posts();
     posts.findBy('title', 'Hello World').then(function (post) {
       post.get('title').should.equal('Hello World');
       done();
@@ -115,15 +114,15 @@ describe('Collection', function () {
   });
 
   it('should fire beforeSave callback', function (done) {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       beforeSave: function (model) {
-        return new P((resolve) => {
+        return new Promise((resolve) => {
           model.set('title', 'I am new again');
           return resolve(true);
         });
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'I am new'
     });
 
@@ -134,15 +133,15 @@ describe('Collection', function () {
   });
 
   it('should fire afterSave callback', function (done) {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       afterSave: function (model) {
-        return new P((resolve) => {
+        return new Promise((resolve) => {
           model.set('title', 'I am modified in afterSave');
           return resolve(true);
         });
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'I am new'
     });
 
@@ -153,15 +152,15 @@ describe('Collection', function () {
   });
 
   it('should fire beforeValidate callback', function (done) {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       beforeValidate: function (model) {
-        return new P((resolve) => {
+        return new Promise((resolve) => {
           model.set('title', 'I am modified in beforeValidate');
           return resolve(true);
         });
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'I am new'
     });
 
@@ -172,15 +171,15 @@ describe('Collection', function () {
   });
 
   it('should fire afterValidate callback', function (done) {
-    var posts = new this.Posts({
+    const posts = new this.Posts({
       afterValidate: function (model) {
-        return new P((resolve) => {
+        return new Promise((resolve) => {
           model.set('title', 'I am modified in afterValidate');
           return resolve(true);
         });
       }
     });
-    var post = posts.model({
+    const post = posts.model({
       title: 'I am new'
     });
 
@@ -191,8 +190,8 @@ describe('Collection', function () {
   });
 
   it('should fire beforeDelete callback', function (done) {
-    var authors = new this.Authors();
-    var author = authors.model({
+    const authors = new this.Authors();
+    const author = authors.model({
       id: 1
     });
     author.fetch().then(function (model) {
@@ -208,8 +207,8 @@ describe('Collection', function () {
   });
 
   it('should fire afterDelete callback', function (done) {
-    var posts = new this.Posts();
-    var post = posts.model({
+    const posts = new this.Posts();
+    const post = posts.model({
       id: 2
     });
     post.fetch().then(function (model) {
