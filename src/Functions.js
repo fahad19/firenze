@@ -1,3 +1,6 @@
+// ## Functions
+//
+
 export default class Functions {
   constructor(...args) {
     this.query = args[0];

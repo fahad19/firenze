@@ -16,18 +16,18 @@ $ bower install --save firenze
 
 ---
 
-firenze.js is a adapter-based object relational mapper written in ES6 targetting node.js, io.js and the browser.
+firenze.js is a adapter-based object relational mapper written in ES6 targetting node.js and the browser.
 
 #### Key features
 
-* Works in both node/io.js and the browser
 * Adapter based structure to plug in any database/store
+* Intuitive query builder
 * Highly extensible with Behavior pattern
 * Promise based workflow
 * Strong validation support
 * Small footprint of ~30kB minified file
 
-The project is still in heavy development, and more features are expected to land in future releases.
+The project is still under heavy development, and more features are expected to land in future releases.
 
 #### Available adapters
 
@@ -44,10 +44,11 @@ The project is still in heavy development, and more features are expected to lan
 
 #### Terminologies
 
-Terminologies for developing with firenze.js can be broken down into a handful of items:
+Terminologies for developing with firenze.js can be broken down into these items:
 
 * Database
 * Adapter
+* Query
 * Collection
 * Model
 * Behavior
@@ -60,14 +61,15 @@ Each of them are discussed in the documentation below.
 
 - [Install](#install)
   - [Node.js](#nodejs)
-  - [io.js](#iojs)
   - [Browser](#browser)
 - [Quickstart](#quickstart)
 - [Database](#database)
   - [Usage](#usage)
   - [Methods](#methods)
-    - [createCollectionClass(extend)](#createcollectionclassextend)
+    - [createCollection(extend)](#createcollectionextend)
     - [getAdapter()](#getadapter)
+    - [query()](#query)
+    - [schema()](#schema)
     - [getConnection()](#getconnection)
     - [close(cb = null)](#closecb--null)
 - [Adapter](#adapter)
@@ -75,16 +77,16 @@ Each of them are discussed in the documentation below.
   - [Methods](#methods-1)
     - [getConnection()](#getconnection-1)
     - [closeConnection(cb = null)](#closeconnectioncb--null)
-    - [query()](#query)
-    - [create(q, obj)](#createq-obj)
-    - [read(q)](#readq)
-    - [update(q, obj)](#updateq-obj)
-    - [delete(q)](#deleteq)
-    - [dropTable(collection)](#droptablecollection)
-    - [createTable(collection)](#createtablecollection)
+    - [query()](#query-1)
+    - [schema()](#schema-1)
     - [populateTable(collection, rows)](#populatetablecollection-rows)
     - [loadFixture(collection, rows)](#loadfixturecollection-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
+  - [Schema](#schema)
+- [Query](#query)
+  - [Example usage](#example-usage)
+  - [Expression](#expression)
+  - [Functions](#functions)
 - [Collection](#collection)
   - [Creating classes](#creating-classes)
     - [Properties](#properties)
@@ -96,7 +98,6 @@ Each of them are discussed in the documentation below.
       - [validationRules](#validationrules)
       - [behaviors](#behaviors)
       - [loadedBehaviors](#loadedbehaviors)
-      - [finders](#finders)
       - [alias](#alias)
   - [Usage](#usage-2)
   - [Validations](#validations)
@@ -111,21 +112,18 @@ Each of them are discussed in the documentation below.
   - [Methods](#methods-2)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
-    - [getAdapter()](#getadapter-1)
     - [setDatabase(db)](#setdatabasedb)
-    - [query(options = {})](#queryoptions--)
-    - [find(type, options = {})](#findtype-options--)
-    - [findAll(options = {})](#findalloptions--)
-    - [findFirst(options = {})](#findfirstoptions--)
-    - [findCount(options = {})](#findcountoptions--)
-    - [findList(options = {})](#findlistoptions--)
-    - [findBy(field, value, options = {})](#findbyfield-value-options--)
-    - [findById(value, options = {})](#findbyidvalue-options--)
-    - [findByKey(value, options = {})](#findbykeyvalue-options--)
+    - [getAdapter()](#getadapter-1)
+    - [query()](#query-2)
+    - [find()](#find)
+    - [findBy(field, value)](#findbyfield-value)
+    - [findAllBy(field, value)](#findallbyfield-value)
+    - [findById(value)](#findbyidvalue)
+    - [findByKey(value)](#findbykeyvalue)
     - [validate()](#validate)
     - [validateField(model, field, value = null)](#validatefieldmodel-field-value--null)
     - [save(model, options = {})](#savemodel-options--)
-    - [delete(model)](#deletemodel)
+    - [delete(model, options = {})](#deletemodel-options--)
     - [loadBehaviors()](#loadbehaviors)
     - [callBehavedMethod(methodName)](#callbehavedmethodmethodname)
   - [Callbacks](#callbacks)
@@ -182,7 +180,7 @@ Each of them are discussed in the documentation below.
 
 # Install
 
-firenze.js can be used in both node.js/io.js, as well as the browser.
+firenze.js can be used in both node.js as well as the browser.
 
 ## Node.js
 
@@ -196,16 +194,6 @@ Now you can require it as follows:
 var firenze = require('firenze');
 ```
 
-## io.js
-
-Installation is same as Node.js since `npm` is the common package manager.
-
-To import:
-
-```js
-import firenze from 'firenze';
-```
-
 ## Browser
 
 You can download firenze.js using [Bower](http://bower.io).
@@ -214,9 +202,9 @@ You can download firenze.js using [Bower](http://bower.io).
 $ bower install --save firenze
 ```
 
-The package comes with multiple dist files, and you are free to choose whatever workflow suits you best.
+The package comes with multiple dist files, and you are free to choose whatever setup suits you best.
 
-If you want to include just one file alone with all the dependencies:
+If you want to include just one file along with all the required dependencies:
 
 ```html
 <script src="bower_components/firenze/dist/firenze.full.min.js"></script>
@@ -268,14 +256,14 @@ var db = new Database({
 });
 
 // define a Model, which represents a record
-var Post = f.createModelClass({
+var Post = f.createModel({
   getLowercasedTitle: function () {
     return this.get('title').toLowerCase();
   }
 });
 
 // define a Collection, which represents a table
-var Posts = db.createCollectionClass({ // or db.Collection()
+var Posts = db.createCollection({
   table: 'posts',
 
   alias: 'Post',
@@ -293,37 +281,37 @@ var Posts = db.createCollectionClass({ // or db.Collection()
       type: 'text'
     }
   }
-
 });
 
 // finding
 var posts = new Posts();
-posts.find('first', {
-  conditions: {
+
+posts.find()
+  .where({
     id: 1
-    // can also be prefixed with Model alias as:
-    // 'Post.id': 1
-  }
-}).then(function (post) {
-  // post in an instance of Model, with fetched data
-  var title = post.get('title');
+  })
+  .then(function (post) {
+    // post in an instance of Model, with fetched data
+    var title = post.get('title');
 
-  // custom Model method
-  var lowerCasedTitle = post.getLowercasedTitle();
+    // custom Model method
+    var lowerCasedTitle = post.getLowercasedTitle();
 
-  // or convert to plain object
-  var postObject = post.toObject();
-  var title = postObject.title;
-});
+    // or convert to plain object
+    var postObject = post.toJSON();
+    var title = postObject.title;
+  });
 
 // saving
 var post = posts.model({
   title: 'Hello World',
   body: 'blah...'
 });
-post.save().then(function (model) {
-  console.log('Saved with ID: ' + model.get('id'));
-});
+
+post.save()
+  .then(function (model) {
+    console.log('Saved with ID: ' + model.get('id'));
+  });
 ```
 
 <!--docume:src/Database.js-->
@@ -352,13 +340,19 @@ var db = new Database({
 ```
 ## Methods
 
-### createCollectionClass(extend)
-
-Also aliased as `.Collection(extend)`.
+### createCollection(extend)
 
 ### getAdapter()
 
 Returns adapter
+
+### query()
+
+Returns query builder of the Adapter
+
+### schema()
+
+Returns schema object
 
 ### getConnection()
 
@@ -421,31 +415,11 @@ Returns a promise.
 
 ### query()
 
+Gets a new query object
+
+### schema()
+
 Gets a query object
-
-### create(q, obj)
-
-Creates a new record
-
-### read(q)
-
-Fetches the results found against the query object
-
-### update(q, obj)
-
-Updates the records matching againt query object with given data
-
-### delete(q)
-
-Deletes the records matching against query object
-
-### dropTable(collection)
-
-Drop table if exists
-
-### createTable(collection)
-
-Create table based on collection's schema
 
 ### populateTable(collection, rows)
 
@@ -459,9 +433,48 @@ Creates table, and loads data for given collection
 
 Runs fixtures for multiple collections
 
-arr = [{collection: post, rows: rows}]
+arr = [{collection: posts, rows: rows}]
 
 <!--/docume:src/Adapter.js-->
+
+<!--docume:src/Schema.js-->
+## Schema
+
+<!--/docume:src/Schema.js-->
+
+<!--docume:src/Query.js-->
+# Query
+
+The query builder.
+
+## Example usage
+
+```js
+db.query()
+  .select('id', 'title')
+  .from('posts', 'Post')
+  .where({
+    id: 1
+  })
+  .offset(0)
+  .limit(10)
+  .run()
+  .then(function (results) {
+
+  });
+```
+
+<!--/docume:src/Query.js-->
+
+<!--docume:src/Expression.js-->
+## Expression
+
+<!--/docume:src/Expression.js-->
+
+<!--docume:src/Functions.js-->
+## Functions
+
+<!--/docume:src/Functions.js-->
 
 <!--docume:src/Collection.js-->
 # Collection
@@ -599,23 +612,6 @@ Example:
 #### loadedBehaviors
 
 Array of already loaded behaviors for this model
-
-#### finders
-
-List of mapped finder methods that you want available in `.find(mappedName, options)`
-
-By default these are set:
-
-```js
-{
-  all: 'findAll',
-  first: 'findFirst',
-  count: 'findCount',
-  list: 'findList'
-}
-```
-
-This mapping allows you to later call `.find('all', options)`, which eventually calls `.findAll(options)`.
 
 #### alias
 
@@ -862,79 +858,41 @@ Get an instance of this Collection's model
 
 Get an instance of the current Database
 
-### getAdapter()
-
-Get adapter of the Collection's database
-
 ### setDatabase(db)
 
 Change database instance of this Collection to `db`
 
-### query(options = {})
+### getAdapter()
 
-Get query object for this Collection
+Get adapter of the Collection's database
 
-### find(type, options = {})
+### query()
 
-Explained above in `finders` section
+Get a new query builder for this Collection's table
 
-### findAll(options = {})
+### find()
 
-Returns a promise with matched results.
+Returns query builder for fetching records of this Collection
 
-Same as `collection.find('all', options)`.
+### findBy(field, value)
 
-### findFirst(options = {})
-
-Returns a promise with matched model if any.
-
-Same as `collection.find('first', options)`.
-
-### findCount(options = {})
-
-Returns a promise with count of matched results.
-
-Same as `collection.find('count', options)`.
-
-### findList(options = {})
-
-Returns a promise with key/value pair of matched results.
-
-Same as `collection.find('list', options)`.
-
-### findBy(field, value, options = {})
-
-Shortcut method for finding a single record.
-
-Same as:
-
-```js
-collection.find('first', {
-  conditions: {
-    field: value
-  }
-});
-```
+Shortcut method for finding single record that matches a field's value.
 
 Returns a promise.
 
-### findById(value, options = {})
+### findAllBy(field, value)
 
-Shortcut method for finding record by ID.
-
-Same as:
-
-```js
-collection.find('first', {
-  conditions: {
-    id: value // `id` key comes from `model.primaryKey
-  }
-});
-```
+Shortcut method for finding all records that matche a field's value.
 
 Returns a promise.
 
-### findByKey(value, options = {})
+### findById(value)
+
+Shortcut method for finding a record by its ID.
+
+Returns a promise.
+
+### findByKey(value)
 
 Alias for `collection.findById()`.
 
@@ -968,7 +926,7 @@ Options:
 
 * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
 
-### delete(model)
+### delete(model, options = {})
 
 Deletes the given model. Usually called via `Model.delete()`.
 

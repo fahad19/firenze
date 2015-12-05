@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import P from 'bluebird';
 
+import P from '../../Promise';
 import Schema from '../../Schema';
 
 export default class SqlSchema extends Schema {

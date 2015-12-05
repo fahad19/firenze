@@ -1,5 +1,7 @@
 import Promise from './Promise';
 
+// ## Schema
+//
 export default class Schema {
   constructor(adapter) {
     this.adapter = adapter;

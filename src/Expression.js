@@ -1,3 +1,5 @@
+// ## Expression
+//
 export default class Expression {
   constructor(query) {
     this.query = query;
