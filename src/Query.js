@@ -105,6 +105,8 @@ export default class Query {
 
   count() { return this; }
 
+  join() { return this; }
+
   innerJoin() { return this; }
 
   leftJoin() { return this; }

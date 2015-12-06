@@ -25,19 +25,19 @@ function makeWhere(query, method, ...args) {
 
 function extractJoinOptions(table, ...args) {
   let alias = table;
-  let where = function () { };
+  let on = function () { };
 
   if (args[1] !== 'undefined') {
     alias = args[0];
-    where = args[1];
+    on = args[1];
   } else {
-    where = args[0];
+    on = args[0];
   }
 
   return {
     table,
     alias,
-    where
+    on
   };
 }
 
@@ -198,7 +198,7 @@ export default function makeQuery(knex) {
         type: null,
         table: null,
         alias: null,
-        where: function () { },
+        on: function () { },
         ...givenOptions
       };
 
@@ -208,7 +208,7 @@ export default function makeQuery(knex) {
 
       this.builder[joinMethod](tableName, function () {
         const expr = query.expr(this, {joins: true});
-        options.where.apply(query, [expr]);
+        options.on.apply(query, [expr]);
       });
 
       return this;
