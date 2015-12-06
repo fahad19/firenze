@@ -19,6 +19,12 @@ export default class SqlExpression extends Expression {
     super(...args);
 
     this.builder = (typeof args[1] !== 'undefined') ? args[1] : null;
+
+    this.options = (typeof args[2] !== 'undefined') ? args[2] : {
+      joins: false
+    };
+
+    this.whereMethod = this.options.joins ? 'on' : 'where';
   }
 
   and(...args) {
@@ -34,43 +40,43 @@ export default class SqlExpression extends Expression {
   }
 
   eq(field, value) {
-    this.builder.where(field, '=', value);
+    this.builder[this.whereMethod](field, '=', value);
 
     return this;
   }
 
   notEq(field, value) {
-    this.builder.where(field, '<>', value);
+    this.builder[this.whereMethod](field, '<>', value);
 
     return this;
   }
 
   lt(field, value) {
-    this.builder.where(field, '<', value);
+    this.builder[this.whereMethod](field, '<', value);
 
     return this;
   }
 
   lte(field, value) {
-    this.builder.where(field, '<=', value);
+    this.builder[this.whereMethod](field, '<=', value);
 
     return this;
   }
 
   gt(field, value) {
-    this.builder.where(field, '>', value);
+    this.builder[this.whereMethod](field, '>', value);
 
     return this;
   }
 
   gte(field, value) {
-    this.builder.where(field, '>=', value);
+    this.builder[this.whereMethod](field, '>=', value);
 
     return this;
   }
 
   like(field, value) {
-    this.builder.where(field, 'like', value);
+    this.builder[this.whereMethod](field, 'like', value);
 
     return this;
   }
@@ -82,7 +88,7 @@ export default class SqlExpression extends Expression {
   }
 
   in(field, values) {
-    this.builder.where(field, 'in', values);
+    this.builder[this.whereMethod](field, 'in', values);
 
     return this;
   }

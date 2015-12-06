@@ -685,4 +685,24 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find with JOINs - left', function (done) {
+    this.db.query()
+      .from('posts', 'Post')
+      .where({
+        'Post.id': 1
+      })
+      .leftJoin('authors', 'Author', function (expr) {
+        expr.eq('Post.author_id', 'Author.id');
+      })
+      .all()
+      .then(function (results) {
+        results[0].title.should.eql('Hello World');
+        results[0].name.should.eql('Fahad Ibnay Heylaal');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });

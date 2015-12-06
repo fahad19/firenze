@@ -23,6 +23,45 @@ function makeWhere(query, method, ...args) {
   return query;
 }
 
+function extractJoinOptions(table, ...args) {
+  let alias = table;
+  let where = function () { };
+
+  if (args[1] !== 'undefined') {
+    alias = args[0];
+    where = args[1];
+  } else {
+    where = args[0];
+  }
+
+  return {
+    table,
+    alias,
+    where
+  };
+}
+
+function getJoinMethodByType(type) {
+  switch (type.toUpperCase()) {
+    case 'INNER':
+      return 'innerJoin';
+    case 'LEFT':
+      return 'leftJoin';
+    case 'LEFT OUTER':
+      return 'leftOuter';
+    case 'RIGHT':
+      return 'rightJoin';
+    case 'RIGHT OUTER':
+      return 'rightOuter';
+    case 'OUTER':
+      return 'outer';
+    case 'FULL OUTER':
+      return 'fullOuter';
+    default:
+      return 'leftJoin';
+  }
+}
+
 export default function makeQuery(knex) {
   class SqlQuery extends Query {
     constructor(givenOptions = {}) {
@@ -152,6 +191,76 @@ export default function makeQuery(knex) {
       this.builder.offset(offset);
 
       return this;
+    }
+
+    join(givenOptions = {}) {
+      const options = {
+        type: null,
+        table: null,
+        alias: null,
+        where: function () { },
+        ...givenOptions
+      };
+
+      const joinMethod = getJoinMethodByType(options.type);
+      const tableName = options.alias ? `${options.table} as ${options.alias}` : options.table;
+      const query = this;
+
+      this.builder[joinMethod](tableName, function () {
+        const expr = query.expr(this, {joins: true});
+        options.where.apply(query, [expr]);
+      });
+
+      return this;
+    }
+
+    innerJoin(...args) {
+      return this.join({
+        type: 'INNER',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    leftJoin(...args) {
+      return this.join({
+        type: 'LEFT',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    leftOuterJoin(...args) {
+      return this.join({
+        type: 'LEFT OUTER',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    rightJoin(...args) {
+      return this.join({
+        type: 'RIGHT',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    rightOuterJoin(...args) {
+      return this.join({
+        type: 'RIGHT OUTER',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    outerJoin(...args) {
+      return this.join({
+        type: 'OUTER',
+        ...extractJoinOptions(...args)
+      });
+    }
+
+    fullOuterJoin(...args) {
+      return this.join({
+        type: 'FULL OUTER',
+        ...extractJoinOptions(...args)
+      });
     }
 
     orderBy(name, direction = 'asc') {

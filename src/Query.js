@@ -105,6 +105,22 @@ export default class Query {
 
   count() { return this; }
 
+  innerJoin() { return this; }
+
+  leftJoin() { return this; }
+
+  leftOuterJoin() { return this; }
+
+  rightJoin() { return this; }
+
+  rightOuterJoin() { return this; }
+
+  outerJoin() { return this; }
+
+  fullOuterJoin() { return this; }
+
+  crossJoin() { return this; }
+
   all() { return new Promise.resolve(true); }
 
   first() { return new Promise.resolve(true); }
