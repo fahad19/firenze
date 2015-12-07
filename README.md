@@ -76,20 +76,53 @@ Each of them are discussed in the documentation below.
   - [Usage](#usage-1)
   - [Methods](#methods-1)
     - [getConnection()](#getconnection-1)
-    - [closeConnection(cb = null)](#closeconnectioncb--null)
+    - [closeConnection()](#closeconnection)
     - [query()](#query-1)
     - [schema()](#schema-1)
     - [populateTable(collection, rows)](#populatetablecollection-rows)
     - [loadFixture(collection, rows)](#loadfixturecollection-rows)
     - [loadAllFixtures(arr)](#loadallfixturesarr)
   - [Schema](#schema)
-- [Query](#query)
-  - [Example usage](#example-usage)
-  - [Expression](#expression)
-  - [Functions](#functions)
-- [Collection](#collection)
-  - [Creating classes](#creating-classes)
+    - [Creating classes](#creating-classes)
     - [Properties](#properties)
+      - [adapter](#adapter)
+    - [Methods](#methods-2)
+      - [getConnection()](#getconnection-2)
+      - [dropTable(collection)](#droptablecollection)
+      - [createTable(collection)](#createtablecollection)
+- [Query](#query)
+  - [Usage](#usage-2)
+  - [Creating classes](#creating-classes-1)
+  - [Properties](#properties-1)
+    - [adapter](#adapter-1)
+    - [collection](#collection)
+  - [Methods](#methods-3)
+    - [setAdapter(adapter)](#setadapteradapter)
+    - [getAdapter()](#getadapter-1)
+    - [setCollection(collection)](#setcollectioncollection)
+    - [expr()](#expr)
+    - [func()](#func)
+    - [all()](#all)
+    - [first()](#first)
+    - [run()](#run)
+    - [toModels(results)](#tomodelsresults)
+    - [toModel(result)](#tomodelresult)
+    - [tap(fn)](#tapfn)
+  - [Expression](#expression)
+    - [Usage](#usage-3)
+    - [Creating classes](#creating-classes-2)
+    - [Properties](#properties-2)
+      - [query](#query)
+  - [Functions](#functions)
+    - [Usage](#usage-4)
+    - [Creating classes](#creating-classes-3)
+    - [Properties](#properties-3)
+      - [query](#query-1)
+      - [column](#column)
+      - [setColumn(column)](#setcolumncolumn)
+- [Collection](#collection)
+  - [Creating classes](#creating-classes-4)
+    - [Properties](#properties-4)
       - [modelClass](#modelclass)
       - [table](#table)
       - [schema](#schema)
@@ -99,21 +132,21 @@ Each of them are discussed in the documentation below.
       - [behaviors](#behaviors)
       - [loadedBehaviors](#loadedbehaviors)
       - [alias](#alias)
-  - [Usage](#usage-2)
+  - [Usage](#usage-5)
   - [Validations](#validations)
     - [Single rule](#single-rule)
     - [Multiple rules](#multiple-rules)
     - [Rule with options](#rule-with-options)
     - [Rule as a function](#rule-as-a-function)
-    - [Asynchronouse rule](#asynchronouse-rule)
+    - [Asynchronous rule](#asynchronous-rule)
     - [Available rules](#available-rules)
     - [Custom rules](#custom-rules)
     - [Required fields](#required-fields)
-  - [Methods](#methods-2)
+  - [Methods](#methods-4)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
     - [setDatabase(db)](#setdatabasedb)
-    - [getAdapter()](#getadapter-1)
+    - [getAdapter()](#getadapter-2)
     - [query()](#query-2)
     - [find()](#find)
     - [findBy(field, value)](#findbyfield-value)
@@ -135,13 +168,13 @@ Each of them are discussed in the documentation below.
     - [beforeDelete(model)](#beforedeletemodel)
     - [afterDelete(model)](#afterdeletemodel)
 - [Models](#models)
-  - [Creating classes](#creating-classes-1)
-    - [Properties](#properties-1)
+  - [Creating classes](#creating-classes-5)
+    - [Properties](#properties-5)
       - [attributes](#attributes)
-      - [collection](#collection)
+      - [collection](#collection-1)
       - [id](#id)
-  - [Usage](#usage-3)
-  - [Methods](#methods-3)
+  - [Usage](#usage-6)
+  - [Methods](#methods-5)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
     - [toObject()](#toobject)
@@ -156,10 +189,10 @@ Each of them are discussed in the documentation below.
     - [validate()](#validate-1)
     - [validateField(field, value = null)](#validatefieldfield-value--null)
 - [Behavior](#behavior)
-  - [Usage](#usage-4)
-  - [Creating classes](#creating-classes-2)
-  - [Properties](#properties-2)
-    - [collection](#collection-1)
+  - [Usage](#usage-7)
+  - [Creating classes](#creating-classes-6)
+  - [Properties](#properties-6)
+    - [collection](#collection-2)
     - [options](#options)
   - [Callback methods](#callback-methods)
     - [collectionInitialize(collection)](#collectioninitializecollection)
@@ -330,7 +363,7 @@ var db = new Database({
   adapter: MysqlAdapter,
   host: '127.0.0.1',
   database: 'my_database',
-  user: '',
+  user: 'root',
   password: '',
   pool: {
     min: 0,
@@ -342,17 +375,19 @@ var db = new Database({
 
 ### createCollection(extend)
 
+Quickly create Collection class that references to current Database instance.
+
 ### getAdapter()
 
-Returns adapter
+Returns adapter instance
 
 ### query()
 
-Returns query builder of the Adapter
+Returns a new query builder of the Adapter
 
 ### schema()
 
-Returns schema object
+Returns schema object for manipulating the Database
 
 ### getConnection()
 
@@ -373,7 +408,7 @@ Adapter is responsible for making the actual database operations.
 
 ## Usage
 
-You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
+You would hardly ever need to create an instance of an Adapter. Database class would take care of it.
 
 An adapter instance is created with the same options passed when creating a Database instance:
 
@@ -407,7 +442,7 @@ Every adapter needs to implement at least these methods below:
 
 Returns the current connection
 
-### closeConnection(cb = null)
+### closeConnection()
 
 Closes the current connection.
 
@@ -415,53 +450,212 @@ Returns a promise.
 
 ### query()
 
-Gets a new query object
+Returns a new query object
 
 ### schema()
 
-Gets a query object
+Returns Schema object
 
 ### populateTable(collection, rows)
 
-Insert rows into collection's table
+Inserts rows into collection's table
+
+Returns a promise
 
 ### loadFixture(collection, rows)
 
-Creates table, and loads data for given collection
+Drops and creates table, and loads data for given collection
+
+Returns a promise.
 
 ### loadAllFixtures(arr)
 
 Runs fixtures for multiple collections
 
-arr = [{collection: posts, rows: rows}]
+`arr` should be in the format of `[{collection: posts, rows: rows}]`
+
+Returns a promise.
 
 <!--/docume:src/Adapter.js-->
 
 <!--docume:src/Schema.js-->
 ## Schema
 
+Schema class is responsible for exposing methods for manipulating the database, like dropping and creating tables.
+
+It made its way into the project in v0.3, for abstracting the responsibilities of fixtures in tests mainly.
+
+The class is intended to be primarily used by Adapters internally only.
+
+### Creating classes
+
+Unless you are building an adapter yourself, you wouldn't be required to create a Schema class.
+
+Example in ES6:
+
+```js
+import {Schema} from 'firenze';
+
+export default MyCustomSchema extends Schema {
+  // ...
+}
+```
+
+### Properties
+
+#### adapter
+
+Current instance of Adapter
+
+### Methods
+
+#### getConnection()
+
+Returns current Adapter's connection
+
+#### dropTable(collection)
+
+Drops the table for given collection.
+
+Returns a promise.
+
+#### createTable(collection)
+
+Create table from given collection.
+
+Schema can build the table from the information available in `collection.schema`.
+
 <!--/docume:src/Schema.js-->
 
 <!--docume:src/Query.js-->
 # Query
 
-The query builder.
+The query builder is the heart of all Adapters.
 
-## Example usage
+This class is responsible for building the query and executing it against the database.
+
+## Usage
+
+For helping understanding better, we will be showing examples with SQL environments below.
+
+```js
+// create a new Query object
+var query = db.query()
+  .select('id', 'title') // select the columns `id` and `title`
+  .from('posts', 'Post') // from `posts` table, as `Post`
+  .where({ // conditions
+    id: 1
+  })
+  .orderBy({
+    id: 'asc' // order by the column `id` in ascending order
+  })
+  .limit(10); // limit the results set to `10`
+
+// execute it
+query.run()
+  .then(function (results) {
+    console.log(results);
+  });
+```
+
+Majority of the methods are chainable.
+
+## Creating classes
+
+Unless you are building an Adapter yourself, you wouldn't be required to create Query classes yourself.
+
+Example in ES6:
+
+```js
+// base Query class
+import {Query} from 'firenze';
+
+// custom helper classes needed for creating new Query class
+import FooExpression from './Expression';
+import FooFunctions from './Functions';
+
+export default FooQuery extends Query {
+  constructor(options = {}) {
+    options = {
+      expressionClass: FooExpression,
+      functionsClass: FooFunctions,
+      ...options
+    };
+
+    super(options);
+  }
+}
+```
+
+## Properties
+
+### adapter
+
+Current instance of Adapter
+
+### collection
+
+Current collection (if any)
+
+## Methods
+
+### setAdapter(adapter)
+
+Sets adapter to given one
+
+### getAdapter()
+
+Returns currently set Adapter instance
+
+### setCollection(collection)
+
+Sets collection to given one
+
+### expr()
+
+Read more in Expression section.
+
+Returns a new Expression object
+
+### func()
+
+Read more in Functions section.
+
+Returns a new Functions object
+
+### all()
+
+Returns a promise, resolving with an array of results after execution
+
+### first()
+
+Returns a promise, resolving with with a single object result after execution
+
+### run()
+
+Returns a promise, with the direct result of execution
+
+### toModels(results)
+
+Converts results to model(s), if query is for a Collection
+
+### toModel(result)
+
+Alias to `.toModels()`
+
+### tap(fn)
+
+Taps into the query builder chain, so you can perform something in between.
+
+Example:
 
 ```js
 db.query()
   .select('id', 'title')
-  .from('posts', 'Post')
-  .where({
-    id: 1
+  .tap(function () {
+    // `this` is the Query object here
   })
-  .offset(0)
-  .limit(10)
   .run()
-  .then(function (results) {
-
-  });
 ```
 
 <!--/docume:src/Query.js-->
@@ -469,10 +663,109 @@ db.query()
 <!--docume:src/Expression.js-->
 ## Expression
 
+Expression class is responsible for handling all sorts of conditions that make up a Query object.
+
+An instance of Expression object is passed into functions like `where()`, `andWhere()`, etc.
+
+### Usage
+
+```js
+db.query()
+  .from('posts')
+  .where(function (expr) {
+    // `expr` here in an Expression object
+    expr
+     .eq('author_id', 1)    // WHERE author_id = 1
+     .notEq('published', 1) // AND published != 1
+  })
+  .run();
+```
+
+### Creating classes
+
+Unless you are building an Adapter, you wouldn't be required to create an Expression class.
+
+Example in ES6:
+
+```js
+import {Expression} from 'firenze';
+
+export default class CustomExpression extends Expression {
+  // ...
+}
+```
+
+### Properties
+
+#### query
+
+Current query object
+
 <!--/docume:src/Expression.js-->
 
 <!--docume:src/Functions.js-->
 ## Functions
+
+Functions class is an abstraction layer allowing you to perform database specific functions on columns.
+
+### Usage
+
+You can make use of functions from your Query object as follows:
+
+```js
+db.query()
+  .from('posts')
+  .select('id', function (column) {
+    // `column` is in instance of `Functions` class here
+    return column('title')
+      .upper() // uppercase the `title` column
+      .trim(); // and also trim the `title` column
+  })
+  .run();
+```
+
+You can also call it directly from the Query object if you already have it as a variable first:
+
+```js
+var query = db.query();
+
+query
+  .from('posts')
+  .select('id', {
+    title: query.func('title')
+      .upper()
+      .trim()
+  })
+  .run()
+```
+
+### Creating classes
+
+Functions classes come from the Adapters. If you are building one yourself, you would optionally want to create one too.
+
+Example in ES6:
+
+```js
+import {Functions} from 'firenze';
+
+export default class CustomFunctions extends Functions {
+  // ...
+}
+```
+
+### Properties
+
+#### query
+
+The current query object
+
+#### column
+
+Currently chosen column name
+
+#### setColumn(column)
+
+Set column name
 
 <!--/docume:src/Functions.js-->
 
@@ -486,7 +779,7 @@ A collection represents a table. If you have a `posts` table, most likely you wo
 You can create a Collection class from your Database instance. And it requires minimum one property: `table`:
 
 ```js
-var Posts = db.createCollectionClass({
+var Posts = db.createCollection({
   table: 'posts',
 
   // optional
@@ -494,29 +787,14 @@ var Posts = db.createCollectionClass({
 });
 ```
 
-There is also a short method for creating Collection class via `db.Collection()`.
-
-You can also create a Collection class like this:
+You can also create a Collection class independently:
 
 ```js
-var Posts = f.createCollectionClass({
+var Posts = f.createCollection({
   db: db, // instance of your Database
 
   table: 'posts'
 });
-```
-
-If you are using ES6:
-
-```js
-import {Collection} from 'firenze';
-
-class Posts extends Collection {
-  constructor(extend = {}) {
-    super(extend);
-    this.setDatabase(db);
-  }
-}
 ```
 
 ### Properties
@@ -533,7 +811,7 @@ The name of the table that this Collection represents. Always as a string.
 
 #### schema
 
-Collections do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
+Collections do not necessarily need to define their full schema, but you would need them for building fixtures (for tests) and also assigning validation rules, for e.g., later.
 
 The keys of this object are the column names, and the value defines what type of column they are. For example:
 
@@ -550,7 +828,7 @@ The keys of this object are the column names, and the value defines what type of
 
 Column types can vary depending on the adapter you are using.
 
-You also use the `schema` property to set validation rules.
+You can also use the `schema` property to set validation rules.
 
 For example:
 
@@ -596,6 +874,8 @@ Example:
 }
 ```
 
+See Validations section later for more documentation on this.
+
 #### behaviors
 
 Array of behavior classes, in the order as you want them applied.
@@ -615,7 +895,9 @@ Array of already loaded behaviors for this model
 
 #### alias
 
-Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+Unless defined, alias always defaults to the `table` property. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+
+If you have a `Posts` collection for the table `posts`, with a model `Post`, it is safe to have an alias `Post` (in singular form).
 
 ## Usage
 
@@ -632,7 +914,7 @@ Validation rules for fields can be set when defining the schema:
 ### Single rule
 
 ```js
-db.createCollectionClass({
+db.createCollection({
   schema: {
     email: {
       type: 'string',
@@ -700,7 +982,7 @@ db.createCollectionClass({
 }
 ```
 
-### Asynchronouse rule
+### Asynchronous rule
 
 ```js
 {
@@ -720,7 +1002,7 @@ db.createCollectionClass({
 
 ### Available rules
 
-By default, all the validation rules from [Validator.js](https://github.com/chriso/validator.js#validators) is available:
+By default, all the validation rules from [Validator.js](https://github.com/chriso/validator.js#validators) are available:
 
 - **equals(str, comparison)** - check if the string matches the comparison.
 - **contains(str, seed)** - check if the string contains the seed.
@@ -765,7 +1047,7 @@ By default, all the validation rules from [Validator.js](https://github.com/chri
 Example usage of the above mentioned rules:
 
 ```js
-db.createCollectionClass({
+db.createCollection({
   schema: {
     title: {
       // direct rule
@@ -790,7 +1072,7 @@ But of course, you can always override them or add new custom rules.
 Validation rules can be defined when creating a Collection class:
 
 ```js
-var Posts = db.createCollectionClass({
+var Posts = db.createCollection({
   schema: {
     name: {
       type: 'string',
@@ -840,7 +1122,7 @@ var Posts = db.createCollectionClass({
       type: 'string',
       validate: {
         rule: 'isAlpha',
-        required: true,
+        required: true, // here
         message: 'Must be alphabets only'
       }
     }
@@ -852,11 +1134,11 @@ var Posts = db.createCollectionClass({
 
 ### model(attributes = {}, extend = {})
 
-Get an instance of this Collection's model
+Get a new instance of this Collection's model
 
 ### getDatabase()
 
-Get an instance of the current Database
+Get an instance of the current Collection's Database
 
 ### setDatabase(db)
 
@@ -872,17 +1154,33 @@ Get a new query builder for this Collection's table
 
 ### find()
 
-Returns query builder for fetching records of this Collection
+Returns query builder for fetching records of this Collection.
+
+Example:
+
+```js
+var posts = new Posts();
+var query = posts.find();
+
+query
+  .where({id: 1})
+  .first() // could also be `.all()` for returning multiple results
+  .then(function (post) {
+    var title = post.get('title');
+  });
+```
+
+See Query section of the documentation for more usage details.
 
 ### findBy(field, value)
 
 Shortcut method for finding single record that matches a field's value.
 
-Returns a promise.
+Returns a promise with the found model.
 
 ### findAllBy(field, value)
 
-Shortcut method for finding all records that matche a field's value.
+Shortcut method for finding all records that matches a field's value.
 
 Returns a promise.
 
@@ -952,7 +1250,8 @@ For example:
 
 ```js
 var Promise = f.Promise;
-var Posts = f.createCollectionClass({
+
+var Posts = f.createCollection({
   alias: 'Post',
 
   beforeSave: function (model) {
@@ -1005,14 +1304,14 @@ Should return a Promise.
 <!--docume:src/Model.js-->
 # Models
 
-A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
+A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular form, which is `Post`.
 
 ## Creating classes
 
 You can create a Model class as follows:
 
 ```js
-var Post = f.createModelClass({
+var Post = f.createModel({
   // ...
 });
 ```
@@ -1023,9 +1322,7 @@ If you are using ES6:
 import {Model} from 'firenze';
 
 class Post extends Model {
-  constructor(attributes = {}, extend = {}) {
-    super(attributes, extend);
-  }
+  // ...
 }
 ```
 
@@ -1074,12 +1371,13 @@ Alias of `.toObject()`.
 
 ### fetch(options = {})
 
-Fetches the model again from the Database, and returns it with a promise.
+Fetches the model from the Database, and returns it with a promise.
 
 A quick example:
 
 ```js
 var post = posts.model({id: 1});
+
 post.fetch().then(function (model) {
   var title = model.get('title');
 });
@@ -1143,7 +1441,7 @@ Behaviors allow you to hook into your Collections and Models and make them behav
 ## Usage
 
 ```js
-var Posts = db.createCollectionClass({
+var Posts = db.createCollection({
   behaviors: [
     TimestampBehavior,
     AnotherBehavior
@@ -1154,7 +1452,7 @@ var Posts = db.createCollectionClass({
 With custom configuration:
 
 ```js
-var Posts = db.createCollectionClass({
+var Posts = db.createCollection({
   behaviors: [
     {
       'class': TimestampBehavior,
@@ -1172,7 +1470,7 @@ var Posts = db.createCollectionClass({
 ```js
 var f = require('firenze');
 
-var TimestampBehavior = f.createBehaviorClass({
+var TimestampBehavior = f.createBehavior({
   beforeSave: function (model) {
     model.set('created', new Date());
     return new f.Promise(true);
@@ -1180,7 +1478,7 @@ var TimestampBehavior = f.createBehaviorClass({
 });
 ```
 
-If you are using ES6, the syntax is much simpler:
+If you are using ES6, the syntax can be much simpler:
 
 ```js
 import {Behavior, Promise} from 'firenze';
