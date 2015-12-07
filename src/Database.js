@@ -18,7 +18,7 @@ import P from './Promise';
 //   adapter: MysqlAdapter,
 //   host: '127.0.0.1',
 //   database: 'my_database',
-//   user: '',
+//   user: 'root',
 //   password: '',
 //   pool: {
 //     min: 0,
@@ -47,12 +47,14 @@ export default class Database {
 //
 // ### createCollection(extend)
 //
+// Quickly create Collection class that references to current Database instance.
+//
     this.createCollection = collectionFactory(this);
   }
 
 // ### getAdapter()
 //
-// Returns adapter
+// Returns adapter instance
 //
   getAdapter() {
     return this.adapter;
@@ -60,7 +62,7 @@ export default class Database {
 
 // ### query()
 //
-// Returns query builder of the Adapter
+// Returns a new query builder of the Adapter
 //
   query() {
     return this.adapter.query();
@@ -68,7 +70,7 @@ export default class Database {
 
 // ### schema()
 //
-// Returns schema object
+// Returns schema object for manipulating the Database
 //
   schema() {
     return this.adapter.schema();

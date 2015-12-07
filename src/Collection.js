@@ -16,7 +16,7 @@ import Model from './Model';
 // You can create a Collection class from your Database instance. And it requires minimum one property: `table`:
 //
 // ```js
-// var Posts = db.createCollectionClass({
+// var Posts = db.createCollection({
 //   table: 'posts',
 //
 //   // optional
@@ -24,29 +24,14 @@ import Model from './Model';
 // });
 // ```
 //
-// There is also a short method for creating Collection class via `db.Collection()`.
-//
-// You can also create a Collection class like this:
+// You can also create a Collection class independently:
 //
 // ```js
-// var Posts = f.createCollectionClass({
+// var Posts = f.createCollection({
 //   db: db, // instance of your Database
 //
 //   table: 'posts'
 // });
-// ```
-//
-// If you are using ES6:
-//
-// ```js
-// import {Collection} from 'firenze';
-//
-// class Posts extends Collection {
-//   constructor(extend = {}) {
-//     super(extend);
-//     this.setDatabase(db);
-//   }
-// }
 // ```
 //
 
@@ -71,7 +56,7 @@ export default class Collection {
 
 // #### schema
 //
-// Collections do not necessarily need to define their full schema, but you would need them for building fixtures and also assigning validation rules for example later.
+// Collections do not necessarily need to define their full schema, but you would need them for building fixtures (for tests) and also assigning validation rules, for e.g., later.
 //
 // The keys of this object are the column names, and the value defines what type of column they are. For example:
 //
@@ -88,7 +73,7 @@ export default class Collection {
 //
 // Column types can vary depending on the adapter you are using.
 //
-// You also use the `schema` property to set validation rules.
+// You can also use the `schema` property to set validation rules.
 //
 // For example:
 //
@@ -140,6 +125,8 @@ export default class Collection {
 // }
 // ```
 //
+// See Validations section later for more documentation on this.
+//
     this.validationRules = {};
 
 // #### behaviors
@@ -167,7 +154,9 @@ export default class Collection {
 
 // #### alias
 //
-// Unless defined, alias always defaults to the table name as defined in the Collection class of a Model. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+// Unless defined, alias always defaults to the `table` property. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
+//
+// If you have a `Posts` collection for the table `posts`, with a model `Post`, it is safe to have an alias `Post` (in singular form).
 //
     if (!this.alias) {
       this.alias = this.table;
@@ -193,7 +182,7 @@ export default class Collection {
 // ### Single rule
 //
 // ```js
-// db.createCollectionClass({
+// db.createCollection({
 //   schema: {
 //     email: {
 //       type: 'string',
@@ -261,7 +250,7 @@ export default class Collection {
 // }
 // ```
 //
-// ### Asynchronouse rule
+// ### Asynchronous rule
 //
 // ```js
 // {
@@ -281,7 +270,7 @@ export default class Collection {
 //
 // ### Available rules
 //
-// By default, all the validation rules from [Validator.js](https://github.com/chriso/validator.js#validators) is available:
+// By default, all the validation rules from [Validator.js](https://github.com/chriso/validator.js#validators) are available:
 //
 // - **equals(str, comparison)** - check if the string matches the comparison.
 // - **contains(str, seed)** - check if the string contains the seed.
@@ -326,7 +315,7 @@ export default class Collection {
 // Example usage of the above mentioned rules:
 //
 // ```js
-// db.createCollectionClass({
+// db.createCollection({
 //   schema: {
 //     title: {
 //       // direct rule
@@ -351,7 +340,7 @@ export default class Collection {
 // Validation rules can be defined when creating a Collection class:
 //
 // ```js
-// var Posts = db.createCollectionClass({
+// var Posts = db.createCollection({
 //   schema: {
 //     name: {
 //       type: 'string',
@@ -401,7 +390,7 @@ export default class Collection {
 //       type: 'string',
 //       validate: {
 //         rule: 'isAlpha',
-//         required: true,
+//         required: true, // here
 //         message: 'Must be alphabets only'
 //       }
 //     }
@@ -414,7 +403,7 @@ export default class Collection {
 //
 // ### model(attributes = {}, extend = {})
 //
-// Get an instance of this Collection's model
+// Get a new instance of this Collection's model
 //
   model(attributes = {}, extend = {}) {
     _.merge(extend, {
@@ -426,7 +415,7 @@ export default class Collection {
 
 // ### getDatabase()
 //
-// Get an instance of the current Database
+// Get an instance of the current Collection's Database
 //
   getDatabase() {
     return this.db;
@@ -461,7 +450,23 @@ export default class Collection {
 
 // ### find()
 //
-// Returns query builder for fetching records of this Collection
+// Returns query builder for fetching records of this Collection.
+//
+// Example:
+//
+// ```js
+// var posts = new Posts();
+// var query = posts.find();
+//
+// query
+//   .where({id: 1})
+//   .first() // could also be `.all()` for returning multiple results
+//   .then(function (post) {
+//     var title = post.get('title');
+//   });
+// ```
+//
+// See Query section of the documentation for more usage details.
 //
   find() {
     return this.query()
@@ -472,7 +477,7 @@ export default class Collection {
 //
 // Shortcut method for finding single record that matches a field's value.
 //
-// Returns a promise.
+// Returns a promise with the found model.
 //
   findBy(field, value) {
     return this.find()
@@ -484,7 +489,7 @@ export default class Collection {
 
 // ### findAllBy(field, value)
 //
-// Shortcut method for finding all records that matche a field's value.
+// Shortcut method for finding all records that matches a field's value.
 //
 // Returns a promise.
 //
@@ -1002,7 +1007,8 @@ export default class Collection {
 //
 // ```js
 // var Promise = f.Promise;
-// var Posts = f.createCollectionClass({
+//
+// var Posts = f.createCollection({
 //   alias: 'Post',
 //
 //   beforeSave: function (model) {

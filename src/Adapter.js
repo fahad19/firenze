@@ -13,7 +13,7 @@ import Schema from './Schema';
 export default class Adapter {
 // ## Usage
 //
-// You would hardly ever need to create an instance of a Adapter. Database class would take care of it.
+// You would hardly ever need to create an instance of an Adapter. Database class would take care of it.
 //
 // An adapter instance is created with the same options passed when creating a Database instance:
 //
@@ -58,7 +58,7 @@ export default class Adapter {
     return null;
   }
 
-// ### closeConnection(cb = null)
+// ### closeConnection()
 //
 // Closes the current connection.
 //
@@ -72,7 +72,7 @@ export default class Adapter {
 
 // ### query()
 //
-// Gets a new query object
+// Returns a new query object
 //
   query(options = {}) {
     return new this.queryClass({
@@ -83,7 +83,7 @@ export default class Adapter {
 
 // ### schema()
 //
-// Gets a query object
+// Returns Schema object
 //
   schema() {
     return new this.schemaClass(this);
@@ -91,7 +91,9 @@ export default class Adapter {
 
 // ### populateTable(collection, rows)
 //
-// Insert rows into collection's table
+// Inserts rows into collection's table
+//
+// Returns a promise
 //
   populateTable(collection, rows) {
     return new P((resolve, reject) => {
@@ -106,7 +108,9 @@ export default class Adapter {
 
 // ### loadFixture(collection, rows)
 //
-// Creates table, and loads data for given collection
+// Drops and creates table, and loads data for given collection
+//
+// Returns a promise.
 //
   loadFixture(collection, rows) { //eslint-disable-line
     return new P((resolve, reject) => {
@@ -152,7 +156,9 @@ export default class Adapter {
 //
 // Runs fixtures for multiple collections
 //
-// arr = [{collection: posts, rows: rows}]
+// `arr` should be in the format of `[{collection: posts, rows: rows}]`
+//
+// Returns a promise.
 //
   loadAllFixtures(arr) { //eslint-disable-line
     return new P((resolve, reject) => {

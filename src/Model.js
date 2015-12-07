@@ -5,7 +5,7 @@ import P from './Promise';
 
 // # Models
 //
-// A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular for, which is `Post`.
+// A model represents a record of a table. If you have a `posts` table, most likely you would want to name your Model class in its singular form, which is `Post`.
 //
 
 export default class Model {
@@ -15,7 +15,7 @@ export default class Model {
 // You can create a Model class as follows:
 //
 // ```js
-// var Post = f.createModelClass({
+// var Post = f.createModel({
 //   // ...
 // });
 // ```
@@ -26,9 +26,7 @@ export default class Model {
 // import {Model} from 'firenze';
 //
 // class Post extends Model {
-//   constructor(attributes = {}, extend = {}) {
-//     super(attributes, extend);
-//   }
+//   // ...
 // }
 // ```
 //
@@ -115,12 +113,13 @@ export default class Model {
 
 // ### fetch(options = {})
 //
-// Fetches the model again from the Database, and returns it with a promise.
+// Fetches the model from the Database, and returns it with a promise.
 //
 // A quick example:
 //
 // ```js
 // var post = posts.model({id: 1});
+//
 // post.fetch().then(function (model) {
 //   var title = model.get('title');
 // });
@@ -183,6 +182,7 @@ export default class Model {
 //
   saveField(field, value) {
     this.set(field, value);
+
     return this.save({
       fields: [field]
     });

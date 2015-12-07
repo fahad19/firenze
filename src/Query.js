@@ -6,26 +6,65 @@ import Functions from './Functions';
 
 // # Query
 //
-// The query builder.
+// The query builder is the heart of all Adapters.
 //
-// ## Example usage
+// This class is responsible for building the query and executing it against the database.
+//
+// ## Usage
+//
+// For helping understanding better, we will be showing examples with SQL environments below.
 //
 // ```js
-// db.query()
-//   .select('id', 'title')
-//   .from('posts', 'Post')
-//   .where({
+// // create a new Query object
+// var query = db.query()
+//   .select('id', 'title') // select the columns `id` and `title`
+//   .from('posts', 'Post') // from `posts` table, as `Post`
+//   .where({ // conditions
 //     id: 1
 //   })
-//   .offset(0)
-//   .limit(10)
-//   .run()
-//   .then(function (results) {
+//   .orderBy({
+//     id: 'asc' // order by the column `id` in ascending order
+//   })
+//   .limit(10); // limit the results set to `10`
 //
+// // execute it
+// query.run()
+//   .then(function (results) {
+//     console.log(results);
 //   });
 // ```
 //
+// Majority of the methods are chainable.
+//
 export default class Query {
+
+// ## Creating classes
+//
+// Unless you are building an Adapter yourself, you wouldn't be required to create Query classes yourself.
+//
+// Example in ES6:
+//
+// ```js
+// // base Query class
+// import {Query} from 'firenze';
+//
+// // custom helper classes needed for creating new Query class
+// import FooExpression from './Expression';
+// import FooFunctions from './Functions';
+//
+// export default FooQuery extends Query {
+//   constructor(options = {}) {
+//     options = {
+//       expressionClass: FooExpression,
+//       functionsClass: FooFunctions,
+//       ...options
+//     };
+//
+//     super(options);
+//   }
+// }
+// ```
+//
   constructor(givenOptions = {}) {
     const options = {
       expressionClass: Expression,
@@ -33,7 +72,18 @@ export default class Query {
       ...givenOptions
     };
 
+// ## Properties
+//
+// ### adapter
+//
+// Current instance of Adapter
+//
     this.adapter = null;
+
+// ### collection
+//
+// Current collection (if any)
+//
     this.collection = null;
 
     if (options.adapter) {
@@ -47,16 +97,30 @@ export default class Query {
     this.options = _.omit(options, 'adapter', 'collection');
   }
 
+// ## Methods
+//
+// ### setAdapter(adapter)
+//
+// Sets adapter to given one
+//
   setAdapter(adapter) {
     this.adapter = adapter;
 
     return this;
   }
 
+// ### getAdapter()
+//
+// Returns currently set Adapter instance
+//
   getAdapter() {
     return this.adapter;
   }
 
+// ### setCollection(collection)
+//
+// Sets collection to given one
+//
   setCollection(collection) {
     this.collection = collection;
 
@@ -95,10 +159,22 @@ export default class Query {
 
   table() { return this; }
 
+// ### expr()
+//
+// Read more in Expression section.
+//
+// Returns a new Expression object
+//
   expr(...args) {
     return new this.options.expressionClass(this, ...args);
   }
 
+// ### func()
+//
+// Read more in Functions section.
+//
+// Returns a new Functions object
+//
   func(...args) {
     return new this.options.functionsClass(this, ...args);
   }
@@ -123,12 +199,28 @@ export default class Query {
 
   crossJoin() { return this; }
 
+// ### all()
+//
+// Returns a promise, resolving with an array of results after execution
+//
   all() { return new Promise.resolve(true); }
 
+// ### first()
+//
+// Returns a promise, resolving with with a single object result after execution
+//
   first() { return new Promise.resolve(true); }
 
+// ### run()
+//
+// Returns a promise, with the direct result of execution
+//
   run() { return new Promise.resolve(true); }
 
+// ### toModels(results)
+//
+// Converts results to model(s), if query is for a Collection
+//
   toModels(results) {
     if (!results || !this.collection) {
       return results;
@@ -150,12 +242,31 @@ export default class Query {
     return results;
   }
 
+// ### toModel(result)
+//
+// Alias to `.toModels()`
+//
   toModel(...args) {
     return this.toModels(...args);
   }
 
   debug() { return this; }
 
+// ### tap(fn)
+//
+// Taps into the query builder chain, so you can perform something in between.
+//
+// Example:
+//
+// ```js
+// db.query()
+//   .select('id', 'title')
+//   .tap(function () {
+//     // `this` is the Query object here
+//   })
+//   .run()
+// ```
+//
   tap(func) {
     func.bind(this)();
 

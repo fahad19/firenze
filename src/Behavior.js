@@ -8,7 +8,7 @@ import P from './Promise';
 // ## Usage
 //
 // ```js
-// var Posts = db.createCollectionClass({
+// var Posts = db.createCollection({
 //   behaviors: [
 //     TimestampBehavior,
 //     AnotherBehavior
@@ -19,7 +19,7 @@ import P from './Promise';
 // With custom configuration:
 //
 // ```js
-// var Posts = db.createCollectionClass({
+// var Posts = db.createCollection({
 //   behaviors: [
 //     {
 //       'class': TimestampBehavior,
@@ -37,7 +37,7 @@ import P from './Promise';
 // ```js
 // var f = require('firenze');
 //
-// var TimestampBehavior = f.createBehaviorClass({
+// var TimestampBehavior = f.createBehavior({
 //   beforeSave: function (model) {
 //     model.set('created', new Date());
 //     return new f.Promise(true);
@@ -45,7 +45,7 @@ import P from './Promise';
 // });
 // ```
 //
-// If you are using ES6, the syntax is much simpler:
+// If you are using ES6, the syntax can be much simpler:
 //
 // ```js
 // import {Behavior, Promise} from 'firenze';
@@ -88,7 +88,7 @@ export default class Behavior {
 //
 // Called right after collection's construction, synchronous operations only.
 //
-  collectionInitialize(model) { //eslint-disable-line
+  collectionInitialize(collection) { //eslint-disable-line
 
   }
 
