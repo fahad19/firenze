@@ -67,6 +67,8 @@ export default class Functions {
     this.funcs = [];
   }
 
+// ### Methods
+//
   addFunction(funcName) {
     this.funcs.push(funcName);
 

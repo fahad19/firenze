@@ -108,18 +108,80 @@ Each of them are discussed in the documentation below.
     - [toModels(results)](#tomodelsresults)
     - [toModel(result)](#tomodelresult)
     - [tap(fn)](#tapfn)
+    - [select()](#select)
+      - [Array](#array)
+      - [Arguments](#arguments)
+      - [Object](#object)
+      - [Function](#function)
+    - [distinct(fields)](#distinctfields)
+    - [from (table, alias = null)](#from-table-alias--null)
+    - [table(table)](#tabletable)
+    - [where()](#where)
+    - [andWhere()](#andwhere)
+    - [orWhere()](#orwhere)
+    - [notWhere()](#notwhere)
+    - [limit(number)](#limitnumber)
+    - [page(number)](#pagenumber)
+    - [offset(number)](#offsetnumber)
+    - [orderBy(name, direction)](#orderbyname-direction)
+    - [groupBy(column)](#groupbycolumn)
+    - [count()](#count)
+    - [create(row)](#createrow)
+    - [update(row)](#updaterow)
+    - [delete()](#delete)
+    - [join(options)](#joinoptions)
+    - [innerJoin(options)](#innerjoinoptions)
+    - [leftJoin(options)](#leftjoinoptions)
+    - [leftOuterJoin(options)](#leftouterjoinoptions)
+    - [rightJoin(options)](#rightjoinoptions)
+    - [rightOuterJoin(options)](#rightouterjoinoptions)
+    - [outerJoin(options)](#outerjoinoptions)
+    - [fullOuterJoin(options)](#fullouterjoinoptions)
+    - [debug()](#debug)
   - [Expression](#expression)
     - [Usage](#usage-3)
     - [Creating classes](#creating-classes-2)
     - [Properties](#properties-2)
       - [query](#query)
+      - [eq(column, value)](#eqcolumn-value)
+      - [notEq(column, value)](#noteqcolumn-value)
+      - [lt(column, value)](#ltcolumn-value)
+      - [lte(column, value)](#ltecolumn-value)
+      - [gt(column, value)](#gtcolumn-value)
+      - [gte(column, value)](#gtecolumn-value)
+      - [like(column, value)](#likecolumn-value)
+      - [notLike(column, value)](#notlikecolumn-value)
+      - [in(column, values)](#incolumn-values)
+      - [notIn(column, values)](#notincolumn-values)
+      - [isNull(column)](#isnullcolumn)
+      - [isNotNull(column)](#isnotnullcolumn)
+      - [between(column, from, to)](#betweencolumn-from-to)
+      - [notBetween(column, from, to)](#notbetweencolumn-from-to)
+      - [and()](#and)
+      - [or()](#or)
+      - [not()](#not)
   - [Functions](#functions)
     - [Usage](#usage-4)
     - [Creating classes](#creating-classes-3)
     - [Properties](#properties-3)
       - [query](#query-1)
       - [column](#column)
+    - [Methods](#methods-4)
       - [setColumn(column)](#setcolumncolumn)
+      - [upper()](#upper)
+      - [lower()](#lower)
+      - [sum()](#sum)
+      - [avg()](#avg)
+      - [min()](#min)
+      - [max()](#max)
+      - [count()](#count-1)
+      - [now()](#now)
+      - [year()](#year)
+      - [month()](#month)
+      - [day()](#day)
+      - [week()](#week)
+      - [weekday()](#weekday)
+      - [concat()](#concat)
 - [Collection](#collection)
   - [Creating classes](#creating-classes-4)
     - [Properties](#properties-4)
@@ -142,7 +204,7 @@ Each of them are discussed in the documentation below.
     - [Available rules](#available-rules)
     - [Custom rules](#custom-rules)
     - [Required fields](#required-fields)
-  - [Methods](#methods-4)
+  - [Methods](#methods-5)
     - [model(attributes = {}, extend = {})](#modelattributes---extend--)
     - [getDatabase()](#getdatabase)
     - [setDatabase(db)](#setdatabasedb)
@@ -174,7 +236,7 @@ Each of them are discussed in the documentation below.
       - [collection](#collection-1)
       - [id](#id)
   - [Usage](#usage-6)
-  - [Methods](#methods-5)
+  - [Methods](#methods-6)
     - [get(field)](#getfield)
     - [set(field, value)](#setfield-value)
     - [toObject()](#toobject)
@@ -574,7 +636,7 @@ import {Query} from 'firenze';
 import FooExpression from './Expression';
 import FooFunctions from './Functions';
 
-export default FooQuery extends Query {
+export default class FooQuery extends Query {
   constructor(options = {}) {
     options = {
       expressionClass: FooExpression,
@@ -660,6 +722,223 @@ db.query()
 
 <!--/docume:src/Query.js-->
 
+<!--docume:src/adapters/Sql/makeQuery.js-->
+### select()
+
+Selects columns to be fetched.
+
+Can be called in various ways.
+
+#### Array
+
+```js
+query.select(['id', 'title']);
+```
+
+#### Arguments
+
+```js
+query.select('id', 'title');
+```
+
+#### Object
+
+```js
+query.select('id', {
+  someTitle: 'title' //
+}); // `SELECT id, title as someTitle`
+```
+
+#### Function
+
+```js
+query.select('id', function (column) {
+  return column('title')
+    .upper()
+    .trim();
+}); // `SELET id, TRIM(UPPER(title))`
+```
+
+Read more about column Functions in its own section.
+
+### distinct(fields)
+
+Selects DISTINCT columns given as an array
+
+### from (table, alias = null)
+
+Specify the table where to fetch results from
+
+* `.from('users')` would result in `SELECT * FROM users`
+* `.from('users', 'User')` would result in `SELECT * FROM users AS User`
+
+### table(table)
+
+Not all query operations are SELECTs, but still require setting a table.
+
+`.table()` can be used in those scenarios.
+
+### where()
+
+Sets conditions to the Query object.
+
+Conditions can be set in various ways. For e.g, the same query for finding results where `id = 1` can be written as follows:
+
+**Plain object**:
+
+```js
+query.where({
+  id: 1
+});
+```
+
+**Function**:
+
+```js
+query.where(function (expr) {
+  // `expr` is an Expression object here
+  expr.eq('id', 1);
+});
+```
+
+Read more about Expressions in its own section.
+
+### andWhere()
+
+Same as `.where()` but with `AND` operator
+
+### orWhere()
+
+Same as `.where()` but with `OR` operator
+
+### notWhere()
+
+Same as `.where()` but with `NOT` operator
+
+### limit(number)
+
+Limit query results
+
+### page(number)
+
+Call it only if `.limit()` was called before.
+
+Paginates results to certain page.
+
+### offset(number)
+
+Offsets results. Do not use it together with `.page()`.
+
+### orderBy(name, direction)
+
+Accepts options in two ways:
+
+**Arguments**
+
+```js
+query.orderBy('created', 'asc');
+```
+
+***Object**
+
+```js
+query.orderBy({
+  created: 'asc'
+});
+```
+
+### groupBy(column)
+
+Groups results set by given column.
+
+Can be a string or an array of columns.
+
+### count()
+
+Count the number of results
+
+Example:
+
+```js
+query
+  .from('users')
+  .where({active: 1})
+  .count()
+  .run()
+  .then(function (count) {
+    // `count` is an integer here
+  });
+```
+
+### create(row)
+
+Insert a single or multiple objects into the table
+
+### update(row)
+
+Update with given row
+
+### delete()
+
+Delete records based on current Query conditions
+
+### join(options)
+
+Base method for joining tables.
+
+For example, a LEFT join:
+
+```js
+query
+  .select('*')
+  .from('posts', 'Post')
+  .join({
+    type: 'LEFT',
+    table: 'authors',
+    alias: 'Author',
+    on: function (expr) {
+      expr.eq('Post.author_id', 'Author.id');
+    }
+  })
+  .run()
+```
+
+There are also other handy methods for various kinds of JOINs
+
+### innerJoin(options)
+
+Wrapper for `INNER` join.
+
+### leftJoin(options)
+
+Wrapper for `LEFT` join.
+
+### leftOuterJoin(options)
+
+Wrapper for `LEFT OUTER` join.
+
+### rightJoin(options)
+
+Wrapper for `RIGHT` join.
+
+### rightOuterJoin(options)
+
+Wrapper for `RIGHT OUTER` join.
+
+### outerJoin(options)
+
+Wrapper for `OUTER` join.
+
+### fullOuterJoin(options)
+
+Wrapper for `FULL OUTER` join.
+
+### debug()
+
+Prints out the currently developed Query as a string in console
+
+<!--/docume:src/adapters/Sql/makeQuery.js-->
+
 <!--docume:src/Expression.js-->
 ## Expression
 
@@ -702,6 +981,153 @@ export default class CustomExpression extends Expression {
 Current query object
 
 <!--/docume:src/Expression.js-->
+
+<!--docume:src/adapters/Sql/Expression.js-->
+#### eq(column, value)
+
+Where column equals value.
+
+#### notEq(column, value)
+
+Where column doesn't equal to value.
+
+#### lt(column, value)
+
+Where column is less than value
+
+#### lte(column, value)
+
+Where column is less than or equal to value
+
+#### gt(column, value)
+
+Where column is greater than value
+
+#### gte(column, value)
+
+Where column is greater than or equal to value
+
+#### like(column, value)
+
+Where column is LIKE value.
+
+Example:
+
+```js
+db.query()
+  .from('posts')
+  .where(function (expr) {
+    expr.like('title', '%hello%'); // where `title` contains the text `hello`
+  })
+  .run();
+```
+
+#### notLike(column, value)
+
+Where column is not LIKE value.
+
+#### in(column, values)
+
+Where column is one of the given values.
+
+Example:
+
+```js
+db.query()
+  .from('users')
+  .where(function (expr) {
+    expr.in('id', [1, 2, 3]); // where `id` is either 1, 2, or 3.
+  });
+```
+
+#### notIn(column, values)
+
+Where column is not one of the given values
+
+#### isNull(column)
+
+Where column is `null`
+
+#### isNotNull(column)
+
+Where column is not `null`
+
+#### between(column, from, to)
+
+Where column is between from and to.
+
+Example:
+
+```js
+db.query()
+  .from('posts')
+  .where(function (expr) {
+    expr.between('views_count', 1000, 2000); // where `views_count` is between 1000 and 2000
+  })
+  .run();
+```
+#### notBetween(column, from, to)
+
+Where column is not between from and to.
+
+#### and()
+
+Nests further conditions with `AND` operator.
+
+Example:
+
+```js
+db.query()
+  .from('users')
+  .where(function (expr) {
+    expr
+      .eq('active', 1)
+      .and(function (expr) {
+        expr.eq('role_id', 2);
+      });
+  })
+  .run();
+```
+
+#### or()
+
+Nests further conditions with `OR` operator.
+
+Example:
+
+```js
+db.query()
+  .from('users')
+  .where(function (expr) {
+    expr
+      .eq('active', 1)
+      .or(function (expr) {
+        expr.eq('super_admin', 1);
+      });
+  })
+  .run();
+```
+
+#### not()
+
+Nests further conditions with `NOT` operator.
+
+Example:
+
+```js
+db.query()
+  .from('users')
+  .where(function (expr) {
+    expr
+      .eq('active', 1)
+      .not(function (expr) {
+        expr.eq('spammer', 1);
+      });
+  })
+  .run();
+```
+
+<!--/docume:src/adapters/Sql/Expression.js-->
 
 <!--docume:src/Functions.js-->
 ## Functions
@@ -763,11 +1189,84 @@ The current query object
 
 Currently chosen column name
 
+### Methods
+
 #### setColumn(column)
 
 Set column name
 
 <!--/docume:src/Functions.js-->
+
+<!--docume:src/adapters/Sql/Functions.js-->
+#### upper()
+
+Apply `UPPER()` function to column
+
+#### lower()
+
+Apply `LOWER()` function to column
+
+#### sum()
+
+Apply `SUM()` function to column
+
+#### avg()
+
+Apply `AVG()` function to column
+
+#### min()
+
+Apply `MIN()` function to column
+
+#### max()
+
+Apply `MAX()` function to column
+
+#### count()
+
+Apply `COUNT()` function to column
+
+#### now()
+
+SQL equivalent of `NOW()`
+
+#### year()
+
+Apply `YEAR()` function to column
+
+#### month()
+
+Apply `MONTH()` function to column
+
+#### day()
+
+Apply `DAY()` function to column
+
+#### week()
+
+Apply `WEEK()` function to column
+
+#### weekday()
+
+Apply `WEEKDAY()` function to column
+
+#### concat()
+
+Apply `CONCAT()` function to column
+
+Example:
+
+```js
+query.select({
+  id_and_title: function (column) {
+    return column.concat('id', JSON.stringify(' '), 'title');
+  }
+})
+```
+
+Now `id_and_title` field will be returned with `id` and `title` field's values separated by a space.
+
+<!--/docume:src/adapters/Sql/Functions.js-->
 
 <!--docume:src/Collection.js-->
 # Collection

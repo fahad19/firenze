@@ -52,7 +52,7 @@ export default class Query {
 // import FooExpression from './Expression';
 // import FooFunctions from './Functions';
 //
-// export default FooQuery extends Query {
+// export default class FooQuery extends Query {
 //   constructor(options = {}) {
 //     options = {
 //       expressionClass: FooExpression,
