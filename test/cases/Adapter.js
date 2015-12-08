@@ -1,18 +1,15 @@
-/* global describe, before, after, it */
+/* global describe, before, after, it, firenze, firenzeConfig */
 /* eslint-disable no-invalid-this */
 import should from 'should'; // eslint-disable-line
-
-import lib from '../../';
-import config from '../config';
 
 import makePosts from '../collections/Posts';
 import makeAuthors from '../collections/Authors';
 
-const {Database} = lib;
+const {Database} = firenze;
 
 describe('Adapter', function () {
   before(function () {
-    this.db = new Database(config);
+    this.db = new Database(firenzeConfig);
     this.Posts = makePosts(this.db);
     this.Authors = makeAuthors(this.db);
   });

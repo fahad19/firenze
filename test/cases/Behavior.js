@@ -1,9 +1,6 @@
-/* global describe, before, after, it */
+/* global describe, before, after, it, firenze, firenzeConfig */
 /* eslint-disable no-unused-expressions, no-invalid-this */
 import should from 'should-promised'; // eslint-disable-line
-
-import lib from '../../';
-import config from '../config';
 
 import makePosts from '../collections/Posts';
 import makeAuthors from '../collections/Authors';
@@ -11,11 +8,11 @@ import makeAuthors from '../collections/Authors';
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 
-const {Database} = lib;
+const {Database} = firenze;
 
 describe('Behavior', function () {
   before(function (done) {
-    this.db = new Database(config);
+    this.db = new Database(firenzeConfig);
 
     this.Posts = makePosts(this.db);
     this.postsData = postsData;

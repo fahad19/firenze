@@ -7,7 +7,7 @@
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
     "lint": "eslint src test",
-    "mocha": "mocha --compilers js:babel-register test/cases/**/*.js",
+    "mocha": "mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "test": "run-scripts lint babel mocha",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha --compilers js:babel/register test/cases/**/*.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",

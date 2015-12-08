@@ -1,14 +1,12 @@
-/* global describe, it */
+/* global describe, it, firenze */
 import should from 'should'; // eslint-disable-line
-
-import lib from '../../';
 
 describe('lib', function () {
   it('should have properties', function () {
-    lib.should.have.property('Database');
-    lib.should.have.property('Adapter');
-    lib.should.have.property('Collection');
-    lib.should.have.property('Model');
-    lib.should.have.property('Behavior');
+    firenze.should.have.property('Database');
+    firenze.should.have.property('Adapter');
+    firenze.should.have.property('Collection');
+    firenze.should.have.property('Model');
+    firenze.should.have.property('Behavior');
   });
 });
