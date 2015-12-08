@@ -1,4 +1,8 @@
 import makeAdapter from './makeAdapter';
 import makeConnection from './makeConnection';
 
-export default makeAdapter(makeConnection);
+import Query from './Query';
+
+export default makeAdapter(makeConnection, {
+  queryClass: Query
+});

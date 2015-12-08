@@ -1,17 +1,16 @@
 /* eslint-disable new-cap */
 import f from '../../';
-import Query from './Query';
 import Schema from './Schema';
 
 let Adapter = f.Adapter;
 let P = f.Promise;
 
-export default function makeAdapter(makeConnection) {
+export default function makeAdapter(makeConnection, extendOptions = {}) {
   class SqlAdapter extends Adapter {
     constructor(givenOptions) {
       const options = {
-        queryClass: Query,
         schemaClass: Schema,
+        ...extendOptions,
         ...givenOptions
       };
 
