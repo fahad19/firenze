@@ -1,14 +1,20 @@
 /* global describe, before, after, it */
-import should from 'should';
+/* eslint-disable no-invalid-this */
+import should from 'should'; // eslint-disable-line
 
-import {Database} from '../../src';
+import lib from '../../';
 import config from '../config';
+
+import makePosts from '../collections/Posts';
+import makeAuthors from '../collections/Authors';
+
+const {Database} = lib;
 
 describe('Adapter', function () {
   before(function () {
     this.db = new Database(config);
-    this.Posts = require('../collections/Posts')(this.db);
-    this.Authors = require('../collections/Authors')(this.db);
+    this.Posts = makePosts(this.db);
+    this.Authors = makeAuthors(this.db);
   });
 
   after(function (done) {

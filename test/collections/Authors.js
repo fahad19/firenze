@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-import {Promise} from '../../src';
+import {Promise} from '../../';
 
 import TimestampBehavior from '../behaviors/Timestamp';
 import Author from '../models/Author';
@@ -47,4 +47,4 @@ export default function (db) {
       });
     }
   });
-};
+}

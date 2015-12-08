@@ -1,18 +1,27 @@
 /* global describe, before, after, it */
-import should from 'should';
+/* eslint-disable no-invalid-this */
+import should from 'should'; // eslint-disable-line
 
-import {Database, Promise} from '../../src';
+import lib from '../../';
 import config from '../config';
+
+import makePosts from '../collections/Posts';
+import makeAuthors from '../collections/Authors';
+
+import postsData from '../fixtures/posts';
+import authorsData from '../fixtures/authors';
+
+const {Database} = lib;
 
 describe('Query', function () {
   before(function (done) {
     this.db = new Database(config);
 
-    this.Posts = require('../collections/Posts')(this.db);
-    this.postsData = require('../fixtures/posts');
+    this.Posts = makePosts(this.db);
+    this.postsData = postsData;
 
-    this.Authors = require('../collections/Authors')(this.db);
-    this.authorsData = require('../fixtures/authors');
+    this.Authors = makeAuthors(this.db);
+    this.authorsData = authorsData;
 
     this.db.getAdapter().loadAllFixtures([
       {

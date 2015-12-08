@@ -1,5 +1,5 @@
 /* eslint-disable new-cap */
-import {Promise} from '../../src';
+import {Promise} from '../../';
 
 import TimestampBehavior from '../behaviors/Timestamp';
 import Post from '../models/Post';
@@ -50,4 +50,4 @@ export default function (db) {
       return new Promise.resolve(true);
     }
   });
-};
+}

@@ -1,8 +1,12 @@
 /* global describe, it */
-import should from 'should';
+import should from 'should'; // eslint-disable-line
 
-import {Database} from '../../src';
+import lib from '../../';
 import config from '../config';
+
+import makePosts from '../collections/Posts';
+
+const {Database} = lib;
 
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
@@ -12,7 +16,7 @@ describe('Database', function () {
 
   it('should generate Collection class', function (done) {
     const db = new Database(config);
-    const Posts = require('../collections/Posts')(db);
+    const Posts = makePosts(db);
 
     const posts = new Posts();
     posts.table.should.be.exactly('posts');

@@ -1,4 +1,4 @@
-import SqlAdapter from '../../src/adapters/Sql';
+import SqlAdapter from '../../lib/adapters/Sql';
 
 export default {
   adapter: SqlAdapter,
@@ -13,4 +13,4 @@ export default {
     min: 0,
     max: 5
   }
-}
+};

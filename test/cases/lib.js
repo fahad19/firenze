@@ -1,7 +1,7 @@
 /* global describe, it */
-import should from 'should';
+import should from 'should'; // eslint-disable-line
 
-import lib from '../../src';
+import lib from '../../';
 
 describe('lib', function () {
   it('should have properties', function () {

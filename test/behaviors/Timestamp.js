@@ -1,5 +1,7 @@
 /* eslint-disable new-cap */
-import {createBehavior, Promise} from '../../src';
+import lib from '../../';
+
+const {createBehavior, Promise} = lib;
 
 export default createBehavior({
   // sync
@@ -12,4 +14,4 @@ export default createBehavior({
     model.set('updated', new Date());
     return new Promise.resolve(true);
   }
-})
+});

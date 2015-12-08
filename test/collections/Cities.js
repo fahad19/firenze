@@ -1,6 +1,4 @@
 /* eslint-disable new-cap */
-import {Promise} from '../../src';
-
 import City from '../models/City';
 
 export default function (db) {
@@ -28,4 +26,4 @@ export default function (db) {
       }
     }
   });
-};
+}

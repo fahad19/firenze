@@ -1,3 +1,3 @@
-import {createModel} from '../../src';
+import {createModel} from '../../';
 
 export default createModel();
