@@ -9,7 +9,7 @@
     "lint": "eslint src test",
     "mocha": "mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "test": "run-scripts lint babel mocha",
-    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
+    "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "coverage": "run-scripts istanbul coveralls",
     "dist:lib": "webpack --config ./dist/firenze.config.js",
