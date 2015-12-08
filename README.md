@@ -33,11 +33,12 @@ The project is still under heavy development, and more features are expected to 
 
 ### Available adapters
 
+* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
+
 Supports v0.2.x:
 
 * [localStorage](https://github.com/fahad19/firenze-adapter-localstorage) (for browser only)
 * [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
-* [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
 * [Redis](https://github.com/fahad19/firenze-adapter-redis)
 * [SQLite](https://github.com/alexweber/firenze-adapter-sqlite)
 
