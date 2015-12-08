@@ -34,6 +34,7 @@ The project is still under heavy development, and more features are expected to 
 ### Available adapters
 
 * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
+* [SQLite 3](https://github.com/fahad19/firenze-adapter-sqlite3)
 
 Supports v0.2.x:
 
