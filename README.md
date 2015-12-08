@@ -33,6 +33,8 @@ The project is still under heavy development, and more features are expected to 
 
 ### Available adapters
 
+Supports 0.2.x:
+
 * [localStorage](https://github.com/fahad19/firenze-adapter-localstorage) (for browser only)
 * [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
 * [MySQL](https://github.com/fahad19/firenze-adapter-mysql)
@@ -41,10 +43,12 @@ The project is still under heavy development, and more features are expected to 
 
 ### Available behaviors
 
+Supports v0.2.x:
+
 * [Slug](https://github.com/fahad19/firenze-behavior-slug)
 * [Timestamp](https://github.com/fahad19/firenze-behavior-timestamp)
 
-# Testing
+## Testing
 
 Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be run via npm:
 
@@ -52,7 +56,7 @@ Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be
 $ npm test
 ```
 
-# Releases
+## Releases
 
 To publish a new release:
 
@@ -65,6 +69,6 @@ To publish a new release:
 * Run `npm publish .`
 * Tag the repository with `vX.X.X`
 
-# License
+## License
 
 MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
