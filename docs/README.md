@@ -11,6 +11,7 @@
 * [Adapter](/docs/adapter/README.md)
   * [Usage](/docs/adapter/Usage.md)
   * [Methods](/docs/adapter/Methods.md)
+  * [Create](/docs/adapter/Create.md)
 * [Schema](/docs/schema/README.md)
   * [Create](/docs/schema/Create.md)
   * [Properties](/docs/schema/Properties.md)

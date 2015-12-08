@@ -6,3 +6,4 @@ For e.g., there can be an Adapter targetting MySQL, another targetting Postgresq
 
 * [Usage](./Usage.md)
 * [Methods](./Methods.md)
+* [Create](./Create.md)
