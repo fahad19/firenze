@@ -5,40 +5,7 @@ import P from './Promise';
 import Query from './Query';
 import Schema from './Schema';
 
-// # Adapter
-//
-// Adapter is responsible for making the actual database operations.
-//
-
 export default class Adapter {
-// ## Usage
-//
-// You would hardly ever need to create an instance of an Adapter. Database class would take care of it.
-//
-// An adapter instance is created with the same options passed when creating a Database instance:
-//
-// For example, if you are using MySQL adapter, it would be like this:
-//
-// ```
-// $ npm install --save firenze-adapter-mysql
-// ```
-//
-// Now let's create an instance of Database:
-//
-// ```js
-// var f = require('firenze');
-// var Database = f.Database;
-// var MysqlAdapter = require('firenze-adapter-mysql');
-//
-// var db = new Database({
-//   adapter: MysqlAdapter,
-//   host: '127.0.0.1',
-//   database: 'my_database',
-//   user: '',
-//   password: ''
-// });
-// ```
-//
   constructor(extend = {}) { //eslint-disable-line
     this.queryClass = Query;
     this.schemaClass = Schema;
@@ -46,34 +13,16 @@ export default class Adapter {
     _.merge(this, extend);
   }
 
-// ## Methods
-//
-// Every adapter needs to implement at least these methods below:
-//
-// ### getConnection()
-//
-// Returns the current connection
-//
   getConnection() {
     return null;
   }
 
-// ### closeConnection()
-//
-// Closes the current connection.
-//
-// Returns a promise.
-//
   closeConnection() {
     return new P(function (resolve) {
       return resolve();
     });
   }
 
-// ### query()
-//
-// Returns a new query object
-//
   query(options = {}) {
     return new this.queryClass({
       ...options,
@@ -81,20 +30,10 @@ export default class Adapter {
     });
   }
 
-// ### schema()
-//
-// Returns Schema object
-//
   schema() {
     return new this.schemaClass(this);
   }
 
-// ### populateTable(collection, rows)
-//
-// Inserts rows into collection's table
-//
-// Returns a promise
-//
   populateTable(collection, rows) {
     return new P((resolve, reject) => {
       this.query()
@@ -106,12 +45,6 @@ export default class Adapter {
     });
   }
 
-// ### loadFixture(collection, rows)
-//
-// Drops and creates table, and loads data for given collection
-//
-// Returns a promise.
-//
   loadFixture(collection, rows) { //eslint-disable-line
     return new P((resolve, reject) => {
       async.series([
@@ -152,14 +85,6 @@ export default class Adapter {
     });
   }
 
-// ### loadAllFixtures(arr)
-//
-// Runs fixtures for multiple collections
-//
-// `arr` should be in the format of `[{collection: posts, rows: rows}]`
-//
-// Returns a promise.
-//
   loadAllFixtures(arr) { //eslint-disable-line
     return new P((resolve, reject) => {
       async.map(arr, (fixture, callback) => {

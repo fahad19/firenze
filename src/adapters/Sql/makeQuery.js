@@ -80,44 +80,6 @@ export default function makeQuery(knex) {
       }
     }
 
-// ### select()
-//
-// Selects columns to be fetched.
-//
-// Can be called in various ways.
-//
-// #### Array
-//
-// ```js
-// query.select(['id', 'title']);
-// ```
-//
-// #### Arguments
-//
-// ```js
-// query.select('id', 'title');
-// ```
-//
-// #### Object
-//
-// ```js
-// query.select('id', {
-//   someTitle: 'title' //
-// }); // `SELECT id, title as someTitle`
-// ```
-//
-// #### Function
-//
-// ```js
-// query.select('id', function (column) {
-//   return column('title')
-//     .upper()
-//     .trim();
-// }); // `SELET id, TRIM(UPPER(title))`
-// ```
-//
-// Read more about column Functions in its own section.
-//
     select(...args) {
       if (args.length === 0) {
         return this;
@@ -162,10 +124,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### distinct(fields)
-//
-// Selects DISTINCT columns given as an array
-//
     distinct(givenFields = []) {
       const fields = _.isString(givenFields) ? [givenFields] : givenFields;
 
@@ -178,13 +136,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### from (table, alias = null)
-//
-// Specify the table where to fetch results from
-//
-// * `.from('users')` would result in `SELECT * FROM users`
-// * `.from('users', 'User')` would result in `SELECT * FROM users AS User`
-//
     from(table, alias = null) {
       let exp = table;
       if (alias) {
@@ -196,75 +147,28 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### table(table)
-//
-// Not all query operations are SELECTs, but still require setting a table.
-//
-// `.table()` can be used in those scenarios.
-//
     table(table) {
       this.builder.table(table);
 
       return this;
     }
 
-// ### where()
-//
-// Sets conditions to the Query object.
-//
-// Conditions can be set in various ways. For e.g, the same query for finding results where `id = 1` can be written as follows:
-//
-// **Plain object**:
-//
-// ```js
-// query.where({
-//   id: 1
-// });
-// ```
-//
-// **Function**:
-//
-// ```js
-// query.where(function (expr) {
-//   // `expr` is an Expression object here
-//   expr.eq('id', 1);
-// });
-// ```
-//
-// Read more about Expressions in its own section.
-//
     where(...args) {
       return makeWhere(this, 'where', ...args);
     }
 
-// ### andWhere()
-//
-// Same as `.where()` but with `AND` operator
-//
     andWhere(...args) {
       return makeWhere(this, 'andWhere', ...args);
     }
 
-// ### orWhere()
-//
-// Same as `.where()` but with `OR` operator
-//
     orWhere(...args) {
       return makeWhere(this, 'orWhere', ...args);
     }
 
-// ### notWhere()
-//
-// Same as `.where()` but with `NOT` operator
-//
     notWhere(...args) {
       return makeWhere(this, 'whereNot', ...args);
     }
 
-// ### limit(number)
-//
-// Limit query results
-//
     limit(limit) {
       this._limit = limit;
       this.builder.limit(limit);
@@ -272,12 +176,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### page(number)
-//
-// Call it only if `.limit()` was called before.
-//
-// Paginates results to certain page.
-//
     page(page) {
       if (typeof this._limit === 'undefined') {
         return this;
@@ -289,34 +187,12 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### offset(number)
-//
-// Offsets results. Do not use it together with `.page()`.
-//
     offset(offset) {
       this.builder.offset(offset);
 
       return this;
     }
 
-// ### orderBy(name, direction)
-//
-// Accepts options in two ways:
-//
-// **Arguments**
-//
-// ```js
-// query.orderBy('created', 'asc');
-// ```
-//
-// ***Object**
-//
-// ```js
-// query.orderBy({
-//   created: 'asc'
-// });
-// ```
-//
     orderBy(name, direction = 'asc') {
       if (_.isObject(name)) {
         _.each(name, (v, k) => {
@@ -331,12 +207,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### groupBy(column)
-//
-// Groups results set by given column.
-//
-// Can be a string or an array of columns.
-//
     groupBy(givenColumns) {
       const columns = _.isString(givenColumns) ? [givenColumns] : givenColumns;
 
@@ -345,23 +215,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### count()
-//
-// Count the number of results
-//
-// Example:
-//
-// ```js
-// query
-//   .from('users')
-//   .where({active: 1})
-//   .count()
-//   .run()
-//   .then(function (count) {
-//     // `count` is an integer here
-//   });
-// ```
-//
     count(...args) {
       this.builder.count(...args);
       this._count = true;
@@ -369,59 +222,24 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### create(row)
-//
-// Insert a single or multiple objects into the table
-//
     create(row) {
       this.builder.insert(row);
 
       return this;
     }
 
-// ### update(row)
-//
-// Update with given row
-//
     update(row) {
       this.builder.update(row);
 
       return this;
     }
 
-// ### delete()
-//
-// Delete records based on current Query conditions
-//
     delete() {
       this.builder.delete();
 
       return this;
     }
 
-// ### join(options)
-//
-// Base method for joining tables.
-//
-// For example, a LEFT join:
-//
-// ```js
-// query
-//   .select('*')
-//   .from('posts', 'Post')
-//   .join({
-//     type: 'LEFT',
-//     table: 'authors',
-//     alias: 'Author',
-//     on: function (expr) {
-//       expr.eq('Post.author_id', 'Author.id');
-//     }
-//   })
-//   .run()
-// ```
-//
-// There are also other handy methods for various kinds of JOINs
-//
     join(givenOptions = {}) {
       const options = {
         type: null,
@@ -443,10 +261,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-// ### innerJoin(options)
-//
-// Wrapper for `INNER` join.
-//
     innerJoin(...args) {
       return this.join({
         type: 'INNER',
@@ -454,10 +268,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### leftJoin(options)
-//
-// Wrapper for `LEFT` join.
-//
     leftJoin(...args) {
       return this.join({
         type: 'LEFT',
@@ -465,10 +275,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### leftOuterJoin(options)
-//
-// Wrapper for `LEFT OUTER` join.
-//
     leftOuterJoin(...args) {
       return this.join({
         type: 'LEFT OUTER',
@@ -476,10 +282,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### rightJoin(options)
-//
-// Wrapper for `RIGHT` join.
-//
     rightJoin(...args) {
       return this.join({
         type: 'RIGHT',
@@ -487,10 +289,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### rightOuterJoin(options)
-//
-// Wrapper for `RIGHT OUTER` join.
-//
     rightOuterJoin(...args) {
       return this.join({
         type: 'RIGHT OUTER',
@@ -498,10 +296,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### outerJoin(options)
-//
-// Wrapper for `OUTER` join.
-//
     outerJoin(...args) {
       return this.join({
         type: 'OUTER',
@@ -509,10 +303,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### fullOuterJoin(options)
-//
-// Wrapper for `FULL OUTER` join.
-//
     fullOuterJoin(...args) {
       return this.join({
         type: 'FULL OUTER',
@@ -560,10 +350,6 @@ export default function makeQuery(knex) {
       });
     }
 
-// ### debug()
-//
-// Prints out the currently developed Query as a string in console
-//
     debug() {
       console.log('query:', this.builder.toString()); // eslint-disable-line
 

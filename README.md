@@ -33,7 +33,7 @@ The project is still under heavy development, and more features are expected to 
 
 ### Available adapters
 
-Supports 0.2.x:
+Supports v0.2.x:
 
 * [localStorage](https://github.com/fahad19/firenze-adapter-localstorage) (for browser only)
 * [Memory](https://github.com/fahad19/firenze-adapter-memory) (works in both node and the browser)
@@ -42,8 +42,6 @@ Supports 0.2.x:
 * [SQLite](https://github.com/alexweber/firenze-adapter-sqlite)
 
 ### Available behaviors
-
-Supports v0.2.x:
 
 * [Slug](https://github.com/fahad19/firenze-behavior-slug)
 * [Timestamp](https://github.com/fahad19/firenze-behavior-timestamp)

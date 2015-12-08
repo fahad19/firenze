@@ -7,157 +7,19 @@ import getParams from 'get-params';
 import P from './Promise';
 import Model from './Model';
 
-// # Collection
-//
-// A collection represents a table. If you have a `posts` table, most likely you would have a collection for it called `Posts`.
-//
-// ## Creating classes
-//
-// You can create a Collection class from your Database instance. And it requires minimum one property: `table`:
-//
-// ```js
-// var Posts = db.createCollection({
-//   table: 'posts',
-//
-//   // optional
-//   modelClass: Post
-// });
-// ```
-//
-// You can also create a Collection class independently:
-//
-// ```js
-// var Posts = f.createCollection({
-//   db: db, // instance of your Database
-//
-//   table: 'posts'
-// });
-// ```
-//
-
 export default class Collection {
   constructor(extend = {}) {
-
-// ### Properties
-//
-// #### modelClass
-//
-// Every collection requires a Model for representing its records. This property directly references to the Model class.
-//
-// Be defalult, it is set to the base Model class, which you can always override.
-//
     this.modelClass = Model;
-
-// #### table
-//
-// The name of the table that this Collection represents. Always as a string.
-//
     this.table = null;
-
-// #### schema
-//
-// Collections do not necessarily need to define their full schema, but you would need them for building fixtures (for tests) and also assigning validation rules, for e.g., later.
-//
-// The keys of this object are the column names, and the value defines what type of column they are. For example:
-//
-// ```js
-// {
-//   id: {
-//     type: 'integer'
-//   },
-//   title: {
-//     type: 'string'
-//   }
-// }
-// ```
-//
-// Column types can vary depending on the adapter you are using.
-//
-// You can also use the `schema` property to set validation rules.
-//
-// For example:
-//
-// ```js
-// {
-//   email: {
-//     type: 'string',
-//     validate: {
-//       rule: 'isEmail',
-//       message: 'Please enter a valid email address'
-//     }
-//   }
-// }
-// ```
-//
-// Validations will be discussed further later in its own section.
-//
     this.schema = {};
-
-// #### primaryKey
-//
-// The name of the ID field, defaults to `id`.
-//
     this.primaryKey = 'id';
-
-// #### displayField
-//
-// This is the field that represents your record's display value. Usually `title` or `name` in most cases.
-//
     this.displayField = null;
-
-// #### validationRules
-//
-// Define rules logic which can be used for various fields.
-//
-// Example:
-//
-// ```js
-// {
-//   ruleName: function (field, value) {
-//     return true;
-//   },
-//   asyncRule: function (value, field, done) {
-//     return done(true);
-//   },
-//   ruleWithOptions: function (value, field, arg1, arg2) {
-//     return true;
-//   }
-// }
-// ```
-//
-// See Validations section later for more documentation on this.
-//
     this.validationRules = {};
-
-// #### behaviors
-//
-// Array of behavior classes, in the order as you want them applied.
-//
-// Example:
-//
-// ```js
-// [
-//   TimestampBehavior,
-//   AnotherCustomBehavior
-// ]
-// ```
-//
     this.behaviors = [];
-
-// #### loadedBehaviors
-//
-// Array of already loaded behaviors for this model
-//
     this.loadedBehaviors = [];
 
     _.merge(this, extend);
 
-// #### alias
-//
-// Unless defined, alias always defaults to the `table` property. When associations get in the way, having a unique alias helps avoiding ambiguity when constructing complex conditions.
-//
-// If you have a `Posts` collection for the table `posts`, with a model `Post`, it is safe to have an alias `Post` (in singular form).
-//
     if (!this.alias) {
       this.alias = this.table;
     }
@@ -166,245 +28,6 @@ export default class Collection {
     this.callBehavedMethod(this, 'collectionInitialize');
   }
 
-// ## Usage
-//
-// Before using the Collection, you need to create an instance of it:
-//
-// ```js
-// var posts = new Posts();
-// ```
-//
-
-// ## Validations
-//
-// Validation rules for fields can be set when defining the schema:
-//
-// ### Single rule
-//
-// ```js
-// db.createCollection({
-//   schema: {
-//     email: {
-//       type: 'string',
-//       validate: {
-//         rule: 'isEmail',
-//         message: 'Please enter a valid email address'
-//       }
-//     }
-//   }
-// });
-// ```
-//
-// ### Multiple rules
-//
-// ```js
-// {
-//   email: {
-//     type: 'string',
-//     validate: [
-//       {
-//         rule: 'isLowercase',
-//         message: 'Please enter email address in lowercase',
-//       },
-//       {
-//         rule: 'isEmail',
-//         message: 'Please enter a valid email address'
-//       }
-//     ]
-//   }
-// }
-// ```
-//
-// ### Rule with options
-//
-// ```js
-// {
-//   fruit: {
-//     type: 'string',
-//     validate: {
-//       rule: [
-//        'isIn', // `isIn` is the rule name
-//        [
-//          'apple',
-//          'banana'
-//        ] // this array is passed as an argument to rule function
-//       ],
-//       message: 'Must be either apple or banana'
-//     }
-//   }
-// }
-// ```
-//
-// ### Rule as a function
-//
-// ```js
-// {
-//   mood: {
-//     type: 'string',
-//     validate: {
-//       rule: function (field, value) {
-//         return true;
-//       }
-//     }
-//   }
-// }
-// ```
-//
-// ### Asynchronous rule
-//
-// ```js
-// {
-//   food: {
-//     type: 'string',
-//     validate: {
-//       rule: function (field, value, done) {
-//         checkIfFoodIsHealthy(value, function (healthy) {
-//           var isHealthy = healthy === true;
-//           done(isHealthy);
-//         });
-//       }
-//     }
-//   }
-// }
-// ```
-//
-// ### Available rules
-//
-// By default, all the validation rules from [Validator.js](https://github.com/chriso/validator.js#validators) are available:
-//
-// - **equals(str, comparison)** - check if the string matches the comparison.
-// - **contains(str, seed)** - check if the string contains the seed.
-// - **matches(str, pattern [, modifiers])** - check if string matches the pattern. Either `matches('foo', /foo/i)` or `matches('foo', 'foo', 'i')`.
-// - **isEmail(str [, options])** - check if the string is an email. `options` is an object which defaults to `{ allow_display_name: false, allow_utf8_local_part: true }`. If `allow_display_name` is set to true, the validator will also match `Display Name <email-address>`. If `allow_utf8_local_part` is set to false, the validator will not allow any non-English UTF8 character in email address' local part.
-// - **isURL(str [, options])** - check if the string is an URL. `options` is an object which defaults to `{ protocols: ['http','https','ftp'], require_tld: true, require_protocol: false, allow_underscores: false, host_whitelist: false, host_blacklist: false, allow_trailing_dot: false, allow_protocol_relative_urls: false }`.
-// - **isFQDN(str [, options])** - check if the string is a fully qualified domain name (e.g. domain.com). `options` is an object which defaults to `{ require_tld: true, allow_underscores: false, allow_trailing_dot: false }`.
-// - **isIP(str [, version])** - check if the string is an IP (version 4 or 6).
-// - **isAlpha(str)** - check if the string contains only letters (a-zA-Z).
-// - **isNumeric(str)** - check if the string contains only numbers.
-// - **isAlphanumeric(str)** - check if the string contains only letters and numbers.
-// - **isBase64(str)** - check if a string is base64 encoded.
-// - **isHexadecimal(str)** - check if the string is a hexadecimal number.
-// - **isHexColor(str)** - check if the string is a hexadecimal color.
-// - **isLowercase(str)** - check if the string is lowercase.
-// - **isUppercase(str)** - check if the string is uppercase.
-// - **isInt(str [, options])** - check if the string is an integer. `options` is an object which can contain the keys `min` and/or `max` to check the integer is within boundaries (e.g. `{ min: 10, max: 99 }`).
-// - **isFloat(str [, options])** - check if the string is a float. `options` is an object which can contain the keys `min` and/or `max` to validate the float is within boundaries (e.g. `{ min: 7.22, max: 9.55 }`).
-// - **isDivisibleBy(str, number)** - check if the string is a number that's divisible by another.
-// - **isNull(str)** - check if the string is null.
-// - **isLength(str, min [, max])** - check if the string's length falls in a range. Note: this function takes into account surrogate pairs.
-// - **isByteLength(str, min [, max])** - check if the string's length (in bytes) falls in a range.
-// - **isUUID(str [, version])** - check if the string is a UUID (version 3, 4 or 5).
-// - **isDate(str)** - check if the string is a date.
-// - **isAfter(str [, date])** - check if the string is a date that's after the specified date (defaults to now).
-// - **isBefore(str [, date])** - check if the string is a date that's before the specified date.
-// - **isIn(str, values)** - check if the string is in a array of allowed values.
-// - **isCreditCard(str)** - check if the string is a credit card.
-// - **isISIN(str)** - check if the string is an [ISIN][ISIN] (stock/security identifier).
-// - **isISBN(str [, version])** - check if the string is an ISBN (version 10 or 13).
-// - **isMobilePhone(str, locale)** - check if the string is a mobile phone number, (locale is one of `['zh-CN', 'en-ZA', 'en-AU', 'en-HK', 'pt-PT', 'fr-FR', 'el-GR', 'en-GB', 'en-US', 'en-ZM']`).
-// - **isJSON(str)** - check if the string is valid JSON (note: uses JSON.parse).
-// - **isMultibyte(str)** - check if the string contains one or more multibyte chars.
-// - **isAscii(str)** - check if the string contains ASCII chars only.
-// - **isFullWidth(str)** - check if the string contains any full-width chars.
-// - **isHalfWidth(str)** - check if the string contains any half-width chars.
-// - **isVariableWidth(str)** - check if the string contains a mixture of full and half-width chars.
-// - **isSurrogatePair(str)** - check if the string contains any surrogate pairs chars.
-// - **isMongoId(str)** - check if the string is a valid hex-encoded representation of a [MongoDB ObjectId][mongoid].
-// - **isCurrency(str, options)** - check if the string is a valid currency amount. `options` is an object which defaults to `{symbol: '$', require_symbol: false, allow_space_after_symbol: false, symbol_after_digits: false, allow_negatives: true, parens_for_negatives: false, negative_sign_before_digits: false, negative_sign_after_digits: false, allow_negative_sign_placeholder: false, thousands_separator: ',', decimal_separator: '.', allow_space_after_digits: false }`.
-//
-// Example usage of the above mentioned rules:
-//
-// ```js
-// db.createCollection({
-//   schema: {
-//     title: {
-//       // direct rule
-//       validate: {
-//         rule: 'isAlphanumeric'
-//       }
-//     },
-//     body: {
-//       // rule with options
-//       validate: {
-//         rule: ['isLength', min, max]
-//       }
-//     }
-//   }
-// });
-// ```
-//
-// But of course, you can always override them or add new custom rules.
-//
-// ### Custom rules
-//
-// Validation rules can be defined when creating a Collection class:
-//
-// ```js
-// var Posts = db.createCollection({
-//   schema: {
-//     name: {
-//       type: 'string',
-//       validate: {
-//         rule: 'myFirstRule'
-//       }
-//     },
-//     title: {
-//       type: 'string',
-//       validate: {
-//         rule: [
-//           'myRuleWithOptions',
-//           'arg1 value',
-//           'arg2 value'
-//         ]
-//       }
-//     }
-//   },
-//
-//   validationRules: {
-//     myFirstRule: function (field, value) {
-//       return true; // validated successfully
-//     },
-//     myRuleWithOptions: function (field, value, arg1, arg2) {
-//       return true;
-//     },
-//     myAsyncRule: function (field, value, done) {
-//       doSomething(value, function (result) {
-//         var validated = result === true;
-//         done(validated);
-//       });
-//     }
-//   }
-// });
-// ```
-//
-// ### Required fields
-//
-// By default, validation rules are only checked against fields that are set.
-//
-// But if you wish to make sure that certain fields are required, meaning they should always be present, you can mark them as required in your schema:
-//
-// ```js
-// var Posts = db.createCollectionClass({
-//   schema: {
-//     name: {
-//       type: 'string',
-//       validate: {
-//         rule: 'isAlpha',
-//         required: true, // here
-//         message: 'Must be alphabets only'
-//       }
-//     }
-//   }
-// });
-// ```
-//
-
-// ## Methods
-//
-// ### model(attributes = {}, extend = {})
-//
-// Get a new instance of this Collection's model
-//
   model(attributes = {}, extend = {}) {
     _.merge(extend, {
       collection: this
@@ -413,34 +36,18 @@ export default class Collection {
     return new this.modelClass(attributes, extend);
   }
 
-// ### getDatabase()
-//
-// Get an instance of the current Collection's Database
-//
   getDatabase() {
     return this.db;
   }
 
-// ### setDatabase(db)
-//
-// Change database instance of this Collection to `db`
-//
   setDatabase(db) {
     this.db = db;
   }
 
-// ### getAdapter()
-//
-// Get adapter of the Collection's database
-//
   getAdapter() {
     return this.getDatabase().getAdapter();
   }
 
-// ### query()
-//
-// Get a new query builder for this Collection's table
-//
   query(options = {}) {
     return this.getAdapter().query({
       ...options,
@@ -448,37 +55,11 @@ export default class Collection {
     });
   }
 
-// ### find()
-//
-// Returns query builder for fetching records of this Collection.
-//
-// Example:
-//
-// ```js
-// var posts = new Posts();
-// var query = posts.find();
-//
-// query
-//   .where({id: 1})
-//   .first() // could also be `.all()` for returning multiple results
-//   .then(function (post) {
-//     var title = post.get('title');
-//   });
-// ```
-//
-// See Query section of the documentation for more usage details.
-//
   find() {
     return this.query()
       .from(this.table, this.alias);
   }
 
-// ### findBy(field, value)
-//
-// Shortcut method for finding single record that matches a field's value.
-//
-// Returns a promise with the found model.
-//
   findBy(field, value) {
     return this.find()
       .where({
@@ -487,12 +68,6 @@ export default class Collection {
       .first();
   }
 
-// ### findAllBy(field, value)
-//
-// Shortcut method for finding all records that matches a field's value.
-//
-// Returns a promise.
-//
   findAllBy(field, value) {
     return this.find()
       .where({
@@ -501,38 +76,14 @@ export default class Collection {
       .all();
   }
 
-// ### findById(value)
-//
-// Shortcut method for finding a record by its ID.
-//
-// Returns a promise.
-//
   findById(value) {
     return this.findBy(this.primaryKey, value);
   }
 
-// ### findByKey(value)
-//
-// Alias for `collection.findById()`.
-//
-// Returns a promise.
-//
   findByKey(value) {
     return this.findById(value);
   }
 
-// ### validate()
-//
-// Validates all fields of the given Model
-//
-// Returns a promise with `true` if all validated, otherwise an object of error messages keyed by field names.
-//
-// @TODO: `reject()` instead on error?
-//
-// Options:
-//
-// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-//
   validate(model, options = {}) {
     let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
@@ -654,12 +205,6 @@ export default class Collection {
     });
   }
 
-// ### validateField(model, field, value = null)
-//
-// Validates a single field
-//
-// Returns a promise with true if validated, otherwise error message
-//
   validateField(model, field, givenValue = null) {
     const value = !givenValue ? model.get(field) : givenValue;
 
@@ -740,16 +285,6 @@ export default class Collection {
     });
   }
 
-// ### save(model, options = {})
-//
-// Save the given model. This method is not usually called directly, but rather via `Model.save()`.
-//
-// Returns a promise with model instance.
-//
-// Options:
-//
-// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-//
   save(model, options = {}) {
     let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
@@ -860,16 +395,6 @@ export default class Collection {
     });
   }
 
-// ### delete(model, options = {})
-//
-// Deletes the given model. Usually called via `Model.delete()`.
-//
-// Returns a promise.
-//
-// Options:
-//
-// * `callbacks`: Defaults to true, pass false to disable before/after callbacks.
-//
   delete(model, options = {}) {
     let callbacks = (_.isUndefined(options.callbacks) || options.callbacks);
 
@@ -937,10 +462,6 @@ export default class Collection {
     });
   }
 
-// ### loadBehaviors()
-//
-// Called during construction, and loads behaviors as defined in `behaviors` property.
-//
   loadBehaviors() {
     this.behaviors.forEach((behaviorItem) => {
       let behaviorClass = behaviorItem;
@@ -959,10 +480,6 @@ export default class Collection {
     });
   }
 
-// ### callBehavedMethod(methodName)
-//
-// Used internally to call a callback method along with all the methods defined by loaded Behaviors too.
-//
   callBehavedMethod(context, methodName) {
     if (methodName.indexOf('after') === -1 && methodName.indexOf('before') === -1) {
       // sync
@@ -999,88 +516,30 @@ export default class Collection {
     });
   }
 
-// ## Callbacks
-//
-// Collections support callbacks that you can define when creating classes.
-//
-// For example:
-//
-// ```js
-// var Promise = f.Promise;
-//
-// var Posts = f.createCollection({
-//   alias: 'Post',
-//
-//   beforeSave: function (model) {
-//     // do something before saving...
-//
-//     // end the callback with a promise
-//     return new Promise.resolve(true);
-//   }
-// });
-// ```
-//
-
-// ### modelInitialize(model)
-//
-// Called right after Collection's Model construction.
-//
-// For synchronous operations only, since it does not return any Promise.
-//
   modelInitialize(model) { //eslint-disable-line
     return true;
   }
 
-// ### beforeSave(model)
-//
-// Should return a Promise with `true` to continue.
-//
-// To stop the save, return a Promise with an error.
-//
   beforeSave(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
-// ### afterSave(model)
-//
-// Should return a Promise.
-//
   afterSave(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
-// ### beforeValidate(model)
-//
-// Should return a Promise with `true` to continue.
-//
-// To stop the validation, return a Promise with an error.
-//
   beforeValidate(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
-// ### afterValidate(model)
-//
-// Should return a Promise.
-//
   afterValidate(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
-// ### beforeDelete(model)
-//
-// Should return a Promise with `true` to continue.
-//
-// To stop from deleting, return a Promise with an error.
-//
   beforeDelete(model) { //eslint-disable-line
     return new P.resolve(true);
   }
 
-// ### afterDelete(model)
-//
-// Should return a Promise.
-//
   afterDelete(model) { //eslint-disable-line
     return new P.resolve(true);
   }

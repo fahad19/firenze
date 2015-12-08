@@ -1,5 +1,10 @@
 # Changelog
 
+* [`v0.3.0`](https://github.com/fahad19/firenze/compare/v0.2.1...v0.3.0)
+  * New query builder
+  * API for creating classes has been changed
+    * `.createCollection()` instead of `.createCollectionClass()`
+  * New docs
 * v0.2.1
   * Fix for updating records
 * [`v0.2.0`](https://github.com/fahad19/firenze/compare/v0.1.5...v0.2.0):
