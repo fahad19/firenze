@@ -3,3 +3,4 @@ npm-debug.log
 lib/
 coverage/
 /bower_components/
+_book/

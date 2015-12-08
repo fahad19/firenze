@@ -84,7 +84,7 @@ export default class Database {
     return this.getAdapter().getConnection();
   }
 
-// ### close(cb = null)
+// ### close()
 //
 // Closes the connection
 //

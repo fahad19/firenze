@@ -1,0 +1,16 @@
+## Table of Contents
+
+* [Read Me](/README.md)
+* [Installation](/docs/installation/README.md)
+  * [Node.js](/docs/installation/node.md)
+  * [Browser](/docs/installation/browser.md)
+* [Quickstart](/docs/Quickstart.md)
+* [Database](/docs/database/README.md)
+  * [Usage](/docs/database/Usage.md)
+  * [Methods](/docs/database/Methods.md)
+* [Adapter](/docs/adapter/README.md)
+  * [Usage](/docs/adapter/Usage.md)
+  * [Methods](/docs/adapter/Methods.md)
+* [Glossary](/docs/Glossary.md)
+* [Contributing](/CONTRIBUTING.md)
+* [Change Log](/CHANGELOG.md)

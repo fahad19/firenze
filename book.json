@@ -1,0 +1,25 @@
+{
+  "gitbook": "2.x.x",
+  "structure": {
+    "summary": "docs/README.md"
+  },
+  "plugins": [
+    "edit-link",
+    "prism",
+    "-highlight",
+    "github",
+    "ga"
+  ],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/fahad19/firenze/tree/master",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/fahad19/firenze/"
+    },
+    "ga": {
+      "token": "UA-47493443-2"
+    }
+  }
+}
