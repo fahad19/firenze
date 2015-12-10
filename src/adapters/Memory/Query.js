@@ -10,6 +10,10 @@ export default class MemoryQuery extends Query {
     this.data = this.adapter.getConnection();
 
     this.builder = _(this.data);
+
+    if (this.collection) {
+      this.table(this.collection.table);
+    }
   }
 
   from(table) {
@@ -159,6 +163,7 @@ export default class MemoryQuery extends Query {
 
     this._create.forEach((row) => {
       let tableRows = this.adapter.getData(table);
+
       if (typeof tableRows === 'undefined') {
         tableRows = [];
       }
@@ -234,13 +239,15 @@ export default class MemoryQuery extends Query {
           data = givenData.slice(this._offset, this._limit + 1);
         } else if (this._limit) {
           data = givenData.slice(0, this._limit);
+        } else {
+          data = givenData;
         }
 
         return data;
       })
       .thru((data) => {
         // all or first
-        if (this._all) {
+        if (this._all || this._count) {
           return data;
         }
 

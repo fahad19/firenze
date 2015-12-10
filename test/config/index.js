@@ -1,6 +1,7 @@
 import SqlAdapter from '../../lib/adapters/Sql';
+import MemoryAdapter from '../../lib/adapters/Memory';
 
-export default {
+const Mysql = {
   adapter: SqlAdapter,
 
   host: process.env.FIRENZE_DB_HOST || '127.0.0.1',
@@ -13,4 +14,13 @@ export default {
     min: 0,
     max: 5
   }
+};
+
+const Memory = {
+  adapter: MemoryAdapter
+};
+
+export default {
+  Mysql,
+  Memory
 };

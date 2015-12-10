@@ -1,10 +1,12 @@
 /* eslint-disable new-cap */
 import _ from 'lodash';
 
-import {Adapter} from '../../';
+import lib from '../../';
 
 import Query from './Query';
 import Schema from './Schema';
+
+const {Adapter} = lib;
 
 export default class MemoryAdapter extends Adapter {
   constructor(givenOptions = {}) {
