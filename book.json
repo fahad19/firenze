@@ -9,7 +9,8 @@
     "-highlight",
     "github",
     "ga",
-    "anchors"
+    "anchors",
+    "collapsible-menu"
   ],
   "pluginsConfig": {
     "edit-link": {
