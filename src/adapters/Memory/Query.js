@@ -62,6 +62,17 @@ export default class MemoryQuery extends Query {
     return this;
   }
 
+  page(page) {
+    if (typeof this._limit === 'undefined') {
+      return this;
+    }
+
+    const offset = (page - 1) * this._limit;
+    this.offset(offset);
+
+    return this;
+  }
+
   create(row) {
     this._create = _.isArray(row) ? row : [row];
 
