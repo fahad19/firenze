@@ -11,10 +11,18 @@ export default class Functions {
     return this;
   }
 
+  getFunctions() {
+    return this.funcs;
+  }
+
   setColumn(column) {
     this.column = column;
 
     return this;
+  }
+
+  getColumn() {
+    return this.column;
   }
 
   upper() { return this; }

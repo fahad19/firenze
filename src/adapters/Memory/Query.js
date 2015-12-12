@@ -3,9 +3,16 @@ import P from 'bluebird';
 
 import Query from '../../Query';
 
+import MemoryFunctions from './Functions';
+
 export default class MemoryQuery extends Query {
-  constructor(...args) {
-    super(...args);
+  constructor(givenOptions) {
+    const options = {
+      functionsClass: MemoryFunctions,
+      ...givenOptions
+    };
+
+    super(options);
 
     this.data = this.adapter.getConnection();
 
@@ -22,9 +29,62 @@ export default class MemoryQuery extends Query {
     return this;
   }
 
-  select(fields = []) {
-    if (fields.length === 0) {
+  select(...args) {
+    if (typeof this._fields === 'undefined') {
+      this._fields = [];
+    }
+
+    if (typeof !this._mapFields === 'undefined') {
+      this._mapFields = {};
+    }
+
+    if (typeof !this._funcFields === 'undefined') {
+      this._fieldFuncs = {};
+    }
+
+    if (args.length === 0) {
       return this;
+    }
+
+    args.forEach((arg) => {
+      this._select(arg);
+    });
+
+    return this;
+  }
+
+  _select(field) {
+    if (typeof field === 'string') {
+      this._fields.push(field);
+    } else if (_.isArray(field)) {
+      field.forEach((f) => {
+        this._fields.push(f);
+      });
+    } else if (typeof field === 'object') {
+      _.each(field, (f, as) => {
+        if (typeof f !== 'object' && typeof f !== 'function') {
+          this._mapFields[f] = as;
+
+          return;
+        }
+
+        let funcsList;
+        let fieldName;
+
+        if (typeof f === 'object' && f instanceof MemoryFunctions) {
+          fieldName = f.getColumn();
+          funcsList = f.toArray();
+        } else if (typeof f === 'function') {
+          const func = this.func.bind(this);
+          fieldName = f.bind(this)(func).getColumn();
+          funcsList = f.bind(this)(func).getFunctions();
+        }
+
+        this._fieldFuncs[fieldName] = {
+          as: fieldName,
+          funcs: funcsList
+        };
+      });
     }
 
     return this;
@@ -257,8 +317,22 @@ export default class MemoryQuery extends Query {
         return data;
       })
       .thru((data) => {
+        // select fields
+        if (!data || !this._fields) {
+          return data;
+        }
+
+        if (this._fields) {
+          return _.map(data, (row) => {
+            return _.pick(row, this._fields);
+          });
+        }
+
+        return data;
+      })
+      .thru((data) => {
         // all or first
-        if (this._all || this._count) {
+        if (!this._first) {
           return data;
         }
 
@@ -272,6 +346,10 @@ export default class MemoryQuery extends Query {
 
     if (this._count) {
       return results.length;
+    }
+
+    if (!this._all || !this._first) {
+      return results;
     }
 
     return this.toModels(results);
