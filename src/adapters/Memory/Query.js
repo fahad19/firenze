@@ -341,6 +341,21 @@ export default class MemoryQuery extends Query {
                 return;
               }
 
+              if (func === 'concat') {
+                val = '';
+                this._concat.forEach((concatColumn) => {
+                  if (concatColumn.indexOf('"') > -1) {
+                    val += JSON.parse(concatColumn);
+
+                    return;
+                  }
+
+                  val += row[concatColumn];
+                });
+
+                return;
+              }
+
               val = String(val)[func]();
             });
 

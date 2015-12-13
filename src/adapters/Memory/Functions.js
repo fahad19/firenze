@@ -6,4 +6,10 @@ export default class MemoryFunctions extends Functions {
   lower() { return this.addFunction('toLowerCase'); }
 
   trim() { return this.addFunction('trim'); }
+
+  concat(...columns) {
+    this.query._concat = columns;
+
+    return this.addFunction('concat');
+  }
 }
