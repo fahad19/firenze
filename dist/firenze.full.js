@@ -21678,11 +21678,21 @@ this["firenze"] =
 	      return this;
 	    }
 	  }, {
+	    key: "getFunctions",
+	    value: function getFunctions() {
+	      return this.funcs;
+	    }
+	  }, {
 	    key: "setColumn",
 	    value: function setColumn(column) {
 	      this.column = column;
 
 	      return this;
+	    }
+	  }, {
+	    key: "getColumn",
+	    value: function getColumn() {
+	      return this.column;
 	    }
 	  }, {
 	    key: "upper",

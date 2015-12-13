@@ -1,6 +1,8 @@
-/node_modules/
-npm-debug.log
-lib/
+.DS_Store
+node_modules
+*.log
+lib
 coverage/
-/bower_components/
-_book/
+bower_components
+_book
+_test
