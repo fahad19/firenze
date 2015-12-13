@@ -34,11 +34,11 @@ export default class MemoryQuery extends Query {
       this._fields = [];
     }
 
-    if (typeof !this._mapFields === 'undefined') {
+    if (typeof this._mapFields === 'undefined') {
       this._mapFields = {};
     }
 
-    if (typeof !this._funcFields === 'undefined') {
+    if (typeof this._funcFields === 'undefined') {
       this._fieldFuncs = {};
     }
 
@@ -73,7 +73,7 @@ export default class MemoryQuery extends Query {
 
         if (typeof f === 'object' && f instanceof MemoryFunctions) {
           fieldName = f.getColumn();
-          funcsList = f.toArray();
+          funcsList = f.getFunctions();
         } else if (typeof f === 'function') {
           const func = this.func.bind(this);
           fieldName = f.bind(this)(func).getColumn();
@@ -81,7 +81,7 @@ export default class MemoryQuery extends Query {
         }
 
         this._fieldFuncs[fieldName] = {
-          as: fieldName,
+          as,
           funcs: funcsList
         };
       });
@@ -317,18 +317,51 @@ export default class MemoryQuery extends Query {
         return data;
       })
       .thru((data) => {
-        // select fields
-        if (!data || !this._fields) {
+        // select
+        if (!data || (!this._fields && !this._mapFields && !this._fieldFuncs)) {
           return data;
         }
 
-        if (this._fields) {
-          return _.map(data, (row) => {
-            return _.pick(row, this._fields);
+        let rows = data;
+
+        // mapped fields
+        rows = _.map(rows, (row) => {
+          _.each(this._mapFields, (as, f) => {
+            row[as] = row[f];
+          });
+
+          _.each(this._fieldFuncs, (fieldFunc, f) => {
+            const {as, funcs} = fieldFunc;
+
+            let val = row[f];
+            funcs.forEach((func) => {
+              if (typeof _[func] === 'function') {
+                val = _[func](val);
+
+                return;
+              }
+
+              val = String(val)[func]();
+            });
+
+            row[as] = val;
+          });
+
+          return row;
+        });
+
+        // pick the fields
+        const pickFields = this._fields
+          .concat(_.values(this._mapFields))
+          .concat(_.map(this._fieldFuncs, item => item.as));
+
+        if (pickFields.length > 0) {
+          rows = _.map(rows, (row) => {
+            return _.pick(row, pickFields);
           });
         }
 
-        return data;
+        return rows;
       })
       .thru((data) => {
         // all or first
@@ -348,7 +381,7 @@ export default class MemoryQuery extends Query {
       return results.length;
     }
 
-    if (!this._all || !this._first) {
+    if (!this._all && !this._first) {
       return results;
     }
 
