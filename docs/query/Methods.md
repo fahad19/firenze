@@ -239,6 +239,8 @@ query
   .run()
 ```
 
+You can also pass `nest: true` to avoid overriding column values, by returning the results nested per table.
+
 There are also other handy methods for various kinds of JOINs
 
 ### innerJoin(options)

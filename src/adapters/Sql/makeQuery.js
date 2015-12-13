@@ -258,6 +258,12 @@ export default function makeQuery(knex) {
         options.on.apply(query, [expr]);
       });
 
+      if (options.nest) {
+        this.builder.options({
+          nestTables: true
+        });
+      }
+
       return this;
     }
 

@@ -711,4 +711,30 @@ describe('Query', function () {
         throw error;
       });
   });
+
+  it('should find with JOINs - nested tables', function (done) {
+    this.db.query()
+      .from('posts', 'Post')
+      .where({
+        'Post.id': 1
+      })
+      .join({
+        type: 'left',
+        table: 'authors',
+        alias: 'Author',
+        on: function (expr) {
+          expr.eq('Post.author_id', 'Author.id');
+        },
+        nest: true
+      })
+      .all()
+      .then(function (results) {
+        results[0].Post.title.should.eql('Hello World');
+        results[0].Author.name.should.eql('Fahad Ibnay Heylaal');
+
+        done();
+      }).catch(function (error) {
+        throw error;
+      });
+  });
 });
