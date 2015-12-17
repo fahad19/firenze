@@ -68,6 +68,13 @@ To publish a new release:
 * Run `npm publish .`
 * Tag the repository with `vX.X.X`
 
+## Thanks
+
+The project couldn't have happened if there weren't other projects to be inspired from. A big thanks goes to these open source projects that directly or indirectly helped make it possible:
+
+* [knex.js](https://github.com/tgriesser/knex) and [bookshelf.js](https://github.com/tgriesser/bookshelf)
+* [CakePHP](http://cakephp.org/)
+
 ## License
 
 MIT © [Fahad Ibnay Heylaal](http://fahad19.com)
