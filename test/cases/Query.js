@@ -176,6 +176,7 @@ describe('Query', function () {
     posts.find()
       .select('id', 'title')
       .limit(1)
+      .orderBy({id: 'asc'})
       .run()
       .then(function (results) {
         results.should.be.instanceOf(Array);
@@ -196,6 +197,7 @@ describe('Query', function () {
     posts.find()
       .select('id', 'title', {title2: 'title'})
       .limit(1)
+      .orderBy({id: 'asc'})
       .run()
       .then(function (results) {
         results.should.be.instanceOf(Array);
@@ -224,6 +226,7 @@ describe('Query', function () {
           .upper()
        })
       .limit(1)
+      .orderBy({id: 'asc'})
       .all()
       .then(function (models) {
         models.should.be.instanceOf(Array);
@@ -248,6 +251,7 @@ describe('Query', function () {
         }
       })
       .limit(1)
+      .orderBy({id: 'asc'})
       .all()
       .then(function (models) {
         models.should.be.instanceOf(Array);
@@ -271,6 +275,7 @@ describe('Query', function () {
         }
       })
       .limit(1)
+      .orderBy({id: 'asc'})
       .all()
       .then(function (models) {
         models.should.be.instanceOf(Array);

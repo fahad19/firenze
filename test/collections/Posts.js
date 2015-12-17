@@ -16,22 +16,32 @@ export default function (db) {
 
     schema: {
       id: {
-        type: 'increments'
+        type: 'increments',
+        primary: true
       },
       author_id: { //eslint-disable-line
-        type: 'integer'
+        type: 'integer',
+        nullable: true
       },
       title: {
-        type: 'string'
+        type: 'string',
+        nullable: false,
+        unique: true,
+        length: 100
       },
       body: {
-        type: 'text'
+        type: 'text',
+        nullable: true,
+        default: null
       },
       views: {
-        type: 'integer'
+        type: 'integer',
+        unsigned: true,
+        default: 0
       },
       note: {
-        type: 'string'
+        type: 'string',
+        comment: 'extra notes'
       },
       created: {
         type: 'datetime'

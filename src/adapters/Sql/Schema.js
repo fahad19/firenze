@@ -26,7 +26,55 @@ export default class SqlSchema extends Schema {
     return new P(function (resolve, reject) {
       connection.schema.createTable(table, function (t) {
         _.each(collection.schema, function (column, name) {
-          t[column.type](name);
+          const args = [name];
+          const lookForArgs = [
+            'length',
+            'textType',
+            'precision',
+            'scale'
+          ];
+
+          lookForArgs.forEach(function (argName) {
+            if (typeof column[argName] !== 'undefined') {
+              args.push(column[argName]);
+            }
+          });
+
+          const c = t[column.type](...args);
+
+          // primary
+          if (column.primary === true) {
+            c.primary();
+          } else if (_.isArray(column.primary)) {
+            c.primary(column.primary);
+          }
+
+          // unique
+          if (column.unique === true) {
+            c.unique();
+          }
+
+          // nullable
+          if (column.nullable === true) {
+            c.nullable();
+          } else if (column.nullable === false) {
+            c.notNullable();
+          }
+
+          // default
+          if (typeof column.default !== 'undefined') {
+            c.defaultTo(column.default);
+          }
+
+          // unsigned
+          if (column.unsigned === true) {
+            c.unsigned();
+          }
+
+          // comment
+          if (typeof column.comment !== 'undefined') {
+            c.comment(column.comment);
+          }
         });
       })
         .then(function (response) {
