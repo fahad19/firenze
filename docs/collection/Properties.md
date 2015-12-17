@@ -29,6 +29,38 @@ The keys of this object are the column names, and the value defines what type of
 
 Column types can vary depending on the adapter you are using.
 
+Additional information per column will also allow generating tables for fixtures more accurately:
+
+```js
+{
+  id: {
+    type: 'integer',
+    primary: true // Primary index
+  },
+  title: {
+    type: 'string',
+    length: 100, // 100 characters limit
+    unique: true, // Unique index
+  },
+  description: {
+    type: 'text',
+    textType: 'longtext', // `longtext` or `mediumtext` in SQL
+    nullable: true // allow field to accept `NULL`
+  },
+  cost: {
+    type: 'float',
+    precision: 8,
+    scale: 2,
+    comment: 'cost column' // additional comment in SQL
+  },
+  published: {
+    type: 'enum',
+    values: ['Y', 'N'],
+    default: 'N', // default value in SQL
+  }
+}
+```
+
 You can also use the `schema` property to set validation rules.
 
 For example:

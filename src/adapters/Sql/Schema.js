@@ -31,7 +31,8 @@ export default class SqlSchema extends Schema {
             'length',
             'textType',
             'precision',
-            'scale'
+            'scale',
+            'values'
           ];
 
           lookForArgs.forEach(function (argName) {
