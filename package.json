@@ -1,6 +1,6 @@
 {
   "name": "firenze",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "ORM for relational databases.",
   "main": "index.js",
   "scripts": {
