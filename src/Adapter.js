@@ -49,7 +49,7 @@ export default class Adapter {
     return new P((resolve, reject) => {
       async.series([
         (callback) => {
-          this.schema().dropTable(collection)
+          this.schema().dropTableOfCollection(collection)
             .then(function (response) {
               callback(null, response);
             })
@@ -58,7 +58,7 @@ export default class Adapter {
             });
         },
         (callback) => {
-          this.schema().createTable(collection)
+          this.schema().createTableFromCollection(collection)
             .then(function (response) {
               callback(null, response);
             })

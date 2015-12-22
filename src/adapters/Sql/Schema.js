@@ -4,7 +4,7 @@ import P from '../../Promise';
 import Schema from '../../Schema';
 
 export default class SqlSchema extends Schema {
-  dropTable(collection) {
+  dropTableOfCollection(collection) {
     const connection = this.getConnection();
     const table = collection.table;
 
@@ -19,7 +19,7 @@ export default class SqlSchema extends Schema {
     });
   }
 
-  createTable(collection) {
+  createTableFromCollection(collection) {
     const connection = this.getConnection();
     const table = collection.table;
 
