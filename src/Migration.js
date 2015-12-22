@@ -18,7 +18,7 @@ const migrationsTableSchema = {
   }
 };
 
-const generatedMigration = `
+const generatedMigration = _.trimLeft(`
 var Promise = require('firenze').Promise;
 
 module.exports = {
@@ -38,7 +38,7 @@ module.exports = {
     return new Promise.resolve(true);
   }
 };
-`;
+`);
 
 export default class Migration {
   constructor(options = {}) {
