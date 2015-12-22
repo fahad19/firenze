@@ -245,6 +245,7 @@ export default function makeQuery(knex) {
         type: null,
         table: null,
         alias: null,
+        nest: false,
         on: function () { },
         ...givenOptions
       };
