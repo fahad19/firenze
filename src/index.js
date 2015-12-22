@@ -7,6 +7,7 @@ import Query from './Query';
 import Expression from './Expression';
 import Functions from './Functions';
 import Schema from './Schema';
+import Migration from './Migration';
 import Promise from './Promise';
 
 import collectionFactory from './common/collectionFactory';
@@ -24,7 +25,9 @@ export default {
   Query,
   Expression,
   Functions,
+
   Schema,
+  Migration,
 
   Promise,
 

@@ -3,18 +3,18 @@ import lib from '../../';
 
 const {Promise} = lib;
 
-export const up = function (schema) {
+export const before = function (db, direction) {
   return new P.resolve(true);
 };
 
-export const down = function (schema) {
+export const up = function (db) {
   return new P.resolve(true);
 };
 
-export const before = function () {
+export const down = function (db) {
   return new P.resolve(true);
 };
 
-export const after = function () {
+export const after = function (db, direction) {
   return new P.resolve(true);
 };

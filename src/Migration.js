@@ -1,4 +1,6 @@
 import fs from 'fs';
+import path from 'path';
+
 import async from 'async';
 import _ from 'lodash';
 
@@ -16,27 +18,27 @@ const migrationsTableSchema = {
   }
 };
 
-const generatedMigration = ```
+const generatedMigration = `
 var Promise = require('firenze').Promise;
 
 module.exports = {
-  before: function (db) {
+  before: function (db, direction) {
     return new Promise.resolve(true);
   },
 
-  up: function (schema) {
+  up: function (db) {
     return new Promise.resolve(true);
   },
 
-  down: function (schema) {
+  down: function (db) {
     return new Promise.resolve(true);
   },
 
-  after: function (db) {
+  after: function (db, direction) {
     return new Promise.resolve(true);
   }
 };
-```;
+`;
 
 export default class Migration {
   constructor(options = {}) {
@@ -125,19 +127,49 @@ export default class Migration {
     const mig = require(this.options.directory + '/' + filename);
     const {db, table} = this.options;
 
-    return mig(db.schema())
-      .then(function () {
-        return db.query()
-          .table(table)
-          .create({
-            id: filename,
-            created: new Date()
-          })
-          .run();
-      })
-      .catch(function (error) {
-        throw error;
+    return new Promise((resolve, reject) => {
+      async.waterfall([
+        // before
+        (callback) => {
+          mig.before(db, direction)
+            .then(response => callback(null, response))
+            .catch(error => callback(error));
+        },
+
+        // up/down
+        (response, callback) => {
+          mig[direction](db)
+            .then(response => callback(null, response))
+            .catch(error => callback(error));
+        },
+
+        // after
+        (callback) => {
+          mig.after(db, direction)
+            .then(response => callback(null, response))
+            .catch(error => callback(error));
+        },
+
+        // create record
+        (callback) => {
+          db.query()
+            .table(table)
+            .create({
+              id: filename,
+              created: new Date()
+            })
+            .run()
+            .then(response => callback(null, response))
+            .catch(error => callback(error));
+        }
+      ], (error, response) => {
+        if (error) {
+          return reject(error);
+        }
+
+        resolve(response);
       });
+    });
   }
 
   runAll() {
@@ -172,19 +204,52 @@ export default class Migration {
 
   generate(name) {
     const datetime = new Date().toISOString().slice(0, 19).replace(/[T\-\:]/g, '');
-    const filename = datetime + '_' + name + '.js';
+    const filename = datetime + '_' + _.camelCase(name) + '.js';
 
-    const fullPath = this.options.directory + '/' + filename;
+    const directoryPath = path.normalize(this.options.directory);
+    const fullPath = directoryPath + '/' + filename;
 
     return new Promise((resolve, reject) => {
-      fs.writeFile(fullPath, generatedMigration, {
-        encoding: 'utf8'
-      }, function (err) {
-        if (err) {
-          return reject(err);
+      async.waterfall([
+        // create directory if needed
+        (callback) => {
+          fs.stat(directoryPath, (error, stats) => {
+            if (error && error.code !== 'ENOENT') {
+              return callback(error);
+            }
+
+            if (stats && stats.isDirectory()) {
+              return callback(null, true);
+            }
+
+            fs.mkdir(directoryPath, (error) => {
+              if (error) {
+                return callback('Could not create directory at: ' + directoryPath);
+              }
+
+              callback(null, true);
+            });
+          });
+        },
+
+        // create migration file
+        (result, callback) => {
+          fs.writeFile(fullPath, generatedMigration, {
+            encoding: 'utf8'
+          }, function (err) {
+            if (err) {
+              return callback(err);
+            }
+
+            callback(null, fullPath);
+          });
+        }
+      ], (error, result) => {
+        if (error) {
+          return reject(error);
         }
 
-        resolve(fullPath);
+        resolve(result);
       });
     });
   }

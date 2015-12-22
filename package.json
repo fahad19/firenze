@@ -19,6 +19,7 @@
     "uglify:lib": "uglifyjs dist/firenze.js -o dist/firenze.min.js",
     "uglify:full": "uglifyjs dist/firenze.full.js -o dist/firenze.full.min.js",
     "dist": "run-scripts dist:lib dist:full uglify:lib uglify:full",
+    "migrations:clean": "rimraf test/_migrations",
     "docs:prepare": "gitbook install",
     "docs:clean": "rimraf _book",
     "docs:build": "npm run docs:prepare && gitbook build -g fahad19/firenze",

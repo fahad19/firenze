@@ -3,6 +3,7 @@ node_modules
 *.log
 *.log*
 lib
+test/_migrations
 coverage/
 bower_components
 _book
