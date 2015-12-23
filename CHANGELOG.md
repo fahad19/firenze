@@ -1,11 +1,20 @@
 # Changelog
 
+* [`v0.4.0`](https://github.com/fahad19/firenze/compare/v0.3.1...v0.4.0)
+  * New Migrations API
+  * Core adapters extended further
+  * Better JOINs support (with nesting) in API
+  * CLI support
+  * Bug fixes and consistency in tests
 * [`v0.3.0`](https://github.com/fahad19/firenze/compare/v0.2.1...v0.3.0)
   * New query builder
+  * Further abstraction of queries with Expressions and Functions
   * API for creating classes has been changed
     * `.createCollection()` instead of `.createCollectionClass()`
-  * New docs
-* v0.2.1
+    * `.createModel()` instead of `.createModelClass()`
+    * `.createBehavior()` instead of `.createBehaviorClass()`
+  * New documentation website
+* [v0.2.1](https://github.com/fahad19/firenze/compare/v0.2.0...v0.2.1)
   * Fix for updating records
 * [`v0.2.0`](https://github.com/fahad19/firenze/compare/v0.1.5...v0.2.0):
   * Model classes are now optional, as configuration has moved to Collection level.

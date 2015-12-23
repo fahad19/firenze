@@ -8,14 +8,16 @@ Visit [http://fahad19.github.io/firenze/](http://fahad19.github.io/firenze/) for
 
 ### Key features
 
-* Adapter based structure to plug in any database/store
-* Intuitive query builder
-* Highly extensible with Behavior pattern
-* Promise based workflow
-* Strong validation support
+* **Adapter** based structure to plug in any database/store
+* Intituitive **query builder**
+* **Migrations** API (with rollback)
+* Highly extensible with **Behavior** pattern for Collections and Models
+* **Promise** based workflow
+* Strong and flexible **validation** system
+* **CLI** support
 * Small footprint of ~30kB minified file
 
-The project is still under heavy development, and more features are expected to land in future releases.
+The project is still under active development, and more features are expected to land in future releases.
 
 ## Installation
 
