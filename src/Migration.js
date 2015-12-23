@@ -144,14 +144,14 @@ export default class Migration {
         },
 
         // after
-        (callback) => {
+        (response, callback) => {
           mig.after(db, direction)
             .then(response => callback(null, response))
             .catch(error => callback(error));
         },
 
         // create record
-        (callback) => {
+        (response, callback) => {
           db.query()
             .table(table)
             .create({

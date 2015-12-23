@@ -4,17 +4,17 @@ import lib from '../../';
 const {Promise} = lib;
 
 export const before = function (db, direction) {
-  return new P.resolve(true);
+  return new Promise.resolve(true);
 };
 
 export const up = function (db) {
-  return new P.resolve(true);
+  return new Promise.resolve(true);
 };
 
 export const down = function (db) {
-  return new P.resolve(true);
+  return new Promise.resolve(true);
 };
 
 export const after = function (db, direction) {
-  return new P.resolve(true);
+  return new Promise.resolve(true);
 };
