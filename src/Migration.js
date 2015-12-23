@@ -150,14 +150,26 @@ export default class Migration {
             .catch(error => callback(error));
         },
 
-        // create record
+        // create/remove record
         (response, callback) => {
-          db.query()
-            .table(table)
-            .create({
-              id: filename,
-              created: new Date()
-            })
+          const query = db.query()
+            .table(table);
+
+          if (direction === 'up') {
+            query
+              .create({
+                id: filename,
+                created: new Date()
+              });
+          } else {
+            query
+              .where({
+                id: filename
+              })
+              .delete();
+          }
+
+          query
             .run()
             .then(response => callback(null, response))
             .catch(error => callback(error));
