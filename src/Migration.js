@@ -109,7 +109,7 @@ export default class Migration {
             });
           });
 
-          resolve(list);
+          resolve(_.sortByOrder(list, ['id', 'asc']));
         })
         .catch(function (error) {
           reject(error);

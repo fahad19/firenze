@@ -73,8 +73,12 @@ describe('Migration', function () {
     migration.list()
       .then(function (list) {
         list.should.be.instanceOf(Array);
+
         list[0].run.should.be.false;
+        list[0].id.should.eql('first_migration.js');
+
         list[1].run.should.be.false;
+        list[1].id.should.eql('second_migration.js');
 
         return migration.run(list[0].id);
       })
