@@ -21,7 +21,19 @@ describe('Migration', function () {
 
     migration.generate('new migration')
       .then(function (response) {
-        console.log('response', response); // eslint-disable-line
+        response.should.be.a.string;
+        done();
+      });
+  });
+
+  it('should init migrations table', function (done) {
+    const migration = new Migration({
+      db: this.db,
+      directory: __dirname + '/../_migrations'
+    });
+
+    migration.initTable()
+      .then(function (response) {
         done();
       });
   });
