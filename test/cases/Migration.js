@@ -74,6 +74,7 @@ describe('Migration', function () {
       .then(function (list) {
         list.should.be.instanceOf(Array);
         list[0].run.should.be.false;
+        list[1].run.should.be.false;
 
         return migration.run(list[0].id);
       })
@@ -82,6 +83,27 @@ describe('Migration', function () {
       })
       .then(function (list) {
         list[0].run.should.be.true;
+        list[1].run.should.be.false;
+      })
+      .then(function () {
+        done();
+      });
+  });
+
+  it('should run all pending migrations', function (done) {
+    const migration = new Migration({
+      db: this.db,
+      directory: __dirname + '/../migrations'
+    });
+
+    migration.runAll()
+      .then(function () {
+        return migration.list();
+      })
+      .then(function (list) {
+        list.should.be.instanceOf(Array);
+        list[0].run.should.be.true;
+        list[1].run.should.be.true;
       })
       .then(function () {
         done();
