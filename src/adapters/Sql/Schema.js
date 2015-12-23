@@ -3,87 +3,169 @@ import _ from 'lodash';
 import P from '../../Promise';
 import Schema from '../../Schema';
 
-export default class SqlSchema extends Schema {
-  dropTableOfCollection(collection) {
-    const connection = this.getConnection();
-    const table = collection.table;
+function createColumns(collectionSchema) {
+  return function (t) {
+    _.each(collectionSchema, function (column, name) {
+      const args = [name];
+      const lookForArgs = [
+        'length',
+        'textType',
+        'precision',
+        'scale',
+        'values'
+      ];
 
-    return new P(function (resolve, reject) {
-      connection.schema.dropTableIfExists(table)
-        .then(function (response) {
-          return resolve(response);
-        })
-        .catch(function (error) {
-          reject(error);
-        });
+      lookForArgs.forEach(function (argName) {
+        if (typeof column[argName] !== 'undefined') {
+          args.push(column[argName]);
+        }
+      });
+
+      const c = t[column.type](...args);
+
+      // primary
+      if (column.primary === true) {
+        c.primary();
+      } else if (_.isArray(column.primary)) {
+        c.primary(column.primary);
+      }
+
+      // unique
+      if (column.unique === true) {
+        c.unique();
+      }
+
+      // nullable
+      if (column.nullable === true) {
+        c.nullable();
+      } else if (column.nullable === false) {
+        c.notNullable();
+      }
+
+      // default
+      if (typeof column.default !== 'undefined') {
+        c.defaultTo(column.default);
+      }
+
+      // unsigned
+      if (column.unsigned === true) {
+        c.unsigned();
+      }
+
+      // comment
+      if (typeof column.comment !== 'undefined') {
+        c.comment(column.comment);
+      }
+    });
+  };
+}
+
+export default class SqlSchema extends Schema {
+  dropTable(tableName) {
+    const connection = this.getConnection();
+
+    return new P((resolve, reject) => {
+      connection.schema.dropTable(tableName)
+        .then((...args) => resolve(...args))
+        .catch(error => reject(error));
     });
   }
 
-  createTableFromCollection(collection) {
+  tableExists(tableName) {
     const connection = this.getConnection();
-    const table = collection.table;
 
-    return new P(function (resolve, reject) {
-      connection.schema.createTable(table, function (t) {
-        _.each(collection.schema, function (column, name) {
-          const args = [name];
-          const lookForArgs = [
-            'length',
-            'textType',
-            'precision',
-            'scale',
-            'values'
-          ];
+    return new P((resolve, reject) => {
+      connection.schema.hasTable(tableName)
+        .then(exists => resolve(exists))
+        .catch(error => reject(error));
+    });
+  }
 
-          lookForArgs.forEach(function (argName) {
-            if (typeof column[argName] !== 'undefined') {
-              args.push(column[argName]);
-            }
-          });
+  renameTable(from, to) {
+    const connection = this.getConnection();
 
-          const c = t[column.type](...args);
+    return new P((resolve, reject) => {
+      connection.schema.renameTable(from, to)
+        .then((...args) => resolve(...args))
+        .catch(error => reject(error));
+    });
+  }
 
-          // primary
-          if (column.primary === true) {
-            c.primary();
-          } else if (_.isArray(column.primary)) {
-            c.primary(column.primary);
-          }
+  createTable(tableName, collectionSchema) {
+    const connection = this.getConnection();
 
-          // unique
-          if (column.unique === true) {
-            c.unique();
-          }
+    return new P((resolve, reject) => {
+      connection.schema.createTable(tableName, createColumns(collectionSchema))
+        .then(results => resolve(results))
+        .catch(error => reject(error));
+    });
+  }
 
-          // nullable
-          if (column.nullable === true) {
-            c.nullable();
-          } else if (column.nullable === false) {
-            c.notNullable();
-          }
+  columnExists(tableName, columnName) {
+    const connection = this.getConnection();
 
-          // default
-          if (typeof column.default !== 'undefined') {
-            c.defaultTo(column.default);
-          }
+    return new P((resolve, reject) => {
+      connection.schema.hasColumn(tableName, columnName)
+        .then(exists => resolve(exists))
+        .catch(error => reject(error));
+    });
+  }
 
-          // unsigned
-          if (column.unsigned === true) {
-            c.unsigned();
-          }
+  dropColumns(tableName, columnNames) {
+    const connection = this.getConnection();
 
-          // comment
-          if (typeof column.comment !== 'undefined') {
-            c.comment(column.comment);
-          }
-        });
+    return new P((resolve, reject) => {
+      connection.schema.dropColumns(tableName, columnNames)
+        .then(result => resolve(result))
+        .catch(error => reject(error));
+    });
+  }
+
+  createColumns(tableName, collectionSchema) {
+    const connection = this.getConnection();
+
+    return new P((resolve, reject) => {
+      connection.schema.table(tableName, createColumns(collectionSchema))
+        .then(results => resolve(results))
+        .catch(error => reject(error));
+    });
+  }
+
+  renameColumn(tableName, from, to) {
+    const connection = this.getConnection();
+
+    return new P((resolve, reject) => {
+      connection.schema.table(tableName, (t) => {
+        t.renameColumn(from, to);
       })
-        .then(function (response) {
-          resolve(response);
-        })
-        .catch(function (error) {
-          reject(error);
-        });
+        .then(results => resolve(results))
+        .catch(error => reject(error));
+    });
+  }
+
+  // @TODO: alterColumn()
+
+  createIndex(tableName, columns, indexName, indexType) {
+    const connection = this.getConnection();
+
+    return new P((resolve, reject) => {
+      connection.schema.table(tableName, (t) => {
+        t.index(columns, indexName, indexType);
+      })
+        .then(results => resolve(results))
+        .catch(error => reject(error));
+    });
+  }
+
+  dropIndex(tableName, columns, indexName) {
+    const connection = this.getConnection();
+
+    return new P((resolve, reject) => {
+      connection.schema.table(tableName, (t) => {
+        t.dropIndex(columns, indexName);
+      })
+        .then(results => resolve(results))
+        .catch(error => reject(error));
     });
   }
 }
