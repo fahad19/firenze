@@ -222,6 +222,12 @@ export default function makeQuery(knex) {
       return this;
     }
 
+    truncate() {
+      this.builder.truncate();
+
+      return this;
+    }
+
     create(row) {
       this.builder.insert(row);
 

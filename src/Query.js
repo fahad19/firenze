@@ -84,6 +84,8 @@ export default class Query {
 
   count() { return this; }
 
+  truncate() { return this; }
+
   join() { return this; }
 
   innerJoin() { return this; }

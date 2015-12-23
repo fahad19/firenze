@@ -206,6 +206,10 @@ query
   });
 ```
 
+### truncate()
+
+Empties a table.
+
 ### create(row)
 
 Insert a single or multiple objects into the table
