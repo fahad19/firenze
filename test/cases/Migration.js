@@ -3,6 +3,7 @@
 import should from 'should'; // eslint-disable-line
 
 const {Database, Migration} = firenze;
+const directoryPath = __dirname + '/../_migrations';
 
 describe('Migration', function () {
   before(function () {
@@ -16,12 +17,13 @@ describe('Migration', function () {
   it('should generate new Migration file', function (done) {
     const migration = new Migration({
       db: this.db,
-      directory: __dirname + '/../_migrations'
+      directory: directoryPath
     });
 
     migration.generate('new migration')
       .then(function (response) {
-        response.should.be.a.string;
+        response.should.be.a.String;
+
         done();
       });
   });
@@ -29,11 +31,27 @@ describe('Migration', function () {
   it('should init migrations table', function (done) {
     const migration = new Migration({
       db: this.db,
-      directory: __dirname + '/../_migrations'
+      directory: directoryPath
     });
 
     migration.initTable()
-      .then(function (response) {
+      .then(function () {
+        done();
+      });
+  });
+
+  it('should list migrations', function (done) {
+    const migration = new Migration({
+      db: this.db,
+      directory: directoryPath
+    });
+
+    migration.list()
+      .then(function (list) {
+        list.should.be.instanceOf(Array);
+        list[0].id.should.be.a.String;
+        list[0].run.should.be.a.Boolean;
+
         done();
       });
   });

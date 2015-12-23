@@ -72,7 +72,7 @@ export default class Migration {
   }
 
   list() {
-    const files = fs.readDirSync(this.options.directory);
+    const files = fs.readdirSync(this.options.directory);
     const {db, table} = this.options;
 
     return new Promise((resolve, reject) => {

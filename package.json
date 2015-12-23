@@ -6,7 +6,7 @@
   "scripts": {
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
-    "lint": "eslint src test",
+    "lint": "eslint src test --ignore-path .gitignore",
     "mocha": "npm run mocha:mysql",
     "mocha:mysql": "FIRENZE_CONFIG=Mysql mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "mocha:memory": "FIRENZE_CONFIG=Memory mocha --require ./test/setup.js --compilers js:babel-register --grep '(JOIN|expression|distinct|OR|NOT)' --invert test/cases/**/*.js",
@@ -19,6 +19,7 @@
     "uglify:lib": "uglifyjs dist/firenze.js -o dist/firenze.min.js",
     "uglify:full": "uglifyjs dist/firenze.full.js -o dist/firenze.full.min.js",
     "dist": "run-scripts dist:lib dist:full uglify:lib uglify:full",
+    "clean": "run-scripts migrations:clean docs:clean",
     "migrations:clean": "rimraf test/_migrations",
     "docs:prepare": "gitbook install",
     "docs:clean": "rimraf _book",
