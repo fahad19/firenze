@@ -102,6 +102,25 @@ if (command === 'migration') {
       .finally(function () {
         db.close();
       });
+  } else if (subCommand === 'rollback') {
+    if (typeof argv._[2] === 'undefined') {
+      console.log(chalk.bgRed('Error:') + ' No name given');
+      db.close();
+
+      return;
+    }
+
+    var name = argv._[2];
+    migration.run(name, 'down')
+      .then(function () {
+        console.log('Successfully rolled back ' + chalk.bold(name));
+      })
+      .catch(function (error) {
+        console.log(chalk.bgRed('Error:') + ' ' + error);
+      })
+      .finally(function () {
+        db.close();
+      });
   } else {
     yargs.showHelp();
     db.close();
