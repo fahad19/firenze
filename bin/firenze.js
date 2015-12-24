@@ -16,6 +16,7 @@ if (command === 'migration') {
     .command('list', 'List migrations')
     .command('current', 'Show current migration version')
     .command('run [name]', 'Run specific migration by name')
+    .command('runAll', 'Run all pending migrations')
     .command('rollback [name]', 'Roll back specific migration by name')
     .describe('db', 'Path to database file')
     .describe('db-name', 'Name of database instance (if path exports multiple named instances)')
@@ -95,6 +96,17 @@ if (command === 'migration') {
     migration.run(name)
       .then(function () {
         console.log('Successfully ran ' + chalk.bold(name));
+      })
+      .catch(function (error) {
+        console.log(chalk.bgRed('Error:') + ' ' + error);
+      })
+      .finally(function () {
+        db.close();
+      });
+  } else if (subCommand === 'runAll') {
+    migration.runAll()
+      .then(function () {
+        console.log('Successfully ran all migrations.');
       })
       .catch(function (error) {
         console.log(chalk.bgRed('Error:') + ' ' + error);
