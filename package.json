@@ -6,7 +6,7 @@
   "scripts": {
     "babel": "babel src --out-dir lib",
     "babel:watch": "babel --watch src --out-dir lib",
-    "lint": "eslint src test --ignore-path .gitignore",
+    "lint": "eslint src bin test --ignore-path .gitignore",
     "mocha": "npm run mocha:mysql",
     "mocha:mysql": "FIRENZE_CONFIG=Mysql mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "mocha:memory": "FIRENZE_CONFIG=Memory mocha --require ./test/setup.js --compilers js:babel-register --grep '(JOIN|expression|distinct|OR|NOT)' --invert test/cases/**/*.js",
@@ -69,8 +69,10 @@
   "dependencies": {
     "async": "~1.5.0",
     "bluebird": "~3.0.6",
+    "chalk": "~1.1.1",
     "get-params": "~0.1.2",
     "lodash": "~3.10.1",
-    "validator": "~4.4.0"
+    "validator": "~4.4.0",
+    "yargs": "~3.31.0"
   }
 }
