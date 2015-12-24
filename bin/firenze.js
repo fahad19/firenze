@@ -38,7 +38,7 @@ if (command === 'migration') {
   var migrationOptions = db.options.migrations ? db.options.migrations : {};
   migrationOptions.db = db;
 
-  if (argv.directory) { migrationOptions.directory = argv.directory; }
+  if (argv.directory) { migrationOptions.directory = process.cwd() + '/' + argv.directory; }
   if (argv.table) { migrationOptions.table = argv.table; }
 
   var migration = new firenze.Migration(migrationOptions);
@@ -63,7 +63,7 @@ if (command === 'migration') {
         });
       })
       .catch(function (error) {
-        console.log('Error: ' + error);
+        console.log(chalk.bgRed('Error:') + ' ' + error);
       })
       .finally(function () {
         db.close();
@@ -78,7 +78,26 @@ if (command === 'migration') {
         console.log('Last ran migration is ' + chalk.bold(record.id) + ' on ' + chalk.underline(record.created));
       })
       .catch(function (error) {
-        console.log('Error: ' + error);
+        console.log(chalk.bgRed('Error:') + ' ' + error);
+      })
+      .finally(function () {
+        db.close();
+      });
+  } else if (subCommand === 'run') {
+    if (typeof argv._[2] === 'undefined') {
+      console.log(chalk.bgRed('Error:') + ' No name given');
+      db.close();
+
+      return;
+    }
+
+    var name = argv._[2];
+    migration.run(name)
+      .then(function () {
+        console.log('Successfully ran ' + chalk.bold(name));
+      })
+      .catch(function (error) {
+        console.log(chalk.bgRed('Error:') + ' ' + error);
       })
       .finally(function () {
         db.close();
