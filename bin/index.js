@@ -1,6 +1,6 @@
 /* eslint-disable no-console, no-unused-expressions */
 var yargs = require('yargs')
-  .command('migration', 'Show commands availble for migrations')
+  .command('migration', 'Show commands available for migrations')
   .example('$0 migration')
   .demand(1, 'Must provide a valid command');
 
