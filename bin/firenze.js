@@ -47,7 +47,7 @@ if (command === 'migration') {
     migration.list()
       .then(function (list) {
         if (list.length === 0) {
-          return console.log('No migrations availble.');
+          return console.log('No migrations available.');
         }
 
         console.log('Migrations list:');
@@ -68,8 +68,24 @@ if (command === 'migration') {
       .finally(function () {
         db.close();
       });
+  } else if (subCommand === 'current') {
+    migration.current()
+      .then(function (record) {
+        if (!record) {
+          return console.log('No migrations have been run yet.');
+        }
+
+        console.log('Last ran migration is ' + chalk.bold(record.id) + ' on ' + chalk.underline(record.created));
+      })
+      .catch(function (error) {
+        console.log('Error: ' + error);
+      })
+      .finally(function () {
+        db.close();
+      });
   } else {
     yargs.showHelp();
+    db.close();
   }
 } else {
   yargs.showHelp();

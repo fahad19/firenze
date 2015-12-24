@@ -117,6 +117,15 @@ export default class Migration {
     });
   }
 
+  current() {
+    const {db, table} = this.options;
+
+    return db.query()
+      .table(table)
+      .orderBy({created: 'desc'})
+      .first();
+  }
+
   run(filename, direction = 'up') {
     const allowedDirections = ['up', 'down'];
 

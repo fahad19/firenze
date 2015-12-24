@@ -18,6 +18,6 @@ module.exports = new firenze.Database({
 
   migrations: {
     table: 'migrations',
-    directory: __dirname + '/_migrations'
+    directory: __dirname + '/migrations'
   }
 });
