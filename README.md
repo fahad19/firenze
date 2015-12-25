@@ -15,7 +15,7 @@ Visit [http://fahad19.github.io/firenze/](http://fahad19.github.io/firenze/) for
 * **Promise** based workflow
 * Strong and flexible **validation** system
 * **CLI** support
-* Small footprint of ~30kB minified file
+* Footprint of ~40kB minified file
 
 The project is still under active development, and more features are expected to land in future releases.
 
