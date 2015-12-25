@@ -16,6 +16,7 @@
   * [Create](/docs/schema/Create.md)
   * [Properties](/docs/schema/Properties.md)
   * [Methods](/docs/schema/Methods.md)
+  * [Types](/docs/schema/Types.md)
 * [Query](/docs/query/README.md)
   * [Usage](/docs/query/Usage.md)
   * [Properties](/docs/query/Properties.md)

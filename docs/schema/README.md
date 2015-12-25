@@ -7,3 +7,4 @@ For the sake of documentation, the examples are targetted towards SQL environmen
 * [Create](./Create.md)
 * [Properties](./Properties.md)
 * [Methods](./Methods.md)
+* [Types](./Types.md)
