@@ -9,6 +9,7 @@ module.exports = function (yargs) {
     .usage('$0 migration')
     .command('list', 'List migrations')
     .command('current', 'Show current migration version')
+    .command('generate', 'Generate a new migration file')
     .command('run [name]', 'Run specific migration by name')
     .command('runAll', 'Run all pending migrations')
     .command('rollback [name]', 'Roll back specific migration by name')
@@ -37,6 +38,7 @@ module.exports = function (yargs) {
   if (argv.table) { migrationOptions.table = argv.table; }
 
   var migration = new firenze.Migration(migrationOptions);
+  var name;
 
   if (subCommand === 'list') {
     migration.list()
@@ -78,6 +80,25 @@ module.exports = function (yargs) {
       .finally(function () {
         db.close();
       });
+  } else if (subCommand === 'generate') {
+    if (typeof argv._[2] === 'undefined') {
+      console.log(chalk.bgRed('Error:') + ' No name given');
+      db.close();
+
+      return;
+    }
+
+    name = argv._[2];
+    migration.generate(name)
+      .then(function (result) {
+        console.log('Generated migration file at: ' + chalk.bold(result));
+      })
+      .catch(function (error) {
+        console.log(chalk.bgRed('Error:') + ' ' + error);
+      })
+      .finally(function () {
+        db.close();
+      });
   } else if (subCommand === 'run') {
     if (typeof argv._[2] === 'undefined') {
       console.log(chalk.bgRed('Error:') + ' No name given');
@@ -86,7 +107,7 @@ module.exports = function (yargs) {
       return;
     }
 
-    var name = argv._[2];
+    name = argv._[2];
     migration.run(name)
       .then(function () {
         console.log('Successfully ran ' + chalk.bold(name));
@@ -116,7 +137,7 @@ module.exports = function (yargs) {
       return;
     }
 
-    var name = argv._[2];
+    name = argv._[2];
     migration.run(name, 'down')
       .then(function () {
         console.log('Successfully rolled back ' + chalk.bold(name));
