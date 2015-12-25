@@ -57,19 +57,6 @@ Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be
 $ npm test
 ```
 
-## Releases
-
-To publish a new release:
-
-* Update `package.json` and `bower.json` with version number.
-* Run:
-  * `npm run test`
-  * `npm run dist`
-  * `npm run docs:publish`
-* Commit the changes.
-* Run `npm publish .`
-* Tag the repository with `vX.X.X`
-
 ## Thanks
 
 The project couldn't have happened if there weren't other projects to be inspired from. A big thanks goes to these open source projects that directly or indirectly helped make it possible:

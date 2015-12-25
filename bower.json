@@ -1,7 +1,7 @@
 {
   "name": "firenze",
   "main": "dist/firenze.full.min.js",
-  "version": "0.2.1",
+  "version": "0.3.3",
   "homepage": "https://github.com/fahad19/firenze",
   "authors": [
     "Fahad Ibnay Heylaal"
