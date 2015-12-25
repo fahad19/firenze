@@ -46,6 +46,7 @@
     "models"
   ],
   "author": "Fahad Ibnay Heylaal",
+  "bin": "./bin/index.js",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/fahad19/firenze/issues"
