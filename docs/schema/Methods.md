@@ -52,7 +52,7 @@ Example `collectionSchema`:
 }
 ```
 
-Read more in Types for column types.
+Read more in [Types](./Types.md) for column types.
 
 Returns a promise.
 

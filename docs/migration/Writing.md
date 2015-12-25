@@ -61,7 +61,7 @@ This is where you write your code for the shema changes. Assume, you needed to c
 }
 ```
 
-Find more ways to manipulate the database in Schema section.
+Find more ways to manipulate the database in [Schema](../Schema) section.
 
 ## down
 
