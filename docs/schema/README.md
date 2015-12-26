@@ -4,6 +4,7 @@ Schema class is responsible for exposing methods for manipulating the database s
 
 For the sake of documentation, the examples are targetted towards SQL environments.
 
+* [Usage](./Usage.md)
 * [Create](./Create.md)
 * [Properties](./Properties.md)
 * [Methods](./Methods.md)
