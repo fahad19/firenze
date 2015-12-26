@@ -82,6 +82,7 @@ posts.find()
   .where({
     id: 1
   })
+  .first()
   .then(function (post) {
     // post in an instance of Model, with fetched data
     var title = post.get('title');

@@ -14,13 +14,13 @@ Sets collection to given one
 
 ### expr()
 
-Read more in Expression section.
+Read more in [Expression](../expression) section.
 
 Returns a new Expression object
 
 ### func()
 
-Read more in Functions section.
+Read more in [Functions](../functions) section.
 
 Returns a new Functions object
 
@@ -65,19 +65,19 @@ Selects columns to be fetched.
 
 Can be called in various ways.
 
-#### Array
+##### Array
 
 ```js
 query.select(['id', 'title']);
 ```
 
-#### Arguments
+##### Arguments
 
 ```js
 query.select('id', 'title');
 ```
 
-#### Object
+##### Object
 
 ```js
 query.select('id', {
