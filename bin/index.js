@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /* eslint-disable no-console, no-unused-expressions */
 var yargs = require('yargs')
   .command('migration', 'Show commands available for migrations')
