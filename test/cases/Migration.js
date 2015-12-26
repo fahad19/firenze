@@ -9,10 +9,18 @@ describe('Migration', function () {
   before(function (done) {
     this.db = new Database(firenzeConfig);
 
-    this.db.query()
-      .table('migrations')
-      .truncate()
-      .run()
+    this.db.schema()
+      .tableExists('migrations')
+      .then((exists) => {
+        if (!exists) {
+          return true;
+        }
+
+        return this.db.query()
+          .table('migrations')
+          .truncate()
+          .run();
+      })
       .then(function () {
         done();
       });
