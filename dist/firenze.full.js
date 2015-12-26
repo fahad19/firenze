@@ -94,6 +94,10 @@ this["firenze"] =
 
 	var _Schema2 = _interopRequireDefault(_Schema);
 
+	var _Migration = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./Migration\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+	var _Migration2 = _interopRequireDefault(_Migration);
+
 	var _Promise = __webpack_require__(12);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
@@ -123,7 +127,9 @@ this["firenze"] =
 	  Query: _Query2.default,
 	  Expression: _Expression2.default,
 	  Functions: _Functions2.default,
+
 	  Schema: _Schema2.default,
+	  Migration: _Migration2.default,
 
 	  Promise: _Promise2.default,
 
@@ -21177,13 +21183,13 @@ this["firenze"] =
 	      //eslint-disable-line
 	      return new _Promise2.default(function (resolve, reject) {
 	        _async2.default.series([function (callback) {
-	          _this2.schema().dropTable(collection).then(function (response) {
+	          _this2.schema().dropTableOfCollection(collection).then(function (response) {
 	            callback(null, response);
 	          }).catch(function (error) {
 	            callback(error);
 	          });
 	        }, function (callback) {
-	          _this2.schema().createTable(collection).then(function (response) {
+	          _this2.schema().createTableFromCollection(collection).then(function (response) {
 	            callback(null, response);
 	          }).catch(function (error) {
 	            callback(error);
@@ -21413,6 +21419,11 @@ this["firenze"] =
 	  }, {
 	    key: 'count',
 	    value: function count() {
+	      return this;
+	    }
+	  }, {
+	    key: 'truncate',
+	    value: function truncate() {
 	      return this;
 	    }
 	  }, {
@@ -21757,17 +21768,23 @@ this["firenze"] =
 
 	'use strict';
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* eslint-disable no-unused-vars */
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+
+	var _async = __webpack_require__(7);
+
+	var _async2 = _interopRequireDefault(_async);
 
 	var _Promise = __webpack_require__(12);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -21784,38 +21801,116 @@ this["firenze"] =
 	      return this.adapter.getConnection();
 	    }
 	  }, {
+	    key: 'dropTableOfCollection',
+	    value: function dropTableOfCollection(collection) {
+	      var _this = this;
+
+	      var table = collection.table;
+
+	      return new _Promise2.default(function (resolve, reject) {
+	        _async2.default.waterfall([
+	        // check if exists
+	        function (callback) {
+	          _this.tableExists(table).then(function (exists) {
+	            return callback(null, exists);
+	          }).catch(function (error) {
+	            return callback(error);
+	          });
+	        },
+
+	        // drop it if exists
+	        function (exists, callback) {
+	          if (!exists) {
+	            return callback(null, true);
+	          }
+
+	          _this.dropTable(table).then(function (result) {
+	            return callback(null, result);
+	          }).catch(function (error) {
+	            return callback(error);
+	          });
+	        }], function (error, result) {
+	          if (error) {
+	            return reject(error);
+	          }
+
+	          resolve(result);
+	        });
+	      });
+	    }
+	  }, {
+	    key: 'createTableFromCollection',
+	    value: function createTableFromCollection(collection) {
+	      var table = collection.table;
+	      var collectionSchema = collection.schema;
+
+	      return this.createTable(table, collectionSchema);
+	    }
+	  }, {
 	    key: 'dropTable',
-	    value: function dropTable(collection) {
-	      // eslint-disable-line
+	    value: function dropTable(tableName) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'tableExists',
+	    value: function tableExists(tableName) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'renameTable',
+	    value: function renameTable(from, to) {
 	      return new _Promise2.default.resolve(true);
 	    }
 	  }, {
 	    key: 'createTable',
-	    value: function createTable(collection) {
-	      // eslint-disable-line
+	    value: function createTable(tableName, collectionSchema) {
 	      return new _Promise2.default.resolve(true);
 	    }
-
-	    // dropTableIfExists(tableName) { return new Promise.resolve(true); }
-
-	    // createTableIfNotExists(tableName, collectionSchema) { return new Promise.resolve(true); }
-
-	    // hasTable(tableName) { return new Promise.resolve(true); }
-
-	    // renameTable(from, to) { return new Promise.resolve(true); }
-
-	    // hasColumn(columnName) { return new Promise.resolve(true); }
-
-	    // dropColumn(columnName) { return new Promise.resolve(true); }
-
-	    // createColumn(tableName, columnName, collectionSchemaField) { return new Promise.resolve(true); }
-
-	    // renameColumn() { return new Promise.resolve(true); }
-
-	    // createIndex(tableName, columns, indexName, indexType) { return new Promise.resolve(true); }
-
-	    // dropIndex(tableName, columns, indexName) { return new Promise.resolve(true); }
-
+	  }, {
+	    key: 'columnExists',
+	    value: function columnExists(tableName, columnName) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'dropColumn',
+	    value: function dropColumn(tableName, columnName) {
+	      return this.dropColumns(tableName, [columnName]);
+	    }
+	  }, {
+	    key: 'dropColumns',
+	    value: function dropColumns(tableName, columnNames) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'createColumn',
+	    value: function createColumn(tableName, columnName, fieldSchema) {
+	      return this.createColumns(tableName, _defineProperty({}, columnName, fieldSchema));
+	    }
+	  }, {
+	    key: 'createColumns',
+	    value: function createColumns(tableName, collectionSchema) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'renameColumn',
+	    value: function renameColumn(tableName, from, to) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'alterColumn',
+	    value: function alterColumn(tableName, columnName, toName, fieldSchema) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'createIndex',
+	    value: function createIndex(tableName, columns, indexName, indexType) {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'dropIndex',
+	    value: function dropIndex(tableName, columns, indexName) {
+	      return new _Promise2.default.resolve(true);
+	    }
 	  }]);
 
 	  return Schema;
