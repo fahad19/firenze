@@ -38,11 +38,20 @@ export default class Database {
     return this.getAdapter().getConnection();
   }
 
+  transaction(func) {
+    return new P((resolve, reject) => {
+      func.apply(this, [null])
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   close() {
-    return new P((resolve) => {
-      return this.getAdapter().closeConnection().then(() => {
-        return resolve();
-      });
+    return new P((resolve, reject) => {
+      return this.getAdapter()
+        .closeConnection()
+        .then(resolve)
+        .catch(reject);
     });
   }
 }

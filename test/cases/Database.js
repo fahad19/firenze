@@ -3,7 +3,7 @@ import should from 'should'; // eslint-disable-line
 
 import makePosts from '../collections/Posts';
 
-const {Database} = firenze;
+const {Database, Promise} = firenze;
 
 describe('Database', function () {
   it('should connect and disconnect from server', function (done) {
@@ -18,5 +18,19 @@ describe('Database', function () {
     const posts = new Posts();
     posts.table.should.be.exactly('posts');
     db.close().then(done);
+  });
+
+  it('should wrap transaction calls', function (done) {
+    const db = new Database(firenzeConfig);
+
+    db
+      .transaction(function () {
+        this.close.should.be.of.type('function'); // eslint-disable-line
+
+        return new Promise.resolve(true);
+      })
+      .then(function () {
+        done();
+      });
   });
 });
