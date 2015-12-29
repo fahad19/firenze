@@ -420,7 +420,7 @@ export default class Collection {
         },
         (proceed, cb) => {
           return this //eslint-disable-line
-            ._delete(model, this)
+            ._delete(model, options)
             .then((res) => {
               return cb(null, res);
             })
@@ -448,18 +448,24 @@ export default class Collection {
     });
   }
 
-  _delete(model) {
+  _delete(model, options = {}) {
     return new P((resolve, reject) => {
       if (model.isNew()) {
         let error = new Error('Cannot delete a model without ID');
         return reject(error);
       }
 
-      this.query()
+      const query = this.query()
         .delete()
         .where({
           [this.primaryKey]: model.getId()
-        })
+        });
+
+      if (options.transact) {
+        query.transact(options.transact);
+      }
+
+      query
         .run()
         .then(resolve)
         .catch(reject);

@@ -621,4 +621,93 @@ describe('Model', function () {
           });
       });
   });
+
+  it('should support transactions - deleting with rollback', function (done) {
+    const posts = new this.Posts();
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          posts.model({id: 1})
+            .transact(t)
+            .delete(),
+
+          // second
+          posts
+            .model({
+              title: 'Brave New World',
+              sup: 'hey'
+            })
+            .transact(t)
+            .save()
+        ]);
+      })
+      .catch(function () {
+        db.query()
+          .table('posts')
+          .where({title: 'Brave New World'})
+          .count()
+          .run()
+          .then(function (count) {
+            count.should.eql(0);
+
+            return db.query()
+              .table('posts')
+              .where({id: 1})
+              .count()
+              .run();
+          })
+          .then(function (count) {
+            count.should.eql(1);
+
+            done();
+          });
+      });
+  });
+
+  it('should support transactions - deleting with commit', function (done) {
+    const posts = new this.Posts();
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          posts.model({id: 1})
+            .transact(t)
+            .delete(),
+
+          // second
+          posts
+            .model({
+              title: 'Brave New World'
+            })
+            .transact(t)
+            .save()
+        ]);
+      })
+      .then(function () {
+        db.query()
+          .table('posts')
+          .where({title: 'Brave New World'})
+          .count()
+          .run()
+          .then(function (count) {
+            count.should.eql(1);
+
+            return db.query()
+              .table('posts')
+              .where({id: 1})
+              .count()
+              .run();
+          })
+          .then(function (count) {
+            count.should.eql(0);
+
+            done();
+          });
+      });
+  });
 });

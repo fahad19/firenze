@@ -102,8 +102,15 @@ export default class Model {
     this.attributes = {};
   }
 
-  delete(options = {}) {
-    return this.collection.delete(this, options);
+  delete(givenOptions = {}) {
+    const options = {
+      transact: this._transact ? this._transact : null,
+      ...givenOptions
+    };
+
+    return this
+      .resetTransact()
+      .collection.delete(this, options);
   }
 
   validate(options = {}) {
