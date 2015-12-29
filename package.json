@@ -9,7 +9,7 @@
     "lint": "eslint src bin test --ignore-path .gitignore",
     "mocha": "npm run mocha:mysql",
     "mocha:mysql": "FIRENZE_CONFIG=Mysql mocha --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
-    "mocha:memory": "FIRENZE_CONFIG=Memory mocha --require ./test/setup.js --compilers js:babel-register --grep '(JOIN|expression|distinct|OR|NOT|Migration)' --invert test/cases/**/*.js",
+    "mocha:memory": "FIRENZE_CONFIG=Memory mocha --require ./test/setup.js --compilers js:babel-register --grep '(JOIN|expression|distinct|OR|NOT|Migration|transaction)' --invert test/cases/**/*.js",
     "test": "run-scripts clean lint babel mocha",
     "istanbul": "istanbul cover ./node_modules/mocha/bin/_mocha -- --require ./test/setup.js --compilers js:babel-register test/cases/**/*.js",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
