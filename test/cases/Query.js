@@ -754,7 +754,6 @@ describe('Query', function () {
             .table('posts')
             .transact(t)
             .create({
-              id: 100,
               title: 'New Post'
             })
             .run(),
@@ -808,7 +807,6 @@ describe('Query', function () {
             .table('posts')
             .transact(t)
             .create({
-              id: 100,
               title: 'New Post'
             })
             .run(),
@@ -818,7 +816,6 @@ describe('Query', function () {
             .table('authors')
             .transact(t)
             .create({
-              id: '100',
               name: 'Rowena Revenclaw'
             })
             .run()
