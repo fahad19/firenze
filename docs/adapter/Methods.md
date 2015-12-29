@@ -20,6 +20,12 @@ Returns a new query object
 
 Returns Schema object
 
+### transaction(fn)
+
+Returns a Promise
+
+Read more in [Transactions](../query/Transactions.html) page.
+
 ### populateTable(collection, rows)
 
 Inserts rows into collection's table

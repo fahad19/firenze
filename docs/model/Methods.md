@@ -77,3 +77,15 @@ Validates a single field
 Calls `Collection.validateField()`
 
 Returns a promise
+
+### transact(t)
+
+Returns self for further chaining.
+
+Read more in [Transactions](../query/Transactions.html) page.
+
+### resetTransact()
+
+Resets any reference to transaction.
+
+Returns self for further chaining.

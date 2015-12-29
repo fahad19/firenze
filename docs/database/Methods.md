@@ -16,6 +16,12 @@ Returns a new query builder of the Adapter
 
 Returns schema object for manipulating the Database
 
+### transaction(fn)
+
+Returns a Promise
+
+Read more in [Transactions](../query/Transactions.html) page.
+
 ### getConnection()
 
 Returns connection of the Adapter

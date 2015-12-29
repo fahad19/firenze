@@ -278,3 +278,9 @@ Wrapper for `FULL OUTER` join.
 ### debug()
 
 Prints out the currently developed Query as a string in console
+
+### transact(t)
+
+Returns self for further chaining.
+
+Read more in [Transactions](./Transactions.md) page.
