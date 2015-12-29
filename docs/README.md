@@ -20,6 +20,7 @@
   * [Types](/docs/schema/Types.md)
 * [Query](/docs/query/README.md)
   * [Usage](/docs/query/Usage.md)
+  * [Transactions](/docs/query/Transactions.md)
   * [Properties](/docs/query/Properties.md)
   * [Methods](/docs/query/Methods.md)
   * [Create](/docs/query/Create.md)
