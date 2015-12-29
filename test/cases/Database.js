@@ -25,7 +25,7 @@ describe('Database', function () {
 
     db
       .transaction(function () {
-        this.close.should.be.of.type('function'); // eslint-disable-line
+        this.loadFixture.should.be.of.type('function'); // eslint-disable-line
 
         return new Promise.resolve(true);
       })

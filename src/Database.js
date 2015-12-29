@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 import collectionFactory from './common/collectionFactory';
-import P from './Promise';
 
 export default class Database {
   constructor(options = {}) {
@@ -39,19 +38,12 @@ export default class Database {
   }
 
   transaction(func) {
-    return new P((resolve, reject) => {
-      func.apply(this, [null])
-        .then(resolve)
-        .catch(reject);
-    });
+    return this.getAdapter()
+      .transaction(func);
   }
 
   close() {
-    return new P((resolve, reject) => {
-      return this.getAdapter()
-        .closeConnection()
-        .then(resolve)
-        .catch(reject);
-    });
+    return this.getAdapter()
+      .closeConnection();
   }
 }

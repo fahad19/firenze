@@ -8,7 +8,7 @@ import makeAuthors from '../collections/Authors';
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 
-const {Database} = firenze;
+const {Database, Promise} = firenze;
 
 describe('Query', function () {
   before(function (done) {
@@ -740,6 +740,114 @@ describe('Query', function () {
         done();
       }).catch(function (error) {
         throw error;
+      });
+  });
+
+  it('should support transactions - rollback', function (done) {
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          db.query()
+            .table('posts')
+            .transact(t)
+            .create({
+              id: 100,
+              title: 'New Post'
+            })
+            .run(),
+
+          // second
+          db.query()
+            .table('authors')
+            .transact(t)
+            .create({
+              id: 'abc', // should fail
+              name: 'Rowena Revenclaw'
+            })
+            .run()
+        ]);
+      })
+      .catch(() => {
+        db.query()
+          .table('posts')
+          .where({
+            title: 'New Post'
+          })
+          .count()
+          .run()
+          .then((count) => {
+            count.should.eql(0);
+
+            return db.query()
+              .table('authors')
+              .where({
+                name: 'Rowena Revenclaw'
+              })
+              .count()
+              .run();
+          })
+          .then((count) => {
+            count.should.eql(0);
+
+            done();
+          });
+      });
+  });
+
+  it('should support transactions - commit', function (done) {
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          db.query()
+            .table('posts')
+            .transact(t)
+            .create({
+              id: 100,
+              title: 'New Post'
+            })
+            .run(),
+
+          // second
+          db.query()
+            .table('authors')
+            .transact(t)
+            .create({
+              id: '100',
+              name: 'Rowena Revenclaw'
+            })
+            .run()
+        ]);
+      })
+      .then(() => {
+        db.query()
+          .table('posts')
+          .where({
+            title: 'New Post'
+          })
+          .count()
+          .run()
+          .then((count) => {
+            count.should.eql(1);
+
+            return db.query()
+              .table('authors')
+              .where({
+                name: 'Rowena Revenclaw'
+              })
+              .count()
+              .run();
+          })
+          .then((count) => {
+            count.should.eql(1);
+
+            done();
+          });
       });
   });
 });

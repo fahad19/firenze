@@ -30,6 +30,14 @@ export default class Adapter {
     });
   }
 
+  transaction(func) {
+    return new P((resolve, reject) => {
+      func.apply(this, [null])
+        .then(resolve)
+        .catch(reject);
+    });
+  }
+
   schema() {
     return new this.schemaClass(this);
   }

@@ -104,6 +104,8 @@ export default class Query {
 
   crossJoin() { return this; }
 
+  transact() { return this; }
+
   all() { return new Promise.resolve(true); }
 
   first() { return new Promise.resolve(true); }

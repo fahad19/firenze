@@ -19,6 +19,19 @@ export default function makeAdapter(makeConnection, extendOptions = {}) {
       this.connection = makeConnection(options);
     }
 
+    transaction(func) {
+      return new P((resolve, reject) => {
+        this.getConnection()
+          .transaction((t) => {
+            return func.apply(this, [t])
+              .then(t.commit)
+              .catch(t.rollback);
+          })
+          .then(resolve)
+          .catch(reject);
+      });
+    }
+
     getConnection() {
       return this.connection;
     }

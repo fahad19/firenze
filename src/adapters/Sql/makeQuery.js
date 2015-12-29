@@ -323,6 +323,12 @@ export default function makeQuery(knex) {
       });
     }
 
+    transact(t) {
+      this.builder.transacting(t);
+
+      return this;
+    }
+
     run() {
       return new P((resolve, reject) => {
         this.builder
