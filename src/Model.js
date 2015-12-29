@@ -66,8 +66,27 @@ export default class Model {
     return this.getId() ? false : true; // eslint-disable-line
   }
 
-  save(options = {}) {
-    return this.collection.save(this, options);
+  resetTransact() {
+    this._transact = null;
+
+    return this;
+  }
+
+  transact(t) {
+    this._transact = t;
+
+    return this;
+  }
+
+  save(givenOptions = {}) {
+    const options = {
+      transact: this._transact ? this._transact : null,
+      ...givenOptions
+    };
+
+    return this
+      .resetTransact()
+      .collection.save(this, options);
   }
 
   saveField(field, value) {

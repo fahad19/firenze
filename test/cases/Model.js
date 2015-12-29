@@ -8,7 +8,7 @@ import makeAuthors from '../collections/Authors';
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 
-const {Database} = firenze;
+const {Database, Promise} = firenze;
 
 describe('Model', function () {
   before(function (done) {
@@ -516,6 +516,109 @@ describe('Model', function () {
             }
           });
         done();
+      });
+  });
+
+  it('should support transactions - saving with rollback', function (done) {
+    const posts = new this.Posts();
+    const authors = new this.Authors();
+
+    const post = posts.model({
+      title: 'Hogwarts: A History'
+    });
+
+    const author = authors.model({
+      name: 'Bathilda Bagshot',
+      sup: 'hey' // should fail
+    });
+
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          post
+            .transact(t)
+            .save(),
+
+          // second
+          author
+            .transact(t)
+            .save()
+        ]);
+      })
+      .catch(function () {
+        db.query()
+          .table('posts')
+          .where({title: 'Hogwarts: A History'})
+          .count()
+          .run()
+          .then(function (count) {
+            count.should.eql(0);
+
+            return db.query()
+              .table('authors')
+              .where({name: 'Bathilda Bagshot'})
+              .count()
+              .run();
+          })
+          .then(function (count) {
+            count.should.eql(0);
+
+            done();
+          });
+      });
+  });
+
+  it('should support transactions - saving with commit', function (done) {
+    const posts = new this.Posts();
+    const authors = new this.Authors();
+
+    const post = posts.model({
+      title: 'Hogwarts: A History'
+    });
+
+    const author = authors.model({
+      name: 'Bathilda Bagshot'
+    });
+
+    const db = this.db;
+
+    db
+      .transaction(function (t) {
+        return Promise.all([
+          // first
+          post
+            .transact(t)
+            .save(),
+
+          // second
+          author
+            .transact(t)
+            .save()
+        ]);
+      })
+      .then(function () {
+        db.query()
+          .table('posts')
+          .where({title: 'Hogwarts: A History'})
+          .count()
+          .run()
+          .then(function (count) {
+            count.should.eql(1);
+
+            return db.query()
+              .table('authors')
+              .where({name: 'Bathilda Bagshot'})
+              .count()
+              .run();
+          })
+          .then(function (count) {
+            count.should.eql(1);
+
+            done();
+          });
       });
   });
 });

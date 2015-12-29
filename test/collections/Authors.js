@@ -26,6 +26,12 @@ export default function (db) {
       },
       country: {
         type: 'string'
+      },
+      created: {
+        type: 'datetime'
+      },
+      updated: {
+        type: 'datetime'
       }
     },
 

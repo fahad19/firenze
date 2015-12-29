@@ -376,6 +376,10 @@ export default class Collection {
           .update(obj);
       }
 
+      if (options.transact) {
+        q.transact(options.transact);
+      }
+
       q.run().then((ids) => {
         let id = null;
         if ((_.isArray(ids) && ids.length === 0) || !ids) {
