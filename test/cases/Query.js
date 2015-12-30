@@ -752,21 +752,21 @@ describe('Query', function () {
           // first
           db.query()
             .table('posts')
-            .transact(t)
             .create({
               id: 100,
               title: 'New Post'
             })
+            .transact(t)
             .run(),
 
           // second
           db.query()
             .table('authors')
-            .transact(t)
             .create({
               id: 'abc', // should fail
               name: 'Rowena Revenclaw'
             })
+            .transact(t)
             .run()
         ]);
       })
@@ -811,21 +811,21 @@ describe('Query', function () {
           // first
           db.query()
             .table('posts')
-            .transact(t)
             .create({
               id: 100,
               title: 'New Post'
             })
+            .transact(t)
             .run(),
 
           // second
           db.query()
             .table('authors')
-            .transact(t)
             .create({
               id: 100,
               name: 'Rowena Revenclaw'
             })
+            .transact(t)
             .run()
         ]);
       })
