@@ -748,7 +748,7 @@ describe('Query', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
+        return new Promise.all([
           // first
           db.query()
             .table('posts')

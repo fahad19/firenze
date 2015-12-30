@@ -323,34 +323,23 @@ export default function makeQuery(knex) {
       });
     }
 
-    resetTransact() {
-      this._transact = null;
-
-      return this;
-    }
-
     transact(t) {
-      this._transact = t;
+      this.builder.transacting(t);
 
       return this;
     }
 
     run() {
       return new P((resolve, reject) => {
-        if (this._transact) {
-          this.builder.transacting(this._transact);
-
-          this.resetTransact();
-        }
-
         this.builder
           .then((results) => {
             if (this._count) {
-              return resolve(_.values(results[0])[0]);
+              return _.values(results[0])[0];
             }
 
-            return resolve(results);
+            return results;
           })
+          .then(resolve)
           .catch(reject);
       });
     }
