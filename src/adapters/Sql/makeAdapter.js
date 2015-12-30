@@ -21,13 +21,17 @@ export default function makeAdapter(makeConnection, extendOptions = {}) {
 
     transaction(func) {
       return new P((resolve, reject) => {
+        let ref;
+
         this.getConnection()
           .transaction((t) => {
-            return func.apply(this, [t])
-              .then(t.commit)
-              .catch(t.rollback);
+            ref = t;
+
+            return func.apply(this, [t]);
           })
+          .then(ref.commit)
           .then(resolve)
+          .catch(ref.rollback)
           .catch(reject);
       });
     }
