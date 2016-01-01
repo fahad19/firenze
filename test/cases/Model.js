@@ -8,7 +8,7 @@ import makeAuthors from '../collections/Authors';
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 
-const {Database, Promise} = firenze;
+const {Database} = firenze;
 
 describe('Model', function () {
   before(function (done) {
@@ -536,17 +536,19 @@ describe('Model', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
-          // first
-          post
-            .transact(t)
-            .save(),
-
-          // second
-          author
-            .transact(t)
-            .save()
-        ]);
+        // first
+        return post
+          .transact(t)
+          .save()
+          .then(function () {
+            // second
+            console.log('expecting error...'); // eslint-disable-line
+            return author
+              .transact(t)
+              .save();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .catch(function () {
         db.query()
@@ -587,17 +589,18 @@ describe('Model', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
-          // first
-          post
-            .transact(t)
-            .save(),
-
-          // second
-          author
-            .transact(t)
-            .save()
-        ]);
+        // first
+        return post
+          .transact(t)
+          .save()
+          .then(function () {
+            // second
+            return author
+              .transact(t)
+              .save();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .then(function () {
         db.query()
@@ -628,21 +631,23 @@ describe('Model', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
-          // first
-          posts.model({id: 1})
-            .transact(t)
-            .delete(),
-
-          // second
-          posts
-            .model({
-              title: 'Brave New World',
-              sup: 'hey'
-            })
-            .transact(t)
-            .save()
-        ]);
+        // first
+        return posts.model({id: 1})
+          .transact(t)
+          .delete()
+          .then(function () {
+            // second
+            console.log('expecting error...'); // eslint-disable-line
+            return posts
+              .model({
+                title: 'Brave New World',
+                sup: 'hey'
+              })
+              .transact(t)
+              .save();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .catch(function () {
         db.query()
@@ -673,20 +678,21 @@ describe('Model', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
-          // first
-          posts.model({id: 1})
-            .transact(t)
-            .delete(),
-
-          // second
-          posts
-            .model({
-              title: 'Brave New World'
-            })
-            .transact(t)
-            .save()
-        ]);
+        // first
+        return posts.model({id: 1})
+          .transact(t)
+          .delete()
+          .then(function () {
+            // second
+            return posts
+              .model({
+                title: 'Brave New World'
+              })
+              .transact(t)
+              .save();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .then(function () {
         db.query()

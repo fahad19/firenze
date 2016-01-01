@@ -8,7 +8,7 @@ import makeAuthors from '../collections/Authors';
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 
-const {Database, Promise} = firenze;
+const {Database} = firenze;
 
 describe('Query', function () {
   before(function (done) {
@@ -748,27 +748,29 @@ describe('Query', function () {
 
     db
       .transaction(function (t) {
-        return [
-          // first
-          db.query()
-            .table('posts')
-            .create({
-              id: 100,
-              title: 'New Post'
-            })
-            .transact(t)
-            .run(),
-
-          // second
-          db.query()
-            .table('authors')
-            .create({
-              id: 'abc', // should fail
-              name: 'Rowena Revenclaw'
-            })
-            .transact(t)
-            .run()
-        ];
+        // first query
+        return db.query()
+          .table('posts')
+          .create({
+            id: 100,
+            title: 'New Post'
+          })
+          .transact(t)
+          .run()
+          .then(function () {
+            // second query
+            console.log('expecting error...'); // eslint-disable-line
+            return db.query()
+              .table('authors')
+              .create({
+                id: 'abc', // should fail
+                name: 'Rowena Revenclaw'
+              })
+              .transact(t)
+              .run();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .catch(function () {
         db.query()
@@ -802,27 +804,27 @@ describe('Query', function () {
 
     db
       .transaction(function (t) {
-        return Promise.all([
-          // first
-          db.query()
-            .table('posts')
-            .create({
-              id: 100,
-              title: 'New Post'
-            })
-            .transact(t)
-            .run(),
-
-          // second
-          db.query()
-            .table('authors')
-            .create({
-              id: 100,
-              name: 'Rowena Revenclaw'
-            })
-            .transact(t)
-            .run()
-        ]);
+        return db.query()
+          .table('posts')
+          .create({
+            id: 100,
+            title: 'New Post'
+          })
+          .transact(t)
+          .run()
+          .then(function () {
+            // second
+            return db.query()
+              .table('authors')
+              .create({
+                id: 100,
+                name: 'Rowena Revenclaw'
+              })
+              .transact(t)
+              .run();
+          })
+          .then(t.commit)
+          .catch(t.rollback);
       })
       .then(() => {
         db.query()
