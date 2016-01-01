@@ -4,11 +4,13 @@ import P from './Promise';
 
 import Query from './Query';
 import Schema from './Schema';
+import Transaction from './Transaction';
 
 export default class Adapter {
   constructor(extend = {}) { //eslint-disable-line
     this.queryClass = Query;
     this.schemaClass = Schema;
+    this.transactionClass = Transaction;
 
     _.merge(this, extend);
   }
@@ -32,7 +34,7 @@ export default class Adapter {
 
   transaction(func) {
     return new P((resolve, reject) => {
-      func.apply(this, [null])
+      func.apply(this, [this.transactionClass()])
         .then(resolve)
         .catch(reject);
     });

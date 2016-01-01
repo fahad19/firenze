@@ -748,7 +748,7 @@ describe('Query', function () {
 
     db
       .transaction(function (t) {
-        return new Promise.all([
+        return [
           // first
           db.query()
             .table('posts')
@@ -768,14 +768,9 @@ describe('Query', function () {
             })
             .transact(t)
             .run()
-        ]);
+        ];
       })
-      .then(function () {
-        console.log('should not happen', arguments); // eslint-disable-line
-
-        done();
-      })
-      .catch(() => {
+      .catch(function () {
         db.query()
           .table('posts')
           .where({
@@ -783,7 +778,7 @@ describe('Query', function () {
           })
           .count()
           .run()
-          .then((count) => {
+          .then(function (count) {
             count.should.eql(0);
 
             return db.query()
@@ -794,7 +789,7 @@ describe('Query', function () {
               .count()
               .run();
           })
-          .then((count) => {
+          .then(function (count) {
             count.should.eql(0);
 
             done();
@@ -802,7 +797,7 @@ describe('Query', function () {
       });
   });
 
-  it.skip('should support transactions - commit', function (done) {
+  it('should support transactions - commit', function (done) {
     const db = this.db;
 
     db

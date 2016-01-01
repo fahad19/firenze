@@ -324,7 +324,7 @@ export default function makeQuery(knex) {
     }
 
     transact(t) {
-      this.builder.transacting(t);
+      this.builder.transacting(t.get());
 
       return this;
     }

@@ -8,6 +8,7 @@ import Expression from './Expression';
 import Functions from './Functions';
 import Schema from './Schema';
 import Migration from './Migration';
+import Transaction from './Transaction';
 import Promise from './Promise';
 
 import collectionFactory from './common/collectionFactory';
@@ -28,6 +29,7 @@ export default {
 
   Schema,
   Migration,
+  Transaction,
 
   Promise,
 
