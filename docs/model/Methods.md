@@ -82,7 +82,7 @@ Returns a promise
 
 Returns self for further chaining.
 
-Read more in [Transactions](../query/Transactions.html) page.
+Read more in [Transaction](../transaction) section.
 
 ### resetTransact()
 

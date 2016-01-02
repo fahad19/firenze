@@ -24,7 +24,7 @@ Returns Schema object
 
 Returns a Promise
 
-Read more in [Transactions](../query/Transactions.html) page.
+Read more in [Transaction](../transaction) section.
 
 ### populateTable(collection, rows)
 

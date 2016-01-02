@@ -283,4 +283,4 @@ Prints out the currently developed Query as a string in console
 
 Returns self for further chaining.
 
-Read more in [Transactions](./Transactions.md) page.
+Read more in [Transaction](../transaction) section.
