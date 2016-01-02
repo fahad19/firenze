@@ -42,7 +42,7 @@ db.transaction(function (t) {
       // `postIds[0]` is the ID of Post we just created
 
       // second query, by chaining the Promise
-      db.query()
+      return db.query()
         .table('authors')
         .where({id: 1})
         .delete()
