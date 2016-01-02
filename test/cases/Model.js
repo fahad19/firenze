@@ -98,13 +98,13 @@ describe('Model', function () {
     const post = posts.model({
       title: 'Post here'
     });
-    post.isNew().should.be.true; //eslint-disable-line
+    post.isNew().should.be.true();
 
     const anotherPost = posts.model({
       id: 1,
       title: 'Yo'
     });
-    anotherPost.isNew().should.be.false; //eslint-disable-line
+    anotherPost.isNew().should.be.false();
   });
 
   it('should get plain object', function () {
@@ -163,10 +163,10 @@ describe('Model', function () {
       id: 1,
       title: 'Hi'
     });
-    post.isNew().should.be.false; //eslint-disable-line
+    post.isNew().should.be.false();
 
     post.clear();
-    post.isNew().should.be.true; //eslint-disable-line
+    post.isNew().should.be.true();
   });
 
   it('should delete a record', function (done) {

@@ -21,6 +21,6 @@ export default class Transaction {
   }
 
   rollback() {
-    return new Promise.resolve(true);
+    return new Promise.reject(true);
   }
 }
