@@ -74,7 +74,7 @@ this["firenze"] =
 
 	var _Model2 = _interopRequireDefault(_Model);
 
-	var _Behavior = __webpack_require__(20);
+	var _Behavior = __webpack_require__(21);
 
 	var _Behavior2 = _interopRequireDefault(_Behavior);
 
@@ -98,6 +98,10 @@ this["firenze"] =
 
 	var _Migration2 = _interopRequireDefault(_Migration);
 
+	var _Transaction = __webpack_require__(20);
+
+	var _Transaction2 = _interopRequireDefault(_Transaction);
+
 	var _Promise = __webpack_require__(12);
 
 	var _Promise2 = _interopRequireDefault(_Promise);
@@ -106,11 +110,11 @@ this["firenze"] =
 
 	var _collectionFactory2 = _interopRequireDefault(_collectionFactory);
 
-	var _modelFactory = __webpack_require__(21);
+	var _modelFactory = __webpack_require__(22);
 
 	var _modelFactory2 = _interopRequireDefault(_modelFactory);
 
-	var _behaviorFactory = __webpack_require__(22);
+	var _behaviorFactory = __webpack_require__(23);
 
 	var _behaviorFactory2 = _interopRequireDefault(_behaviorFactory);
 
@@ -130,6 +134,7 @@ this["firenze"] =
 
 	  Schema: _Schema2.default,
 	  Migration: _Migration2.default,
+	  Transaction: _Transaction2.default,
 
 	  Promise: _Promise2.default,
 
@@ -157,10 +162,6 @@ this["firenze"] =
 	var _collectionFactory = __webpack_require__(5);
 
 	var _collectionFactory2 = _interopRequireDefault(_collectionFactory);
-
-	var _Promise = __webpack_require__(12);
-
-	var _Promise2 = _interopRequireDefault(_Promise);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -210,15 +211,14 @@ this["firenze"] =
 	      return this.getAdapter().getConnection();
 	    }
 	  }, {
+	    key: 'transaction',
+	    value: function transaction(func) {
+	      return this.getAdapter().transaction(func);
+	    }
+	  }, {
 	    key: 'close',
 	    value: function close() {
-	      var _this = this;
-
-	      return new _Promise2.default(function (resolve) {
-	        return _this.getAdapter().closeConnection().then(function () {
-	          return resolve();
-	        });
-	      });
+	      return this.getAdapter().closeConnection();
 	    }
 	  }]);
 
@@ -13066,6 +13066,10 @@ this["firenze"] =
 	          q = _this5.query().where(_defineProperty({}, _this5.primaryKey, model.getId())).update(obj);
 	        }
 
+	        if (options.transact) {
+	          q.transact(options.transact);
+	        }
+
 	        q.run().then(function (ids) {
 	          var id = null;
 	          if (_lodash2.default.isArray(ids) && ids.length === 0 || !ids) {
@@ -13106,7 +13110,7 @@ this["firenze"] =
 	            return cb(error);
 	          });
 	        }, function (proceed, cb) {
-	          return _this6._delete(model, _this6).then(function (res) {
+	          return _this6._delete(model, options).then(function (res) {
 	            return cb(null, res);
 	          }).catch(function (error) {
 	            return cb(error);
@@ -13131,13 +13135,21 @@ this["firenze"] =
 	    value: function _delete(model) {
 	      var _this7 = this;
 
+	      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
 	      return new _Promise2.default(function (resolve, reject) {
 	        if (model.isNew()) {
 	          var error = new Error('Cannot delete a model without ID');
 	          return reject(error);
 	        }
 
-	        _this7.query().delete().where(_defineProperty({}, _this7.primaryKey, model.getId())).run().then(resolve).catch(reject);
+	        var query = _this7.query().delete().where(_defineProperty({}, _this7.primaryKey, model.getId()));
+
+	        if (options.transact) {
+	          query.transact(options.transact);
+	        }
+
+	        query.run().then(resolve).catch(reject);
 	      });
 	    }
 	  }, {
@@ -15676,7 +15688,7 @@ this["firenze"] =
 	 * 
 	 */
 	/**
-	 * bluebird build version 3.0.6
+	 * bluebird build version 3.1.1
 	 * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, using, timers, filter, any, each
 	*/
 	!function(e){if(true)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -15720,8 +15732,7 @@ this["firenze"] =
 	    this.drainQueues = function () {
 	        self._drainQueues();
 	    };
-	    this._schedule =
-	        schedule.isStatic ? schedule(this.drainQueues) : schedule;
+	    this._schedule = schedule;
 	}
 
 	Async.prototype.enableTrampoline = function() {
@@ -15786,9 +15797,6 @@ this["firenze"] =
 	    Async.prototype.invoke = AsyncInvoke;
 	    Async.prototype.settlePromises = AsyncSettlePromises;
 	} else {
-	    if (schedule.isStatic) {
-	        schedule = function(fn) { setTimeout(fn, 0); };
-	    }
 	    Async.prototype.invokeLater = function (fn, receiver, arg) {
 	        if (this._trampolineEnabled) {
 	            AsyncInvokeLater.call(this, fn, receiver, arg);
@@ -16330,19 +16338,24 @@ this["firenze"] =
 	                        (true ||
 	                         util.env("BLUEBIRD_DEBUG") ||
 	                         util.env("NODE_ENV") === "development"));
+
 	var warnings = !!(util.env("BLUEBIRD_WARNINGS") != 0 &&
 	    (debugging || util.env("BLUEBIRD_WARNINGS")));
+
 	var longStackTraces = !!(util.env("BLUEBIRD_LONG_STACK_TRACES") != 0 &&
 	    (debugging || util.env("BLUEBIRD_LONG_STACK_TRACES")));
+
+	var wForgottenReturn = util.env("BLUEBIRD_W_FORGOTTEN_RETURN") != 0 &&
+	    (warnings || !!util.env("BLUEBIRD_W_FORGOTTEN_RETURN"));
 
 	Promise.prototype.suppressUnhandledRejections = function() {
 	    var target = this._target();
 	    target._bitField = ((target._bitField & (~1048576)) |
-	                      2097152);
+	                      524288);
 	};
 
 	Promise.prototype._ensurePossibleRejectionHandled = function () {
-	    if ((this._bitField & 2097152) !== 0) return;
+	    if ((this._bitField & 524288) !== 0) return;
 	    this._setRejectionIsUnhandled();
 	    async.invokeLater(this._notifyUnhandledRejection, this, undefined);
 	};
@@ -16350,6 +16363,14 @@ this["firenze"] =
 	Promise.prototype._notifyUnhandledRejectionIsHandled = function () {
 	    fireRejectionEvent("rejectionHandled",
 	                                  unhandledRejectionHandled, undefined, this);
+	};
+
+	Promise.prototype._setReturnedNonUndefined = function() {
+	    this._bitField = this._bitField | 268435456;
+	};
+
+	Promise.prototype._returnedNonUndefined = function() {
+	    return (this._bitField & 268435456) !== 0;
 	};
 
 	Promise.prototype._notifyUnhandledRejection = function () {
@@ -16447,7 +16468,15 @@ this["firenze"] =
 	        }
 	    }
 	    if ("warnings" in opts) {
-	        config.warnings = !!opts.warnings;
+	        var warningsOption = opts.warnings;
+	        config.warnings = !!warningsOption;
+	        wForgottenReturn = config.warnings;
+
+	        if (util.isObject(warningsOption)) {
+	            if ("wForgottenReturn" in warningsOption) {
+	                wForgottenReturn = !!warningsOption.wForgottenReturn;
+	            }
+	        }
 	    }
 	    if ("cancellation" in opts && opts.cancellation && !config.cancellation) {
 	        if (async.haveItemsQueued()) {
@@ -16586,13 +16615,15 @@ this["firenze"] =
 	    }
 	}
 
-	function checkForgottenReturns(returnValue, promiseCreated, name, promise) {
-	    if (returnValue === undefined &&
-	        promiseCreated !== null &&
-	        config.longStackTraces &&
-	        config.warnings) {
+	function checkForgottenReturns(returnValue, promiseCreated, name, promise,
+	                               parent) {
+	    if (returnValue === undefined && promiseCreated !== null &&
+	        wForgottenReturn) {
+	        if (parent !== undefined && parent._returnedNonUndefined()) return;
+
+	        if (name) name = name + " ";
 	        var msg = "a promise was created in a " + name +
-	            " handler but was not returned from it";
+	            "handler but was not returned from it";
 	        promise._warn(msg, true, promiseCreated);
 	    }
 	}
@@ -17022,38 +17053,27 @@ this["firenze"] =
 	            }
 	        };
 	    } else {
-	        var customEventWorks = false;
-	        var anyEventWorks = true;
-	        try {
-	            var ev = new self.CustomEvent("test");
-	            customEventWorks = ev instanceof CustomEvent;
-	        } catch (e) {}
-	        if (!customEventWorks) {
-	            try {
-	                var event = document.createEvent("CustomEvent");
-	                event.initCustomEvent("testingtheevent", false, true, {});
-	                self.dispatchEvent(event);
-	            } catch (e) {
-	                anyEventWorks = false;
-	            }
-	        }
-	        if (anyEventWorks) {
-	            fireDomEvent = function(type, detail) {
-	                var event;
-	                if (customEventWorks) {
-	                    event = new self.CustomEvent(type, {
-	                        detail: detail,
-	                        bubbles: false,
-	                        cancelable: true
-	                    });
-	                } else if (self.dispatchEvent) {
-	                    event = document.createEvent("CustomEvent");
-	                    event.initCustomEvent(type, false, true, detail);
-	                }
+	        var globalObject = typeof self !== "undefined" ? self :
+	                     typeof window !== "undefined" ? window :
+	                     typeof global !== "undefined" ? global :
+	                     this !== undefined ? this : null;
 
-	                return event ? !self.dispatchEvent(event) : false;
+	        if (!globalObject) {
+	            return function() {
+	                return false;
 	            };
 	        }
+
+	        try {
+	            var event = document.createEvent("CustomEvent");
+	            event.initCustomEvent("testingtheevent", false, true, {});
+	            globalObject.dispatchEvent(event);
+	            fireDomEvent = function(type, detail) {
+	                var event = document.createEvent("CustomEvent");
+	                event.initCustomEvent(type, false, true, detail);
+	                return !globalObject.dispatchEvent(event);
+	            };
+	        } catch (e) {}
 
 	        var toWindowMethodNameMap = {};
 	        toWindowMethodNameMap["unhandledRejection"] = ("on" +
@@ -17063,12 +17083,12 @@ this["firenze"] =
 
 	        return function(name, reason, promise) {
 	            var methodName = toWindowMethodNameMap[name];
-	            var method = self[methodName];
+	            var method = globalObject[methodName];
 	            if (!method) return false;
 	            if (name === "rejectionHandled") {
-	                method.call(self, promise);
+	                method.call(globalObject, promise);
 	            } else {
-	                method.call(self, reason, promise);
+	                method.call(globalObject, reason, promise);
 	            }
 	            return true;
 	        };
@@ -17458,6 +17478,7 @@ this["firenze"] =
 	            ? handler.call(promise._boundValue())
 	            : handler.call(promise._boundValue(), reasonOrValue);
 	        if (ret !== undefined) {
+	            promise._setReturnedNonUndefined();
 	            var maybePromise = tryConvertToPromise(ret, promise);
 	            if (maybePromise instanceof Promise) {
 	                if (this.cancelPromise != null) {
@@ -17562,7 +17583,7 @@ this["firenze"] =
 	util.inherits(PromiseSpawn, Proxyable);
 
 	PromiseSpawn.prototype._isResolved = function() {
-	    return this.promise === null;
+	    return this._promise === null;
 	};
 
 	PromiseSpawn.prototype._cleanup = function() {
@@ -18695,7 +18716,7 @@ this["firenze"] =
 	        var err = x === promise ? makeSelfResolutionError() : x.e;
 	        promise._rejectCallback(err, false);
 	    } else {
-	        debug.checkForgottenReturns(x, promiseCreated, "",  promise);
+	        debug.checkForgottenReturns(x, promiseCreated, "",  promise, this);
 	        promise._resolveCallback(x);
 	    }
 	};
@@ -19897,13 +19918,32 @@ this["firenze"] =
 	          !(typeof window !== "undefined" &&
 	            window.navigator &&
 	            window.navigator.standalone)) {
-	    schedule = function(fn) {
+	    schedule = (function() {
 	        var div = document.createElement("div");
-	        var observer = new MutationObserver(fn);
-	        observer.observe(div, {attributes: true});
-	        return function() { div.classList.toggle("foo"); };
-	    };
-	    schedule.isStatic = true;
+	        var opts = {attributes: true};
+	        var toggleScheduled = false;
+	        var div2 = document.createElement("div");
+	        var o2 = new MutationObserver(function() {
+	            div.classList.toggle("foo");
+	          toggleScheduled = false;
+	        });
+	        o2.observe(div2, opts);
+
+	        var scheduleToggle = function() {
+	            if (toggleScheduled) return;
+	          toggleScheduled = true;
+	          div2.classList.toggle("foo");
+	        };
+
+	        return function schedule(fn) {
+	          var o = new MutationObserver(function() {
+	            o.disconnect();
+	            fn();
+	          });
+	          o.observe(div, opts);
+	          scheduleToggle();
+	        };
+	    })();
 	} else if (typeof setImmediate !== "undefined") {
 	    schedule = function (fn) {
 	        setImmediate(fn);
@@ -20945,6 +20985,8 @@ this["firenze"] =
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* eslint-disable new-cap */
 
 	Object.defineProperty(exports, "__esModule", {
@@ -21040,11 +21082,29 @@ this["firenze"] =
 	      return this.getId() ? false : true; // eslint-disable-line
 	    }
 	  }, {
+	    key: 'resetTransact',
+	    value: function resetTransact() {
+	      this._transact = null;
+
+	      return this;
+	    }
+	  }, {
+	    key: 'transact',
+	    value: function transact(t) {
+	      this._transact = t;
+
+	      return this;
+	    }
+	  }, {
 	    key: 'save',
 	    value: function save() {
-	      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	      var givenOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-	      return this.collection.save(this, options);
+	      var options = _extends({
+	        transact: this._transact ? this._transact : null
+	      }, givenOptions);
+
+	      return this.resetTransact().collection.save(this, options);
 	    }
 	  }, {
 	    key: 'saveField',
@@ -21064,9 +21124,13 @@ this["firenze"] =
 	  }, {
 	    key: 'delete',
 	    value: function _delete() {
-	      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	      var givenOptions = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-	      return this.collection.delete(this, options);
+	      var options = _extends({
+	        transact: this._transact ? this._transact : null
+	      }, givenOptions);
+
+	      return this.resetTransact().collection.delete(this, options);
 	    }
 	  }, {
 	    key: 'validate',
@@ -21123,6 +21187,10 @@ this["firenze"] =
 
 	var _Schema2 = _interopRequireDefault(_Schema);
 
+	var _Transaction = __webpack_require__(20);
+
+	var _Transaction2 = _interopRequireDefault(_Transaction);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21136,6 +21204,7 @@ this["firenze"] =
 	    //eslint-disable-line
 	    this.queryClass = _Query2.default;
 	    this.schemaClass = _Schema2.default;
+	    this.transactionClass = _Transaction2.default;
 
 	    _lodash2.default.merge(this, extend);
 	  }
@@ -21162,6 +21231,15 @@ this["firenze"] =
 	      }));
 	    }
 	  }, {
+	    key: 'transaction',
+	    value: function transaction(func) {
+	      var _this = this;
+
+	      return new _Promise2.default(function (resolve, reject) {
+	        func.apply(_this, [_this.transactionClass()]).then(resolve).catch(reject);
+	      });
+	    }
+	  }, {
 	    key: 'schema',
 	    value: function schema() {
 	      return new this.schemaClass(this);
@@ -21169,33 +21247,33 @@ this["firenze"] =
 	  }, {
 	    key: 'populateTable',
 	    value: function populateTable(collection, rows) {
-	      var _this = this;
+	      var _this2 = this;
 
 	      return new _Promise2.default(function (resolve, reject) {
-	        _this.query().table(collection.table).create(rows).run().then(resolve).catch(reject);
+	        _this2.query().table(collection.table).create(rows).run().then(resolve).catch(reject);
 	      });
 	    }
 	  }, {
 	    key: 'loadFixture',
 	    value: function loadFixture(collection, rows) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      //eslint-disable-line
 	      return new _Promise2.default(function (resolve, reject) {
 	        _async2.default.series([function (callback) {
-	          _this2.schema().dropTableOfCollection(collection).then(function (response) {
+	          _this3.schema().dropTableOfCollection(collection).then(function (response) {
 	            callback(null, response);
 	          }).catch(function (error) {
 	            callback(error);
 	          });
 	        }, function (callback) {
-	          _this2.schema().createTableFromCollection(collection).then(function (response) {
+	          _this3.schema().createTableFromCollection(collection).then(function (response) {
 	            callback(null, response);
 	          }).catch(function (error) {
 	            callback(error);
 	          });
 	        }, function (callback) {
-	          _this2.populateTable(collection, rows).then(function (response) {
+	          _this3.populateTable(collection, rows).then(function (response) {
 	            callback(null, response);
 	          }).catch(function (error) {
 	            callback(error);
@@ -21212,12 +21290,12 @@ this["firenze"] =
 	  }, {
 	    key: 'loadAllFixtures',
 	    value: function loadAllFixtures(arr) {
-	      var _this3 = this;
+	      var _this4 = this;
 
 	      //eslint-disable-line
 	      return new _Promise2.default(function (resolve, reject) {
 	        _async2.default.map(arr, function (fixture, callback) {
-	          _this3.loadFixture(fixture.collection, fixture.rows).then(function (results) {
+	          _this4.loadFixture(fixture.collection, fixture.rows).then(function (results) {
 	            callback(null, results);
 	          }).catch(function (error) {
 	            callback(error);
@@ -21472,6 +21550,11 @@ this["firenze"] =
 	      return this;
 	    }
 	  }, {
+	    key: 'transact',
+	    value: function transact() {
+	      return this;
+	    }
+	  }, {
 	    key: 'all',
 	    value: function all() {
 	      return new _Promise2.default.resolve(true);
@@ -21676,8 +21759,8 @@ this["firenze"] =
 	  function Functions() {
 	    _classCallCheck(this, Functions);
 
-	    this.query = arguments[0];
-	    this.column = arguments[1];
+	    this.query = arguments.length <= 0 ? undefined : arguments[0];
+	    this.column = arguments.length <= 1 ? undefined : arguments[1];
 	    this.funcs = [];
 	  }
 
@@ -21930,6 +22013,66 @@ this["firenze"] =
 	  value: true
 	});
 
+	var _Promise = __webpack_require__(12);
+
+	var _Promise2 = _interopRequireDefault(_Promise);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Transaction = (function () {
+	  function Transaction() {
+	    var reference = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
+	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	    _classCallCheck(this, Transaction);
+
+	    this.reference = reference;
+	    this.options = options;
+	  }
+
+	  _createClass(Transaction, [{
+	    key: 'set',
+	    value: function set(reference) {
+	      this.reference = reference;
+
+	      return this;
+	    }
+	  }, {
+	    key: 'get',
+	    value: function get() {
+	      return this.reference;
+	    }
+	  }, {
+	    key: 'commit',
+	    value: function commit() {
+	      return new _Promise2.default.resolve(true);
+	    }
+	  }, {
+	    key: 'rollback',
+	    value: function rollback() {
+	      return new _Promise2.default.reject(true);
+	    }
+	  }]);
+
+	  return Transaction;
+	})();
+
+	exports.default = Transaction;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _lodash = __webpack_require__(3);
 
 	var _lodash2 = _interopRequireDefault(_lodash);
@@ -22020,7 +22163,7 @@ this["firenze"] =
 	exports.default = Behavior;
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22069,7 +22212,7 @@ this["firenze"] =
 	};
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22078,7 +22221,7 @@ this["firenze"] =
 
 	var _lodash2 = _interopRequireDefault(_lodash);
 
-	var _Behavior = __webpack_require__(20);
+	var _Behavior = __webpack_require__(21);
 
 	var _Behavior2 = _interopRequireDefault(_Behavior);
 
