@@ -44,8 +44,6 @@ post.validate()
 When you save Model, validation automatically kicks in, and will prevent from saving if it fails.
 
 ```js
-var _ = require('_');
-
 post.save()
   .then(function (model) {
     // saved successfully
