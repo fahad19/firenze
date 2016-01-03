@@ -178,7 +178,7 @@ describe('Model', function () {
     });
   });
 
-  it('should validate a single field', function () {
+  it('should validate a single field', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -193,22 +193,22 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be alphanumeric');
+    post.validateField('title')
+      .catch(function (error) {
+        error.should.eql('Must be alphanumeric');
+      })
+      .then(function () {
+        post.set('title', 'hello');
 
-    post.set('title', 'hello');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should validate a single field with multiple rules', function () {
+  it('should validate a single field with multiple rules', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -240,29 +240,30 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be alphanumeric');
+    post.validateField('title')
+      .catch(function (error) {
+        error.should.eql('Must be alphanumeric');
+      })
+      .then(function () {
+        post.set('title', 'hello');
 
-    post.set('title', 'hello');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be a fruit');
+        return post.validateField('title')
+          .catch(function (error) {
+            error.should.eql('Must be a fruit');
+          });
+      })
+      .then(function () {
+        post.set('title', 'apple');
 
-    post.set('title', 'apple');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should validate a single field with validator options', function () {
+  it('should validate a single field with validator options', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -285,22 +286,22 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be a fruit');
+    post.validateField('title')
+      .catch(function (error) {
+        error.should.eql('Must be a fruit');
+      })
+      .then(function () {
+        post.set('title', 'apple');
 
-    post.set('title', 'apple');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should validate a single field with custom rule function', function () {
+  it('should validate a single field with custom rule function', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -317,22 +318,22 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be Voldemort');
+    post.validateField('title')
+      .catch(function (error) {
+        error.should.eql('Must be Voldemort');
+      })
+      .then(function () {
+        post.set('title', 'Voldemort');
 
-    post.set('title', 'Voldemort');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should validate a single field with custom pre-defined rule function', function () {
+  it('should validate a single field with custom pre-defined rule function', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -352,22 +353,22 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be Voldemort');
+    post.validateField('title')
+      .catch(function (error) {
+        error.should.eql('Must be Voldemort');
+      })
+      .then(function () {
+        post.set('title', 'Voldemort');
 
-    post.set('title', 'Voldemort');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should validate a single field with async rule function', function () {
+  it('should validate a single field with async rule function', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -390,22 +391,25 @@ describe('Model', function () {
       title: 'Hello World'
     });
 
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .equal('Must be Voldemort');
+    post.validateField('title')
+      .then(function (result) {
+        return result;
+      })
+      .catch(function (error) {
+        error.should.eql('Must be Voldemort');
+      })
+      .then(function () {
+        post.set('title', 'Voldemort');
 
-    post.set('title', 'Voldemort');
-    post
-      .validateField('title')
-      .should
-      .eventually
-      .be
-      .true;
+        return post.validateField('title')
+          .then(function (validated) {
+            validated.should.be.true();
+          });
+      })
+      .finally(done);
   });
 
-  it('should try to validate model with all fields', function () {
+  it('should try to validate model with all fields', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -427,17 +431,18 @@ describe('Model', function () {
       body: 'Blah... 123'
     });
 
-    post
-      .validate()
-      .should
-      .eventually
-      .eql({
-        title: 'Must be alphanumeric',
-        body: 'Must be alphabets only'
+    post.validate()
+      .catch(function (errors) {
+        errors.should.eql({
+          title: 'Must be alphanumeric',
+          body: 'Must be alphabets only'
+        });
+
+        done();
       });
   });
 
-  it('should validate model with all fields successfully', function () {
+  it('should validate model with all fields successfully', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -459,15 +464,15 @@ describe('Model', function () {
       body: 'blah'
     });
 
-    post
-      .validate()
-      .should
-      .eventually
-      .be
-      .true;
+    post.validate()
+      .then(function (validated) {
+        validated.should.be.true();
+
+        done();
+      });
   });
 
-  it('should validate required fields', function () {
+  it('should validate required fields', function (done) {
     const posts = new this.Posts({
       schema: {
         title: {
@@ -481,12 +486,13 @@ describe('Model', function () {
     });
     const post = posts.model({});
 
-    post
-      .validate()
-      .should
-      .eventually
-      .eql({
-        title: 'Must be alphabets only'
+    post.validate()
+      .catch(function (error) {
+        error.should.eql({
+          title: 'Must be alphabets only'
+        });
+
+        done();
       });
   });
 
@@ -515,6 +521,7 @@ describe('Model', function () {
               title: 'Must be alphanumeric'
             }
           });
+
         done();
       });
   });

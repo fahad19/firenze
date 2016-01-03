@@ -133,10 +133,6 @@ export default class Collection {
         }
       ], (err, result) => {
         if (err) {
-          if (_.isObject(err)) {
-            return resolve(err);
-          }
-
           return reject(err);
         }
 
@@ -181,15 +177,11 @@ export default class Collection {
       async.mapSeries(fields, (field, cb) => {
         this
           .validateField(model, field)
-          .then((validated) => {
-            if (validated !== true) {
-              list[field] = validated;
-            }
-
-            cb();
-          })
           .catch((error) => {
-            cb(error);
+            list[field] = error;
+          })
+          .finally(function () {
+            cb();
           });
       }, (err) => {
         if (err) {
@@ -200,7 +192,7 @@ export default class Collection {
           return resolve(true);
         }
 
-        return resolve(list);
+        return reject(list);
       });
     });
   }
@@ -218,7 +210,7 @@ export default class Collection {
       validate = [validate];
     }
 
-    return new P((resolve) => {
+    return new P((resolve, reject) => {
       async.eachSeries(validate, (ruleObj, cb) => {
         let rule = ruleObj.rule;
         let ruleName;
@@ -262,6 +254,8 @@ export default class Collection {
 
             cb();
           });
+
+          validatorFunc.apply(model, validatorOptions);
         } else {
           // sync
           let passed = validatorFunc.apply(
@@ -277,7 +271,7 @@ export default class Collection {
         }
       }, (err) => {
         if (err) {
-          return resolve(err);
+          return reject(err);
         }
 
         return resolve(true);
@@ -317,22 +311,21 @@ export default class Collection {
               });
           }
 
-          return this.validate(model).then((validated) => {
-            if (validated === true) {
-              return this //eslint-disable-line
-                ._save(model, options)
+          return this.validate(model)
+            .then(() => {
+              this._save(model, options) // eslint-disable-line
                 .then(function (model) {
-                  return cb(null, model);
+                  cb(null, model);
                 })
                 .catch(function (error) {
-                  return cb(error);
+                  cb(error);
                 });
-            }
-
-            return cb({
-              validationErrors: validated
+            })
+            .catch((error) => {
+              cb({
+                validationErrors: error
+              });
             });
-          });
         },
         (result, cb) => {
           if (!callbacks) {
