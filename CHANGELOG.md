@@ -1,5 +1,8 @@
 # Changelog
 
+* [`v0.6.0`](https://github.com/fahad19/firenze/compare/v0.5.0...v0.6.0)
+  * Reject promise when validation fails
+  * Fix for async validation rules
 * [`v0.5.0`](https://github.com/fahad19/firenze/compare/v0.4.0...v0.5.0)
   * New Transactions API
 * [`v0.4.0`](https://github.com/fahad19/firenze/compare/v0.3.1...v0.4.0)
