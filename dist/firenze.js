@@ -459,10 +459,6 @@ this["firenze"] =
 	          });
 	        }], function (err, result) {
 	          if (err) {
-	            if (_lodash2.default.isObject(err)) {
-	              return resolve(err);
-	            }
-
 	            return reject(err);
 	          }
 
@@ -509,14 +505,10 @@ this["firenze"] =
 
 	      return new _Promise2.default(function (resolve, reject) {
 	        _async2.default.mapSeries(fields, function (field, cb) {
-	          _this2.validateField(model, field).then(function (validated) {
-	            if (validated !== true) {
-	              list[field] = validated;
-	            }
-
+	          _this2.validateField(model, field).catch(function (error) {
+	            list[field] = error;
+	          }).finally(function () {
 	            cb();
-	          }).catch(function (error) {
-	            cb(error);
 	          });
 	        }, function (err) {
 	          if (err) {
@@ -527,7 +519,7 @@ this["firenze"] =
 	            return resolve(true);
 	          }
 
-	          return resolve(list);
+	          return reject(list);
 	        });
 	      });
 	    }
@@ -550,7 +542,7 @@ this["firenze"] =
 	        validate = [validate];
 	      }
 
-	      return new _Promise2.default(function (resolve) {
+	      return new _Promise2.default(function (resolve, reject) {
 	        _async2.default.eachSeries(validate, function (ruleObj, cb) {
 	          var rule = ruleObj.rule;
 	          var ruleName = undefined;
@@ -594,6 +586,8 @@ this["firenze"] =
 
 	              cb();
 	            });
+
+	            validatorFunc.apply(model, validatorOptions);
 	          } else {
 	            // sync
 	            var passed = validatorFunc.apply(model, validatorOptions);
@@ -606,7 +600,7 @@ this["firenze"] =
 	          }
 	        }, function (err) {
 	          if (err) {
-	            return resolve(err);
+	            return reject(err);
 	          }
 
 	          return resolve(true);
@@ -617,7 +611,6 @@ this["firenze"] =
 	    key: 'save',
 	    value: function save(model) {
 	      var _this4 //eslint-disable-line
-	      //eslint-disable-line
 	      = this;
 
 	      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -646,17 +639,16 @@ this["firenze"] =
 	            });
 	          }
 
-	          return _this4.validate(model).then(function (validated) {
-	            if (validated === true) {
-	              return _this4._save(model, options).then(function (model) {
-	                return cb(null, model);
-	              }).catch(function (error) {
-	                return cb(error);
-	              });
-	            }
-
-	            return cb({
-	              validationErrors: validated
+	          return _this4.validate(model).then(function () {
+	            _this4._save(model, options) // eslint-disable-line
+	            .then(function (model) {
+	              cb(null, model);
+	            }).catch(function (error) {
+	              cb(error);
+	            });
+	          }).catch(function (error) {
+	            cb({
+	              validationErrors: error
 	            });
 	          });
 	        }, function (result, cb) {
