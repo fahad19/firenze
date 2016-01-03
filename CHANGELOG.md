@@ -1,5 +1,7 @@
 # Changelog
 
+* [`v0.5.0`](https://github.com/fahad19/firenze/compare/v0.4.0...v0.5.0)
+  * New Transactions API
 * [`v0.4.0`](https://github.com/fahad19/firenze/compare/v0.3.1...v0.4.0)
   * New Migrations API
   * Core adapters extended further
