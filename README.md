@@ -4,7 +4,7 @@
 
 > A database agnostic adapter-based object relational mapper (ORM) targetting node.js and the browser.
 
-Visit [http://fahad19.github.io/firenze/](http://fahad19.github.io/firenze/) for documentation.
+Visit [http://firenze.js.org](http://firenze.js.org) for documentation.
 
 ### Key features
 
