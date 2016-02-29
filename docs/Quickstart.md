@@ -18,7 +18,7 @@ var Database = f.Database;
 var MysqlAdapter = require('firenze-adapter-mysql');
 ```
 
-## Ceate an instance of your Database
+## Create an instance of your Database
 
 ```js
 var db = new Database({
