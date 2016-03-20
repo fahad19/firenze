@@ -3,8 +3,11 @@ import {Promise} from '../../';
 
 import TimestampBehavior from '../behaviors/Timestamp';
 import Post from '../models/Post';
+import makeAuthors from './Authors';
 
 export default function (db) {
+  const Authors = makeAuthors(db);
+
   return db.createCollection({
     table: 'posts',
 
@@ -58,6 +61,10 @@ export default function (db) {
     afterDelete(model) {
       model.set('_field', 'afterDelete');
       return new Promise.resolve(true);
+    },
+
+    author() {
+      return this.belongsTo(Authors, 'author_id');
     }
   });
 }

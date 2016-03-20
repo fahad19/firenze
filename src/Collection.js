@@ -1,4 +1,5 @@
 /* eslint-disable new-cap, no-shadow */
+/* global __BUILD__ */
 
 import _ from 'lodash';
 import async from 'async';
@@ -516,6 +517,62 @@ export default class Collection {
             return reject(error);
           });
       });
+    });
+  }
+
+  _getAssociatedCollection(Collection) {
+    if (
+      (typeof __BUILD__ === 'undefined' || !__BUILD__) &&
+      typeof Collection === 'string'
+    ) {
+      const requiredCollection = require(Collection);
+
+      if (requiredCollection.default) {
+        return requiredCollection.default;
+      }
+
+      return requiredCollection;
+    }
+
+    return Collection;
+  }
+
+  makeAssociation(Collection, options = {}) {
+    const CollectionClass = this._getAssociatedCollection(Collection);
+
+    return new CollectionClass({
+      _parentAssociation: {
+        collection: this,
+        ...options
+      }
+    });
+  }
+
+  getAssociationOptions() {
+    return this._parentAssociation;
+  }
+
+  hasOne(Collection, foreignKey = null, options = {}) {
+    return this.makeAssociation(Collection, {
+      type: 'hasOne',
+      foreignKey,
+      ...options
+    });
+  }
+
+  belongsTo(Collection, foreignKey = null, options = {}) {
+    return this.makeAssociation(Collection, {
+      type: 'belongsTo',
+      foreignKey,
+      ...options
+    });
+  }
+
+  hasMany(Collection, foreignKey = null, options = {}) {
+    return this.makeAssociation(Collection, {
+      type: 'hasMany',
+      foreignKey,
+      ...options
     });
   }
 

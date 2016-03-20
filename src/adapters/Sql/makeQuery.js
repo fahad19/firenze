@@ -1,5 +1,6 @@
 /* eslint-disable no-invalid-this */
 import _ from 'lodash';
+import async from 'async';
 
 import P from '../../Promise';
 import Query from '../../Query';
@@ -329,6 +330,60 @@ export default function makeQuery(knex) {
       return this;
     }
 
+    include(inc) {
+      const includes = (typeof inc === 'string') ? [inc] : inc;
+
+      this._include = _.isArray(this._include)
+        ? this._include.concat(includes)
+        : includes;
+
+      return this;
+    }
+
+    _processInclude(model) {
+      if (!this._include || !model) {
+        return new P.resolve(model);
+      }
+
+      const id = model.getId();
+
+      if (!id) {
+        return new P.resolve(model);
+      }
+
+      return new P((resolve, reject) => {
+        async.eachSeries(this._include, (include, callback) => {
+          const includeCollection = this.collection[include]();
+          const associationOptions = includeCollection.getAssociationOptions();
+          const { type, foreignKey } = associationOptions;
+          const includePrimaryKey = includeCollection.alias + '.' + includeCollection.primaryKey;
+
+          switch (type) {
+            case 'belongsTo':
+              return includeCollection.find()
+                .where({
+                  [includePrimaryKey]: model.get(foreignKey)
+                })
+                .first()
+                .then((includeModel) => {
+                  model.set(include, includeModel);
+
+                  callback(null);
+                })
+                .catch(err => callback(err));
+            default:
+              return callback(model);
+          }
+        }, (err) => {
+          if (err) {
+            return reject(err);
+          }
+
+          resolve(model);
+        });
+      });
+    }
+
     run() {
       return new P((resolve, reject) => {
         this.builder
@@ -361,11 +416,13 @@ export default function makeQuery(knex) {
         this.run()
           .then((results) => {
             if (results.length > 0) {
-              return resolve(this.toModel(results[0]));
+              return this.toModel(results[0]);
             }
 
-            resolve(null);
+            return null;
           })
+          .then(model => this._processInclude(model))
+          .then(model => resolve(model))
           .catch(reject);
       });
     }

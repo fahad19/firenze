@@ -144,4 +144,6 @@ export default class Query {
 
     return this;
   }
+
+  include() { return this; }
 }

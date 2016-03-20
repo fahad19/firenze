@@ -226,4 +226,22 @@ describe('Collection', function () {
         });
     });
   });
+
+  it('should find with association include - belongsTo', function (done) {
+    const posts = new this.Posts();
+
+    posts
+      .find()
+      .where({id: 2})
+      .include(['author'])
+      .first()
+      .then(function (model) {
+        model.get('title').should.eql('About');
+
+        var author = model.get('author');
+        author.get('name').should.eql('Fahad Ibnay Heylaal');
+
+        done();
+      });
+  });
 });
