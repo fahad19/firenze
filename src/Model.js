@@ -18,8 +18,8 @@ export default class Model {
     this.collection.callBehavedMethod(this, 'modelInitialize');
   }
 
-  get(field) {
-    let obj = this.toObject();
+  get(field, nest = false) {
+    let obj = this.toObject(nest);
     return _.get(obj, field);
   }
 
@@ -31,12 +31,22 @@ export default class Model {
     return _.set(this.attributes, field, value);
   }
 
-  toObject() {
-    return this.attributes;
+  toObject(nest = false) {
+    function convertToJSON(attributes) {
+      return _.reduce(attributes, (result, value, key) => {
+        result[key] = (nest && _.isObject(value) && _.isFunction(value.toObject))
+          ? convertToJSON(value.attributes)
+          : value;
+
+        return result;
+      }, {});
+    }
+
+    return convertToJSON(this.attributes);
   }
 
-  toJSON() {
-    return this.toObject();
+  toJSON(...args) {
+    return this.toObject(...args);
   }
 
   fetch() {

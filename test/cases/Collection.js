@@ -237,8 +237,12 @@ describe('Collection', function () {
       .first()
       .then(function (model) {
         model.get('title').should.eql('About');
+        model.get('author.name', true).should.eql('Fahad Ibnay Heylaal');
 
-        var author = model.get('author');
+        const modelObj = model.toJSON(true);
+        modelObj.author.name.should.eql('Fahad Ibnay Heylaal');
+
+        const author = model.get('author');
         author.get('name').should.eql('Fahad Ibnay Heylaal');
 
         done();
