@@ -4,9 +4,11 @@ import should from 'should'; // eslint-disable-line
 
 import makePosts from '../collections/Posts';
 import makeAuthors from '../collections/Authors';
+import makeAddresses from '../collections/Addresses';
 
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
+import addressesData from '../fixtures/addresses';
 
 const {Database, Promise} = firenze;
 
@@ -20,6 +22,9 @@ describe('Collection', function () {
     this.Authors = makeAuthors(this.db);
     this.authorsData = authorsData;
 
+    this.Addresses = makeAddresses(this.db);
+    this.addressesData = addressesData;
+
     this.db.getAdapter().loadAllFixtures([
       {
         collection: new this.Posts(),
@@ -28,6 +33,10 @@ describe('Collection', function () {
       {
         collection: new this.Authors(),
         rows: this.authorsData
+      },
+      {
+        collection: new this.Addresses(),
+        rows: this.addressesData
       }
     ]).then(function () {
       done();
@@ -244,6 +253,28 @@ describe('Collection', function () {
 
         const author = model.get('author');
         author.get('name').should.eql('Fahad Ibnay Heylaal');
+
+        done();
+      });
+  });
+
+  it('should find with association include - hasOne', function (done) {
+    const authors = new this.Authors();
+
+    authors
+      .find()
+      .where({id: 2})
+      .include(['address'])
+      .first()
+      .then(function (model) {
+        model.get('name').should.eql('Harry Potter');
+        model.get('address.description', true).should.eql('Address 2');
+
+        const modelObj = model.toJSON(true);
+        modelObj.address.description.should.eql('Address 2');
+
+        const address = model.get('address');
+        address.get('description').should.eql('Address 2');
 
         done();
       });

@@ -3,8 +3,11 @@ import {Promise} from '../../';
 
 import TimestampBehavior from '../behaviors/Timestamp';
 import Author from '../models/Author';
+import makeAddresses from './Addresses';
 
 export default function (db) {
+  const Addresses = makeAddresses(db);
+
   return db.createCollection({
     table: 'authors',
 
@@ -41,6 +44,10 @@ export default function (db) {
         options: {}
       }
     ],
+
+    address() {
+      return this.hasOne(Addresses, 'author_id');
+    },
 
     beforeDelete() {
       return new Promise.reject(true);

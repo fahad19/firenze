@@ -356,13 +356,15 @@ export default function makeQuery(knex) {
           const includeCollection = this.collection[include]();
           const associationOptions = includeCollection.getAssociationOptions();
           const { type, foreignKey } = associationOptions;
-          const includePrimaryKey = includeCollection.alias + '.' + includeCollection.primaryKey;
+          let field;
 
           switch (type) {
             case 'belongsTo':
+              field = includeCollection.alias + '.' + includeCollection.primaryKey;
+
               return includeCollection.find()
                 .where({
-                  [includePrimaryKey]: model.get(foreignKey)
+                  [field]: model.get(foreignKey)
                 })
                 .first()
                 .then((includeModel) => {
@@ -371,6 +373,19 @@ export default function makeQuery(knex) {
                   callback(null);
                 })
                 .catch(err => callback(err));
+            case 'hasOne':
+              field = includeCollection.alias + '.' + foreignKey;
+
+              return includeCollection.find()
+                .where({
+                  [field]: model.getId()
+                })
+                .first()
+                .then((includeModel) => {
+                  model.set(include, includeModel);
+
+                  callback(null);
+                });
             default:
               return callback(model);
           }
