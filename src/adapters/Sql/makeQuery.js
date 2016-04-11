@@ -1,6 +1,5 @@
 /* eslint-disable no-invalid-this */
 import _ from 'lodash';
-import async from 'async';
 
 import P from '../../Promise';
 import Query from '../../Query';
@@ -340,65 +339,6 @@ export default function makeQuery(knex) {
       return this;
     }
 
-    _processInclude(model) {
-      if (!this._include || !model) {
-        return new P.resolve(model);
-      }
-
-      const id = model.getId();
-
-      if (!id) {
-        return new P.resolve(model);
-      }
-
-      return new P((resolve, reject) => {
-        async.eachSeries(this._include, (include, callback) => {
-          const includeCollection = this.collection[include]();
-          const associationOptions = includeCollection.getAssociationOptions();
-          const { type, foreignKey } = associationOptions;
-          let field;
-
-          switch (type) {
-            case 'belongsTo':
-              field = includeCollection.alias + '.' + includeCollection.primaryKey;
-
-              return includeCollection.find()
-                .where({
-                  [field]: model.get(foreignKey)
-                })
-                .first()
-                .then((includeModel) => {
-                  model.set(include, includeModel);
-
-                  callback(null);
-                })
-                .catch(err => callback(err));
-            case 'hasOne':
-              field = includeCollection.alias + '.' + foreignKey;
-
-              return includeCollection.find()
-                .where({
-                  [field]: model.getId()
-                })
-                .first()
-                .then((includeModel) => {
-                  model.set(include, includeModel);
-
-                  callback(null);
-                });
-            default:
-              return callback(model);
-          }
-        }, (err) => {
-          if (err) {
-            return reject(err);
-          }
-
-          resolve(model);
-        });
-      });
-    }
-
     run() {
       return new P((resolve, reject) => {
         this.builder
@@ -415,31 +355,35 @@ export default function makeQuery(knex) {
     }
 
     all() {
-      return new P((resolve, reject) => {
-        this.run()
-          .then((results) => {
-            resolve(this.toModels(results));
-          })
-          .catch(reject);
-      });
+      return this.run()
+        .then(models => this.toModels(models))
+        .then((models) => {
+          return P.map(models, (model) => {
+            return this
+              .collection
+              .association()
+              .fetchIncludes(model, this._include);
+          });
+        });
     }
 
     first() {
       this.limit(1);
 
-      return new P((resolve, reject) => {
-        this.run()
-          .then((results) => {
-            if (results.length > 0) {
-              return this.toModel(results[0]);
-            }
+      return this.run()
+        .then((results) => {
+          if (results.length > 0) {
+            return this.toModel(results[0]);
+          }
 
-            return null;
-          })
-          .then(model => this._processInclude(model))
-          .then(model => resolve(model))
-          .catch(reject);
-      });
+          return null;
+        })
+        .then((model) => {
+          return this
+            .collection
+            .association()
+            .fetchIncludes(model, this._include);
+        });
     }
 
     debug() {

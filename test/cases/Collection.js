@@ -1,4 +1,4 @@
-/* global describe, before, after, it, firenze, firenzeConfig */
+/* global describe, before, beforeEach, after, it, firenze, firenzeConfig */
 /* eslint-disable no-invalid-this */
 import should from 'should'; // eslint-disable-line
 
@@ -13,7 +13,7 @@ import addressesData from '../fixtures/addresses';
 const {Database, Promise} = firenze;
 
 describe('Collection', function () {
-  before(function (done) {
+  before(function () {
     this.db = new Database(firenzeConfig);
 
     this.Posts = makePosts(this.db);
@@ -24,7 +24,9 @@ describe('Collection', function () {
 
     this.Addresses = makeAddresses(this.db);
     this.addressesData = addressesData;
+  });
 
+  beforeEach(function (done) {
     this.db.getAdapter().loadAllFixtures([
       {
         collection: new this.Posts(),
@@ -236,7 +238,7 @@ describe('Collection', function () {
     });
   });
 
-  it('should find with association include - belongsTo', function (done) {
+  it('should find with association include - oneToOne (belongsTo)', function (done) {
     const posts = new this.Posts();
 
     posts
@@ -258,7 +260,7 @@ describe('Collection', function () {
       });
   });
 
-  it('should find with association include - hasOne', function (done) {
+  it('should find with association include - oneToOne (hasOne)', function (done) {
     const authors = new this.Authors();
 
     authors

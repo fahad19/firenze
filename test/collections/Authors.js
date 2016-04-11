@@ -46,7 +46,10 @@ export default function (db) {
     ],
 
     address() {
-      return this.hasOne(Addresses, 'author_id');
+      return this.association()
+        .oneToOne(Addresses)
+        .joinColumn('Author.id', 'Address.author_id')
+        .collection();
     },
 
     beforeDelete() {

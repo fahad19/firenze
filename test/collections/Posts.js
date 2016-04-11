@@ -60,11 +60,15 @@ export default function (db) {
 
     afterDelete(model) {
       model.set('_field', 'afterDelete');
+
       return new Promise.resolve(true);
     },
 
     author() {
-      return this.belongsTo(Authors, 'author_id');
+      return this.association()
+        .oneToOne(Authors)
+        .joinColumn('Post.author_id', 'Author.id')
+        .collection();
     }
   });
 }
