@@ -103,53 +103,49 @@ export default class Association {
       .getParentAssociationOptions();
 
     return new P((resolve, reject) => {
-      let q;
+      let finder;
+      let conditions;
 
       switch (type) {
         case 'oneToOne':
         case 'manyToOne':
-          q = includeCollection.find()
-            .where({
-              [referencedColumn]: model.get(column.split('.').pop())
-            });
-
-          if (orderBy) {
-            q = q.orderBy(...orderBy);
-          }
-
-          if (limit) {
-            q = q.limit(...limit);
-          }
-
-          q
-            .first()
-            .then(includeModel => resolve(includeModel))
-            .catch(err => reject(err));
+          finder = 'first';
+          conditions = {
+            [referencedColumn]: model.get(column.split('.').pop())
+          };
 
           break;
         case 'oneToMany':
-          q = includeCollection.find()
-            .where({
-              [referencedColumn]: model.get(column.split('.').pop())
-            });
-
-          if (orderBy) {
-            q = q.orderBy(...orderBy);
-          }
-
-          if (limit) {
-            q = q.limit(...limit);
-          }
-
-          q
-            .all()
-            .then(includeModels => resolve(includeModels))
-            .catch(err => reject(err));
+          finder = 'all';
+          conditions = {
+            [referencedColumn]: model.get(column.split('.').pop())
+          };
 
           break;
         default:
-          resolve(null);
+          finder = null;
+          conditions = null;
       }
+
+      if (!conditions) {
+        return resolve(null);
+      }
+
+      let q = includeCollection
+        .find()
+        .where(conditions);
+
+      if (orderBy) {
+        q = q.orderBy(...orderBy);
+      }
+
+      if (limit) {
+        q = q.limit(...limit);
+      }
+
+      q[finder]()
+        .then(includeResult => resolve(includeResult))
+        .catch(err => reject(err));
     });
   }
 
