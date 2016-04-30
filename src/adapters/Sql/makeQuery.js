@@ -358,6 +358,10 @@ export default function makeQuery(knex) {
       return this.run()
         .then(models => this.toModels(models))
         .then((models) => {
+          if (!this.collection) {
+            return models;
+          }
+
           return P.map(models, (model) => {
             return this
               .collection
@@ -379,6 +383,10 @@ export default function makeQuery(knex) {
           return null;
         })
         .then((model) => {
+          if (!this.collection) {
+            return model;
+          }
+
           return this
             .collection
             .association()

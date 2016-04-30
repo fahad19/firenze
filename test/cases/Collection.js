@@ -281,4 +281,28 @@ describe('Collection', function () {
         done();
       });
   });
+
+  it('should find multiple with association include - oneToOne (hasOne)', function (done) {
+    const authors = new this.Authors();
+
+    authors
+      .find()
+      .where({id: 2})
+      .include(['address'])
+      .all()
+      .then(function (models) {
+        const model = models[0];
+
+        model.get('name').should.eql('Harry Potter');
+        model.get('address.description', true).should.eql('Address 2');
+
+        const modelObj = model.toJSON(true);
+        modelObj.address.description.should.eql('Address 2');
+
+        const address = model.get('address');
+        address.get('description').should.eql('Address 2');
+
+        done();
+      });
+  });
 });
