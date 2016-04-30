@@ -5,10 +5,14 @@ import should from 'should'; // eslint-disable-line
 import makePosts from '../collections/Posts';
 import makeAuthors from '../collections/Authors';
 import makeAddresses from '../collections/Addresses';
+import makeCountries from '../collections/Countries';
+import makeCities from '../collections/Cities';
 
 import postsData from '../fixtures/posts';
 import authorsData from '../fixtures/authors';
 import addressesData from '../fixtures/addresses';
+import citiesData from '../fixtures/cities';
+import countriesData from '../fixtures/countries';
 
 const {Database, Promise} = firenze;
 
@@ -24,6 +28,12 @@ describe('Collection', function () {
 
     this.Addresses = makeAddresses(this.db);
     this.addressesData = addressesData;
+
+    this.Cities = makeCities(this.db);
+    this.citiesData = citiesData;
+
+    this.Countries = makeCountries(this.db);
+    this.countriesData = countriesData;
   });
 
   beforeEach(function (done) {
@@ -39,6 +49,14 @@ describe('Collection', function () {
       {
         collection: new this.Addresses(),
         rows: this.addressesData
+      },
+      {
+        collection: new this.Cities(),
+        rows: this.citiesData
+      },
+      {
+        collection: new this.Countries(),
+        rows: this.countriesData
       }
     ]).then(function () {
       done();
@@ -326,4 +344,21 @@ describe('Collection', function () {
       });
   });
 
+  it('should find with association include - manyToOne', function (done) {
+    const cities = new this.Cities();
+
+    cities
+      .find()
+      .where({id: 2})
+      .include(['country'])
+      .first()
+      .then(function (model) {
+        model.get('name').should.eql('Amsterdam');
+
+        const country = model.get('country');
+        country.get('name').should.eql('The Netherlands');
+
+        done();
+      });
+  });
 });

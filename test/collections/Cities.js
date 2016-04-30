@@ -1,7 +1,10 @@
 /* eslint-disable new-cap */
 import City from '../models/City';
+import makeCountries from './Countries';
 
 export default function (db) {
+  const Countries = makeCountries(db);
+
   return db.createCollection({
     table: 'cities',
 
@@ -15,6 +18,9 @@ export default function (db) {
       id: {
         type: 'increments'
       },
+      country_id: {
+        type: 'integer'
+      },
       name: {
         type: 'string'
       },
@@ -24,6 +30,13 @@ export default function (db) {
       population: {
         type: 'integer'
       }
+    },
+
+    country: function () {
+      return this.association()
+        .manyToOne(Countries)
+        .joinColumn('City.country_id', 'Country.id')
+        .collection();
     }
   });
 }

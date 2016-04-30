@@ -87,6 +87,7 @@ export default class Association {
     return new P((resolve, reject) => {
       switch (type) {
         case 'oneToOne':
+        case 'manyToOne':
           includeCollection.find()
             .where({
               [referencedColumn]: model.get(column.split('.').pop())
@@ -103,16 +104,6 @@ export default class Association {
             })
             .all()
             .then(includeModels => resolve(includeModels))
-            .catch(err => reject(err));
-
-          break;
-        case 'manyToOne':
-          includeCollection.find()
-            .where({
-              [referencedColumn]: model.get(column.split('.').pop())
-            })
-            .one()
-            .then(includeModel => resolve(includeModel))
             .catch(err => reject(err));
 
           break;
