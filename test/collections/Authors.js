@@ -52,6 +52,16 @@ export default function (db) {
         .collection();
     },
 
+    posts() {
+      const makePosts = require('./Posts').default;
+      const Posts = makePosts(db);
+
+      return this.association()
+        .oneToMany(Posts)
+        .joinColumn('Author.id', 'Post.author_id')
+        .collection();
+    },
+
     beforeDelete() {
       return new Promise.reject(true);
     },

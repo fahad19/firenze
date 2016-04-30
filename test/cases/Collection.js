@@ -305,4 +305,25 @@ describe('Collection', function () {
         done();
       });
   });
+
+  it('should find with association include - oneToMany', function (done) {
+    const authors = new this.Authors();
+
+    authors
+      .find()
+      .where({id: 2})
+      .include(['posts'])
+      .first()
+      .then(function (model) {
+        model.get('name').should.eql('Harry Potter');
+
+        const posts = model.get('posts');
+        posts.should.have.length(1);
+
+        posts[0].get('title').should.eql('Contact');
+
+        done();
+      });
+  });
+
 });
