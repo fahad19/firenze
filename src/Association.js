@@ -56,6 +56,18 @@ export default class Association {
     return this;
   }
 
+  orderBy(...args) {
+    this.options.orderBy = args;
+
+    return this;
+  }
+
+  limit(...args) {
+    this.options.limit = args;
+
+    return this;
+  }
+
   collection(options = {}) {
     const CollectionClass = getModule(this.options.Collection);
 
@@ -80,28 +92,56 @@ export default class Association {
     }
 
     const includeCollection = this.parentCollection[include]();
-    const { type, column, referencedColumn } = includeCollection
+    const {
+      type,
+      column,
+      referencedColumn,
+      orderBy,
+      limit
+    } = includeCollection
       .association()
       .getParentAssociationOptions();
 
     return new P((resolve, reject) => {
+      let q;
+
       switch (type) {
         case 'oneToOne':
         case 'manyToOne':
-          includeCollection.find()
+          q = includeCollection.find()
             .where({
               [referencedColumn]: model.get(column.split('.').pop())
-            })
+            });
+
+          if (orderBy) {
+            q = q.orderBy(...orderBy);
+          }
+
+          if (limit) {
+            q = q.limit(...limit);
+          }
+
+          q
             .first()
             .then(includeModel => resolve(includeModel))
             .catch(err => reject(err));
 
           break;
         case 'oneToMany':
-          includeCollection.find()
+          q = includeCollection.find()
             .where({
               [referencedColumn]: model.get(column.split('.').pop())
-            })
+            });
+
+          if (orderBy) {
+            q = q.orderBy(...orderBy);
+          }
+
+          if (limit) {
+            q = q.limit(...limit);
+          }
+
+          q
             .all()
             .then(includeModels => resolve(includeModels))
             .catch(err => reject(err));
