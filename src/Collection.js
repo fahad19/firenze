@@ -225,7 +225,7 @@ export default class Collection {
           ruleName = rule;
         } else if (_.isArray(rule)) {
           ruleName = _.first(rule);
-          ruleOptions = _.rest(rule);
+          ruleOptions = _.tail(rule);
         }
 
         if (_.isFunction(rule)) {

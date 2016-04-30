@@ -18,7 +18,7 @@ const migrationsTableSchema = {
   }
 };
 
-const generatedMigration = _.trimLeft(`
+const generatedMigration = _.trimStart(`
 var Promise = require('firenze').Promise;
 
 module.exports = {
@@ -109,7 +109,7 @@ export default class Migration {
             });
           });
 
-          resolve(_.sortByOrder(list, ['id', 'asc']));
+          resolve(_.orderBy(list, ['id', 'asc']));
         })
         .catch(function (error) {
           reject(error);
