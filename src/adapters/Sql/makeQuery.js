@@ -3,6 +3,7 @@ import _ from 'lodash';
 
 import P from '../../Promise';
 import Query from '../../Query';
+import omitModels from '../../utils/omitModels';
 
 import SqlExpression from './Expression';
 import SqlFunctions from './Functions';
@@ -235,7 +236,7 @@ export default function makeQuery(knex) {
     }
 
     update(row) {
-      this.builder.update(row);
+      this.builder.update(omitModels(row));
 
       return this;
     }

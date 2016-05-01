@@ -361,4 +361,36 @@ describe('Collection', function () {
         done();
       });
   });
+
+  it('should find with association include, and also update main model - manyToOne', function (done) {
+    const cities = new this.Cities();
+
+    cities
+      .find()
+      .where({id: 2})
+      .include(['country'])
+      .first()
+      .then(function (model) {
+        // fetched
+        model.get('name').should.eql('Amsterdam');
+
+        const country = model.get('country');
+        country.get('name').should.eql('The Netherlands');
+
+        return model;
+      })
+      .then(function (model) {
+        // update it
+        model.set('name', 'Rotterdam');
+
+        return model.save();
+      })
+      .then(function (model) {
+        // updated
+        model.get('name').should.eql('Rotterdam');
+      })
+      .then(function () {
+        done();
+      });
+  });
 });
