@@ -6,6 +6,7 @@ import Behavior from './Behavior';
 import Query from './Query';
 import Expression from './Expression';
 import Functions from './Functions';
+import Association from './Association';
 import Schema from './Schema';
 import Migration from './Migration';
 import Transaction from './Transaction';
@@ -26,6 +27,7 @@ export default {
   Query,
   Expression,
   Functions,
+  Association,
 
   Schema,
   Migration,
