@@ -8,6 +8,7 @@ Guides are written to assist you in learning to use firenze.js from the ground u
 * [Collections](./Collections.md)
 * [Models](./Models.md)
 * [Fetching Data](./FetchingData.md)
+* [Associations](./Associations.md)
 * [Validating Data](./ValidatingData.md)
 * [Saving Data](./SavingData.md)
 * [Deleting Data](./DeletingData.md)

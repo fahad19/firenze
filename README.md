@@ -10,13 +10,13 @@ Visit [http://firenze.js.org](http://firenze.js.org) for documentation.
 
 * Database agnostic **Adapter** based architecture
 * Intituitive **query builder**
+* **Associations** (Collection relationships)
 * **Migrations** API (with rollback)
 * Highly extensible with **Behavior** pattern for Collections and Models
 * **Promise** based workflow
 * Strong and flexible **validation** system
 * **CLI** support
 * API for **Transactions** for supported adapters
-* Footprint of ~40kB minified file
 
 The project is still under active development, and more features are expected to land in future releases.
 
