@@ -52,7 +52,7 @@ Supports v0.2.x:
 
 ## Testing
 
-Tests are written with [mocha](http://visionmedia.github.com/mocha/), and can be run via npm:
+Tests are written with [mocha](http://mochajs.org/), and can be run via npm:
 
 ```
 $ npm test
